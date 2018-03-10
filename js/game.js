@@ -1,5 +1,14 @@
 gameState = {
+	difficulty : 20,
+	beachSlotsPositions : {
+		x : [195, 240, 380, 425, 575, 620, 765, 810],
+		y : [220, 260, 300],
+	},
 	personsGroup : null,
+	beachSlostsGroup : null,
+	beachSlots : [],
+	towel : null,
+	test : null,
 
 	preload: function() {
 		// Just to debug FPS
@@ -11,11 +20,29 @@ gameState = {
 	},
 
 	create: function() {
+		var _this = this;
+
 		background = this.add.image(0, 0, 'background').scale.set(scaleFactor);
 		background.smoothed = false;
 
 		this.personsGroup = this.add.group();
-		this.time.events.loop(Phaser.Timer.SECOND * 2, this.generatePerson, this, 1);
+		this.beachSlostsGroup = this.add.group();
+
+		var way = true;
+
+		this.beachSlotsPositions.x.forEach(function(x) {
+			way = !way;
+
+			_this.beachSlotsPositions.y.forEach(function(y) {
+				item = {x: x, y: y, taken : false, way: way};
+				_this.beachSlots.push(item);
+			});
+		});
+
+		this.time.events.loop(Phaser.Timer.SECOND * 5 / this.difficulty, function() {
+			person = new Person(game);
+			_this.personsGroup.add(person);
+		}, this, 1);
 	},
 
 	update: function() {
@@ -24,25 +51,32 @@ gameState = {
 
 	render: function() {
 		if (debug) {
-			this.game.debug.text('FPS: ' + this.time.fps, gameWidth - 100, 50, {fill: "white", fontSize: 24});
+			this.game.debug.text('FPS: ' + this.time.fps, gameWidth - 200, 50);
+			
+			this.game.debug.text('Beach Slots: ' + this.beachSlots.length, gameWidth - 200, 70);
+
+			if (this.test !== null) {
+				this.game.debug.text('Way: ' + this.test.way, gameWidth - 200, 130);
+			}
 		}
 	},
 
-	generatePerson : function() {
-		var knight = this.personsGroup.create(510, -50, "catknight");
-		knight.scale.x *= -1;
+	getUntakenBeachSlot: function() {
+		var notTaken = [];
 
-		knight.animations.add('idle', [0, 1, 2, 3], 8, true);
+		this.beachSlots.forEach(function (beachSlot) {
+			if (!beachSlot.taken) {
+				notTaken.push(beachSlot);
+			}
+		});
 
-		knight.animations.play('idle');
+		if (notTaken.length == 0) {
+			return null;
+		}
 
-		a =this.add.tween(knight).to( { y: 130 }, 2000, Phaser.Easing.Linear.None, true);
+		var beachSlot = notTaken[Math.floor(Math.random() * notTaken.length)];
+		beachSlot.taken = true;
 
-		arr = [-500, 500];
-		x = arr[this.game.rnd.integerInRange(0, 1)];
-
-		b =this.add.tween(knight).to( { x: x }, 2000, Phaser.Easing.Linear.None);
-	
-		a.chain(b);
+		return beachSlot;
 	}
 }

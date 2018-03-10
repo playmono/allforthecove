@@ -12,9 +12,9 @@
 <body>
 
 <script src="js/phaser.min.js"></script>
+<script src="js/person.js"></script>
 <script src="js/menu.js"></script>
 <script src="js/game.js"></script>
-<script src="js/peson.js"></script>
 
 <script>
 (function() {

@@ -14,6 +14,7 @@
 <script src="js/phaser.min.js"></script>
 <script src="js/menu.js"></script>
 <script src="js/game.js"></script>
+<script src="js/peson.js"></script>
 
 <script>
 (function() {
@@ -23,16 +24,18 @@
 	debug = false;
 	<?php } ?>
 
-	scaleFactor = 2.5;
-	gameWidth = 256 * scaleFactor;
-	gameHeight = 256 * scaleFactor;
+	scaleFactor = 2;
+	gameWidth = 480 * scaleFactor;
+	gameHeight = 270 * scaleFactor;
 
-	var game = new Phaser.Game(gameWidth, gameWidth, Phaser.AUTO, '');
+	game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, '');
 	game.state.add("menuState", menuState);
-	game.state.add("mainState", gameState);
+	game.state.add("gameState", gameState);
+	game.state.add("howToPlayState", howToPlayState);
+	game.state.add("creditsState", creditsState);
 
 	if (debug) {
-		game.state.start("mainState");
+		game.state.start("gameState");
 	} else {
 		game.state.start("menuState");
 	}

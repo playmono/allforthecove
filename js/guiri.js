@@ -169,7 +169,7 @@ Guiri.prototype.fromWaterToTowel = function() {
 	this.waterSlot.taken = false;
 
 	movingRoute1.to({
-		x: _this.beachSlot.x + _this.getTowelOffsetX(true),
+		x: _this.beachSlot.x + _this.getTowelOffsetX(false),
 		y: 350
 	}, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
@@ -322,17 +322,40 @@ Guiri.prototype.fromMainPathToCity = function() {
 Guiri.prototype.fromMainPathToChiringuito = function() {
 	var _this = this;
 
-	if (this.chiringuito == null) {
-		return;
-	} else {
-		var movingRoute1 = gameState.add.tween(this);
-		var time = Phaser.Math.difference(this.chiringuito.x + 60, this.x) * 20;
+	_this.buyCounter++;
 
-		movingRoute1.to({
-			x: _this.chiringuito.x + 60,
-			y: _this.chiringuito.y + 100
-		}, time / gameState.difficulty, Phaser.Easing.Linear.None, true);
-	}
+	var movingRoute1 = gameState.add.tween(this);
+	var time = Phaser.Math.difference(this.chiringuito.x + 60, this.x) * 20;
+
+	movingRoute1.to({
+		x: _this.chiringuito.x + 60,
+		y: _this.chiringuito.y + 100
+	}, time / gameState.difficulty, Phaser.Easing.Linear.None, true);
+
+	// BUYING
+
+	var rnd = gameState.rnd.integerInRange(3, 7);
+
+	game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
+		_this.fromChiringuitoToTowel();
+	}, this);
+}
+
+Guiri.prototype.fromChiringuitoToTowel = function() {
+	var _this = this;
+
+	this.animations.play('down');
+
+	var movingRoute1 = gameState.add.tween(this);
+
+	movingRoute1.to({
+		y: '+25'
+	}, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+
+	movingRoute1.onComplete.add(function() {
+		_this.fromMainPathToTowel();
+	});
+
 }
 
 Guiri.prototype.swimming = function() {
@@ -368,20 +391,22 @@ Guiri.prototype.layOnTowel = function() {
 	var rnd = gameState.rnd.integerInRange(4, 15);
 
 	game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
-		// GET A CHIRINGUITO BRO!!!
-		gameState.getUntakenChiringuito(_this);
+		var swimProbability = gameState.rnd.integerInRange(0, 100);
+		var buyProbability = gameState.rnd.integerInRange(0, 100);
 
-		if (_this.chiringuito == null) {
-			var swimProbability = gameState.rnd.integerInRange(0, 100);
-			var buyProbability = gameState.rnd.integerInRange(0, 100);
+		if (swimProbability > (25 + _this.swimmingCounter * 20) && _this.swimmingCounter <= 3) {
+			_this.fromTowelToWater();
+		} else if (buyProbability > (10 + _this.buyCounter * 20) && _this.buyCounter <= 3) {
+			// GET A CHIRINGUITO BRO!!!
+			gameState.getUntakenChiringuito(_this);
 
-			if (swimProbability > (75 - _this.swimmingCounter * 20) && _this.swimmingCounter <= 3) {
-				_this.fromTowelToWater();
+			if (_this.chiringuito == null) {
+				_this.layOnTowel();
 			} else {
-				_this.fromTowelToCity();
+				_this.fromTowelToChiringuito();
 			}
 		} else {
-			_this.fromTowelToChiringuito();
+			_this.fromTowelToCity();
 		}
 	}, this);
 }

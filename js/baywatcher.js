@@ -1,5 +1,5 @@
-Chiringuito = function (game, x, y) {
-    Phaser.Sprite.call(this, game, x, y, 'chiringuito');
+Baywatcher = function (game, x, y) {
+    Phaser.Sprite.call(this, game, x, y, 'baywatcher');
 
     var _this = this;
 
@@ -8,14 +8,14 @@ Chiringuito = function (game, x, y) {
 
 	var bought = false;
 
-	this.animations.add('idle', [0, 1, 2, 3], 5, true);
+    this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
     this.alpha = 0.2;
     this.inputEnabled = true;
     this.events.onInputOver.add(function () {
     	if (!_this.bought) {
-    		_this.alpha = 0.7;
-    	}
+            _this.alpha = 0.7;
+        }
     }, this);
     this.events.onInputOut.add(function () {
     	if (!_this.bought) {
@@ -25,14 +25,14 @@ Chiringuito = function (game, x, y) {
     this.events.onInputDown.add(function () {
     	_this.alpha = 1;
     	_this.bought = true;
-    	_this.animations.play('idle');
+        _this.animations.play('idle');
     }, this);
 };
 
-Chiringuito.prototype = Object.create(Phaser.Sprite.prototype);
-Chiringuito.prototype.constructor = Chiringuito;
-Chiringuito.taken = false;
+Baywatcher.prototype = Object.create(Phaser.Sprite.prototype);
+Baywatcher.prototype.constructor = Baywatcher;
+Baywatcher.taken = false;
 
-Chiringuito.prototype.update = function() {
+Baywatcher.prototype.update = function() {
 
 };

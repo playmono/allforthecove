@@ -2,67 +2,96 @@ gameState = {
 	difficulty : 2,
 
 	beachSlots : [
-		{squareIndex: 1, titleY: 'top', titleX: 'left', x: 195, y: 220, taken: false},
-		{squareIndex: 1, titleY: 'middle', titleX: 'left', x: 195, y: 260, taken: false},
-		{squareIndex: 1, titleY: 'bottom', titleX: 'left', x: 195, y: 300, taken: false},
-		{squareIndex: 1, titleY: 'top', titleX: 'right', x: 240, y: 220, taken: false},
-		{squareIndex: 1, titleY: 'middle', titleX: 'right', x: 240, y: 260, taken: false},
-		{squareIndex: 1, titleY: 'bottom', titleX: 'right', x: 240, y: 300, taken: false},
+		{squareIndex: 1, titleY: 'top', titleX: 'left', x: 125, y: 240, taken: false},
+		{squareIndex: 1, titleY: 'middle', titleX: 'left', x: 125, y: 280, taken: false},
+		{squareIndex: 1, titleY: 'bottom', titleX: 'left', x: 125, y: 320, taken: false},
+		{squareIndex: 1, titleY: 'top', titleX: 'right', x: 170, y: 240, taken: false},
+		{squareIndex: 1, titleY: 'middle', titleX: 'right', x: 170, y: 280, taken: false},
+		{squareIndex: 1, titleY: 'bottom', titleX: 'right', x: 170, y: 320, taken: false},
 
-		{squareIndex: 2, titleY: 'top', titleX: 'left', x: 380, y: 220, taken: false},
-		{squareIndex: 2, titleY: 'middle', titleX: 'left', x: 380, y: 260, taken: false},
-		{squareIndex: 2, titleY: 'bottom', titleX: 'left', x: 380, y: 300, taken: false},
-		{squareIndex: 2, titleY: 'top', titleX: 'right', x: 425, y: 220, taken: false},
-		{squareIndex: 2, titleY: 'middle', titleX: 'right', x: 425, y: 260, taken: false},
-		{squareIndex: 2, titleY: 'bottom', titleX: 'right', x: 425, y: 300, taken: false},
+		{squareIndex: 2, titleY: 'top', titleX: 'left', x: 320, y: 240, taken: false},
+		{squareIndex: 2, titleY: 'middle', titleX: 'left', x: 320, y: 280, taken: false},
+		{squareIndex: 2, titleY: 'bottom', titleX: 'left', x: 320, y: 320, taken: false},
+		{squareIndex: 2, titleY: 'top', titleX: 'right', x: 365, y: 240, taken: false},
+		{squareIndex: 2, titleY: 'middle', titleX: 'right', x: 365, y: 280, taken: false},
+		{squareIndex: 2, titleY: 'bottom', titleX: 'right', x: 365, y: 320, taken: false},
 
-		{squareIndex: 3, titleY: 'top', titleX: 'left', x: 575, y: 220, taken: false},
-		{squareIndex: 3, titleY: 'middle', titleX: 'left', x: 575, y: 260, taken: false},
-		{squareIndex: 3, titleY: 'bottom', titleX: 'left', x: 575, y: 300, taken: false},
-		{squareIndex: 3, titleY: 'top', titleX: 'right', x: 620, y: 220, taken: false},
-		{squareIndex: 3, titleY: 'middle', titleX: 'right', x: 620, y: 260, taken: false},
-		{squareIndex: 3, titleY: 'bottom', titleX: 'right', x: 620, y: 300, taken: false},
+		{squareIndex: 3, titleY: 'top', titleX: 'left', x: 515, y: 240, taken: false},
+		{squareIndex: 3, titleY: 'middle', titleX: 'left', x: 515, y: 280, taken: false},
+		{squareIndex: 3, titleY: 'bottom', titleX: 'left', x: 515, y: 320, taken: false},
+		{squareIndex: 3, titleY: 'top', titleX: 'right', x: 560, y: 240, taken: false},
+		{squareIndex: 3, titleY: 'middle', titleX: 'right', x: 560, y: 280, taken: false},
+		{squareIndex: 3, titleY: 'bottom', titleX: 'right', x: 560, y: 320, taken: false},
 
-		{squareIndex: 4, titleY: 'top', titleX: 'left', x: 765, y: 220, taken: false},
-		{squareIndex: 4, titleY: 'middle', titleX: 'left', x: 765, y: 260, taken: false},
-		{squareIndex: 4, titleY: 'bottom', titleX: 'left', x: 765, y: 300, taken: false},
-		{squareIndex: 4, titleY: 'top', titleX: 'right', x: 810, y: 220, taken: false},
-		{squareIndex: 4, titleY: 'middle', titleX: 'right', x: 810, y: 260, taken: false},
-		{squareIndex: 4, titleY: 'bottom', titleX: 'right', x: 810, y: 300, taken: false},
+		{squareIndex: 4, titleY: 'top', titleX: 'left', x: 705, y: 240, taken: false},
+		{squareIndex: 4, titleY: 'middle', titleX: 'left', x: 705, y: 280, taken: false},
+		{squareIndex: 4, titleY: 'bottom', titleX: 'left', x: 705, y: 320, taken: false},
+		{squareIndex: 4, titleY: 'top', titleX: 'right', x: 750, y: 240, taken: false},
+		{squareIndex: 4, titleY: 'middle', titleX: 'right', x: 750, y: 280, taken: false},
+		{squareIndex: 4, titleY: 'bottom', titleX: 'right', x: 750, y: 320, taken: false},
 	],
 	waterSlots : [],
 	chiringuitoSlots: [
-		{x: 130, y: 90},
-		{x: 320, y: 90},
-		{x: 500, y: 90},
-		{x: 690, y: 90}
+		{x: 100, y: 10},
+		{x: 270, y: 10},
+		{x: 510, y: 10},
+		{x: 670, y: 10}
+	],
+	trashSlots: [
+		{x: 130, y: 215},
+		//{x: 230, y: 215},
+		{x: 240, y: 135},
+		{x: 330, y: 215},
+		//{x: 425, y: 215},
+		{x: 425, y: 320},
+		{x: 520, y: 215},
+		//{x: 615, y: 215},
+		{x: 640, y: 135},
+		{x: 715, y: 215},
+	],
+	baywatchersSlot: [
+		//{x: 205, y: 250},
+		//{x: 400, y: 250},
+		//{x: 590, y: 250}
+		{x: 205, y: 180},
+		{x: 400, y: 160},
+		{x: 590, y: 180}
 	],
 	guirisGroup : null,
 	chiringuitosGroup : null,
-	towel : null,
+	trashGroup: null,
+	baywatchersGroup: null,
+	itemsGroup: null,
 	test : null,
-	item : null,
 
 	preload: function() {
 		// Just to debug FPS
 		this.time.advancedTiming = true;
 
-		//this.load.image('background', 'assets/beach.png');
 		if (debug) {
-			this.game.load.spritesheet('background', 'assets/beach-debug.png', gameWidth / scaleFactor, gameHeight /scaleFactor);
+			this.game.load.spritesheet('background', 'assets/beach-debug.png', 480, 270);
 		} else {
-			this.game.load.spritesheet('background', 'assets/beach.png', gameWidth / scaleFactor, gameHeight /scaleFactor);
+			this.game.load.spritesheet('background', 'assets/beach.png', 480, 270);
 		}
 
 		this.difficulty = velocity;
 
-		this.game.load.spritesheet('catknight', 'assets/knight.png', 100, 100);
+		this.game.load.spritesheet('guiri1', 'assets/guiri1.png', 17, 37);
+		this.game.load.spritesheet('guiri2', 'assets/guiri2.png', 17, 37);
+		this.game.load.spritesheet('guiri3', 'assets/guiri3.png', 17, 37);
+		this.game.load.spritesheet('guiri4', 'assets/guiri4.png', 17, 37);
+		this.game.load.spritesheet('guiri5', 'assets/guiri5.png', 17, 37);
+		this.game.load.spritesheet('guiri6', 'assets/guiri6.png', 17, 37);
+		this.game.load.spritesheet('guiri7', 'assets/guiri7.png', 17, 37);
+		this.game.load.spritesheet('guiri8', 'assets/guiri8.png', 17, 37);
+		this.game.load.spritesheet('chiringuito', 'assets/chiringuito.png', 81, 80);
+		this.game.load.spritesheet('trash', 'assets/trash.png', 33, 29);
+		this.game.load.spritesheet('baywatcher', 'assets/baywatcher.png', 46, 74);
+		this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
 	},
 
 	create: function() {
 		var _this = this;
-
-		//background = this.add.image(0, 0, 'background').scale.set(scaleFactor);
 		
 		var background = this.game.add.sprite(0, 0, 'background');
 		background.scale.set(scaleFactor);
@@ -71,15 +100,18 @@ gameState = {
 		background.animations.add('idle', [0, 1, 2, 3, 4, 5], 5, true);
 		background.animations.play('idle');
 
+		this.itemsGroup = this.add.group();
 		this.chiringuitosGroup = this.add.group();
+		this.trashGroup = this.add.group();
 		this.guirisGroup = this.add.group();
+		this.baywatchersGroup = this.add.group();
 
-		var waterPositionY = 400;
-		var waterSlotsPositionsX = 60;
+		var waterPositionY = 420;
+		var waterSlotsPositionsX = 0;
 
 		for (i = 0; i < 24; i++) {
 			waterSlotsPositionsX += 35;
-			waterPositionY = waterPositionY == 400 ? 440 : 400;
+			waterPositionY = waterPositionY == 420 ? 460 : 420;
 
 			_this.waterSlots.push({
 				x: waterSlotsPositionsX,
@@ -95,8 +127,18 @@ gameState = {
 		}, this, 1);
 
 		this.chiringuitoSlots.forEach(function(chiringuito) {
-			var chiringuito = new Chiringuito(game, chiringuito.x, chiringuito.y);	
+			var chiringuito = new Chiringuito(game, chiringuito.x, chiringuito.y);
 			_this.chiringuitosGroup.add(chiringuito);
+		});
+
+		this.trashSlots.forEach(function(trash) {
+			var trash = new Trash(game, trash.x, trash.y);
+			_this.trashGroup.add(trash);
+		});
+
+		this.baywatchersSlot.forEach(function(baywatcher) {
+			var baywatcher = new Baywatcher(game, baywatcher.x, baywatcher.y);
+			_this.baywatchersGroup.add(baywatcher);
 		});
 	},
 
@@ -165,5 +207,30 @@ gameState = {
 		waterSlot.taken = true;
 
 		guiri.waterSlot = waterSlot;
+	},
+
+	getUntakenChiringuito: function(guiri) {
+		var notTaken = [];
+
+		this.chiringuitosGroup.forEach(function(chiringuito) {
+			if (chiringuito.taken) {
+				return;
+			}
+
+			if (!chiringuito.bought) {
+				return;
+			}
+
+			notTaken.push(chiringuito);
+		});
+
+		if (notTaken.length == 0) {
+			return null;
+		}
+
+		var chiringuito = notTaken[Math.floor(Math.random() * notTaken.length)];
+		chiringuito.taken = true;
+
+		guiri.chiringuito = chiringuito;
 	}
 }

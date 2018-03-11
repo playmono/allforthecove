@@ -1,15 +1,12 @@
-Chiringuito = function (game, x, y) {
-    Phaser.Sprite.call(this, game, x, y, 'chiringuito');
+Trash = function (game, x, y) {
+    Phaser.Sprite.call(this, game, x, y, 'trash');
 
     var _this = this;
 
+    var bought = false;
+
     this.scale.set(scaleFactor);
     this.smoothed = false;
-
-	var bought = false;
-
-	this.animations.add('idle', [0, 1, 2, 3], 5, true);
-
     this.alpha = 0.2;
     this.inputEnabled = true;
     this.events.onInputOver.add(function () {
@@ -25,14 +22,15 @@ Chiringuito = function (game, x, y) {
     this.events.onInputDown.add(function () {
     	_this.alpha = 1;
     	_this.bought = true;
-    	_this.animations.play('idle');
     }, this);
+
+	//this.animations.add('idle', [0, 1, 2, 3], 8, true);
+	//this.animations.play('idle');
 };
 
-Chiringuito.prototype = Object.create(Phaser.Sprite.prototype);
-Chiringuito.prototype.constructor = Chiringuito;
-Chiringuito.taken = false;
+Trash.prototype = Object.create(Phaser.Sprite.prototype);
+Trash.prototype.constructor = Trash;
 
-Chiringuito.prototype.update = function() {
+Trash.prototype.update = function() {
 
 };

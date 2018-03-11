@@ -34,8 +34,14 @@ Rubbish.prototype.update = function() {
 };
 
 Rubbish.prototype.onDragStop = function() {
-    if (game.physics.arcade.overlap(gameState.trashGroup, this)) {
-         this.destroy();
+    game.physics.arcade.overlap(this, gameState.trashGroup, this.checkCollision, null, this)
+}
+
+Rubbish.prototype.checkCollision = function(rubbish, trash) {
+    if (trash.bought && !trash.isInCooldown) {
+        this.destroy();
+
+        trash.startCooldown();
     } else {
         this.x = this.initialX;
         this.y = this.initialY;

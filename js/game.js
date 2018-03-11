@@ -97,6 +97,7 @@ gameState = {
 		this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
 		this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
 		this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
+		this.game.load.spritesheet('icons', 'assets/icons.png', 16, 16);
 	},
 
 	create: function() {
@@ -169,12 +170,12 @@ gameState = {
 			var baywatcher = new Baywatcher(game, baywatcher.x, baywatcher.y);
 			_this.baywatchersGroup.add(baywatcher);
 		});
-		/*
+
 		this.rubbishZones.forEach(function(rubbish) {
 			var rubbish = new Rubbish(game, rubbish.x, rubbish.y);
 			_this.rubbishGroup.add(rubbish);
 		});
-		*/
+
 		this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
 			var proportion = 6/24;
 			var countGuiris = _this.guirisGroup.length;	

@@ -88,6 +88,7 @@ gameState = {
 		this.game.load.spritesheet('trash', 'assets/trash.png', 33, 29);
 		this.game.load.spritesheet('baywatcher', 'assets/baywatcher.png', 46, 74);
 		this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
+		this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
 	},
 
 	create: function() {

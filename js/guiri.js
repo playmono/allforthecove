@@ -1,4 +1,14 @@
 Guiri = function (game) {
+	this.beachSlot = null;
+	this.waterSlot = null;
+	this.chiringuito = null;
+	this.initialPosition = {x :445, y : -50};
+	this.item = null;
+	this.swimmingCounter = 0;
+	this.buyCounter = 0;
+	this.splash = null;
+	this.isSplashing = false;
+
 	var i = gameState.rnd.integerInRange(1, 8);
 
     Phaser.Sprite.call(this, game, this.initialPosition.x, this.initialPosition.y, 'guiri' + i);
@@ -21,13 +31,6 @@ Guiri = function (game) {
 
 Guiri.prototype = Object.create(Phaser.Sprite.prototype);
 Guiri.prototype.constructor = Guiri;
-Guiri.prototype.beachSlot = null;
-Guiri.prototype.waterSlot = null;
-Guiri.prototype.chiringuito = null;
-Guiri.prototype.initialPosition = {x :445, y : -50};
-Guiri.prototype.item = null;
-Guiri.prototype.swimmingCounter = 0;
-Guiri.prototype.buyCounter = 0;
 
 Guiri.prototype.update = function() {
 
@@ -370,7 +373,13 @@ Guiri.prototype.swimming = function() {
 	var rnd = gameState.rnd.integerInRange(4, 15);
 
 	game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
-		_this.fromWaterToTowel();
+		var rnd = gameState.rnd.integerInRange(1, 100);
+
+		if (rnd > 75) {
+			_this.doSplash();
+		} else {
+			_this.fromWaterToTowel();
+		}
 	}, this);
 }
 
@@ -411,6 +420,31 @@ Guiri.prototype.layOnTowel = function() {
 			_this.fromTowelToCity();
 		}
 	}, this);
+}
+
+Guiri.prototype.doSplash = function() {
+	var _this = this;
+
+	this.isSplashing = true;
+
+	this.splash = gameState.add.sprite(this.x - 22, this.y - 10, 'splash');
+
+	gameState.itemsGroup.add(this.splash);
+	this.splash.scale.set(scaleFactor);
+	this.splash.smoothed = false;
+
+	this.splash.animations.add('idle', [0, 1, 2, 3], 8, true);
+
+	this.splash.animations.play('idle');
+
+	var rnd = gameState.rnd.integerInRange(6, 10);
+
+	game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
+		_this.splash.destroy();
+		_this.isSplashing = false;
+
+		_this.swimming();
+	});
 }
 
 

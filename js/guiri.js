@@ -332,13 +332,15 @@ Guiri.prototype.fromMainPathToChiringuito = function() {
 		y: _this.chiringuito.y + 100
 	}, time / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
-	// BUYING
+	movingRoute1.onComplete.add(function() {
+		// BUYING
 
-	var rnd = gameState.rnd.integerInRange(3, 7);
+		var rnd = gameState.rnd.integerInRange(3, 7);
 
-	game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
-		_this.fromChiringuitoToTowel();
-	}, this);
+		game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
+			_this.fromChiringuitoToTowel();
+		}, this);
+	})
 }
 
 Guiri.prototype.fromChiringuitoToTowel = function() {

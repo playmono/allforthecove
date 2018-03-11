@@ -34,7 +34,6 @@ Trash = function (game, x, y) {
     }, this);
 
     this.enableBody = true;
-
     game.physics.arcade.enable(this);
 };
 

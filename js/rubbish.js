@@ -47,6 +47,7 @@ Rubbish.prototype.onDragStop = function() {
 Rubbish.prototype.checkCollision = function(rubbish, trash) {
     if (trash.bought && !trash.isInCooldown) {
         this.kill();
+        trashEffect.play();
 
         trash.startCooldown();
     } else {

@@ -1,6 +1,6 @@
 gameState = {
-	difficulty : 2,
-	money: 300,
+	difficulty : 1,
+	money: 200,
 	moneyText : null,
 	fame : 0,
 
@@ -99,6 +99,13 @@ gameState = {
 		this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
 		this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
 		this.game.load.spritesheet('icons', 'assets/icons.png', 16, 16);
+
+		game.load.audio('music', ['assets/music.mp3']);
+		game.load.audio('baywatacher', ['assets/baywatcher.mp3']);
+		game.load.audio('trash', ['assets/trash.mp3']);
+		game.load.audio('coin', ['assets/coin.mp3']);
+		game.load.audio('buyguiri', ['assets/buyguiri.mp3']);
+		game.load.audio('buy', ['assets/buy.mp3']);
 	},
 
 	create: function() {
@@ -195,6 +202,13 @@ gameState = {
 				_this.rubbishGroup.add(rubbish);
 			}
 		}, this);
+
+		var music = game.add.audio("music");
+		trashEffect = game.add.audio("trash");
+		buyGuiriEffect = game.add.audio("buyguiri");
+		coinEffect = game.add.audio("coin");
+
+		music.play();
 	},
 
 	update: function() {
@@ -221,6 +235,7 @@ gameState = {
 
 			this.guirisGroup.forEach(function(guiri) {
 				this.game.debug.text('Happiness: ' + guiri.happiness, guiri.centerX, guiri.centerY);
+				//this.game.debug.body(guiri);
 			});
 		}
 

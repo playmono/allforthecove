@@ -56,4 +56,6 @@ Chiringuito.prototype.buy = function(free) {
     this.alpha = 1;
     this.bought = true;
     this.animations.play('idle');
+
+    //coinEffect.play();
 }

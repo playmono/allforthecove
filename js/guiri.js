@@ -27,6 +27,9 @@ Guiri = function (game) {
 
 	this.scale.set(scaleFactor);
 
+	this.enableBody = true;
+	game.physics.arcade.enable(this);
+
 	gameState.getUntakenBeachSlot(this);
 
 	this.fromCityToMainPath();
@@ -352,6 +355,8 @@ Guiri.prototype.fromMainPathToChiringuito = function() {
 		gameState.money += 50;
 		_this.happiness += 2;
 
+		buyGuiriEffect.play();
+
 		var rnd = gameState.rnd.integerInRange(3, 7);
 
 		game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
@@ -461,19 +466,22 @@ Guiri.prototype.doSplash = function() {
 	var rnd = gameState.rnd.integerInRange(6, 10);
 
 	game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
-		_this.splash.destroy();
-		_this.isSplashing = false;
+		// Podemos interrumpir este evento
+		if (_this.isSplashing) {
+			_this.splash.destroy();
+			_this.isSplashing = false;
 
-		// Solo le suma 5 ya que luego se lo restamos junto al grupo
-		_this.happiness += 10;
+			// Solo le suma 5 ya que luego se lo restamos junto al grupo
+			_this.happiness += 10;
 
-		gameState.guirisGroup.forEach(function(guiri) {
-			if (guiri.isSwimming || guiri.isSplashing) {
-				guiri.happiness -= 5;
-			}
-		});
+			gameState.guirisGroup.forEach(function(guiri) {
+				if (guiri.isSwimming || guiri.isSplashing) {
+					guiri.happiness -= 5;
+				}
+			});
 
-		_this.swimming();
+			_this.swimming();
+		}
 	});
 }
 

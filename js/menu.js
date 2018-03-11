@@ -35,17 +35,39 @@ menuState = {
 
 howToPlayState = {
 	preload :  function() {
-		//
+		this.game.load.image('tutorial', 'assets/tutorial.png', 480, 270);
+		this.game.load.image('story', 'assets/story.png', 480, 270);
+		this.game.load.image('title', 'assets/title.png', 480, 270);
 	},
 
 	create : function() {
 		var _this = this;
-		var backText = this.add.text(50, 400, "Volver a Menú", {fill: "white", fontSize: 24});
-		
-		backText.inputEnabled = true;
 
-		backText.events.onInputDown.add(function () {
-			_this.state.start("menuState");
+		a = this.game.add.image(0, 0, 'title');
+		a.scale.set(scaleFactor);
+		a.smoothed = false;
+
+		a.inputEnabled = true;
+
+		a.events.onInputDown.add(function () {
+			b = this.game.add.image(0, 0, 'story');
+			b.scale.set(scaleFactor);
+			b.smoothed = false;
+
+			b.inputEnabled = true;
+
+			b.events.onInputDown.add(function () {
+				c = this.game.add.image(0, 0, 'tutorial');
+				c.scale.set(scaleFactor);
+				c.smoothed = false;
+
+				c.inputEnabled = true;
+
+				c.events.onInputDown.add(function () {
+					_this.state.start("menuState");
+				}, this);
+			});
+
 		}, this);
 
 	},

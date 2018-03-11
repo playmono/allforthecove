@@ -19,6 +19,7 @@
 <script src="js/chiringuito.js"></script>
 <script src="js/baywatcher.js"></script>
 <script src="js/trash.js"></script>
+<script src="js/rubbish.js"></script>
 <script src="js/menu.js"></script>
 <script src="js/game.js"></script>
 

@@ -8,6 +8,9 @@ Guiri = function (game) {
 	this.buyCounter = 0;
 	this.splash = null;
 	this.isSplashing = false;
+	this.isSwimming = false;
+
+	this.happiness = 0;
 
 	var i = gameState.rnd.integerInRange(1, 8);
 
@@ -164,6 +167,8 @@ Guiri.prototype.fromWaterToTowel = function() {
 	var _this = this;
 
 	this.animations.play('up');
+
+	this.isSwimming = false;
 
 	var movingRoute1 = gameState.add.tween(this);
 	var movingRoute2 = gameState.add.tween(this);
@@ -338,6 +343,9 @@ Guiri.prototype.fromMainPathToChiringuito = function() {
 	movingRoute1.onComplete.add(function() {
 		// BUYING
 
+		gameState.money += 50;
+		_this.happiness += 2;
+
 		var rnd = gameState.rnd.integerInRange(3, 7);
 
 		game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
@@ -366,9 +374,13 @@ Guiri.prototype.fromChiringuitoToTowel = function() {
 Guiri.prototype.swimming = function() {
 	var _this = this;
 
+	this.isSwimming = true;
+
 	this.swimmingCounter++;
 
 	this.animations.play('swim');
+
+	this.happiness += 5;
 
 	var rnd = gameState.rnd.integerInRange(4, 15);
 
@@ -387,6 +399,8 @@ Guiri.prototype.layOnTowel = function() {
 	var _this = this;
 
 	_this.animations.play('lay');
+
+	_this.happiness += 2;
 
 	if (this.item == null) {
 		this.item = gameState.add.sprite(this.beachSlot.x, this.beachSlot.y, 'towel');
@@ -412,6 +426,7 @@ Guiri.prototype.layOnTowel = function() {
 			gameState.getUntakenChiringuito(_this);
 
 			if (_this.chiringuito == null) {
+				_this.happiness -= 5;
 				_this.layOnTowel();
 			} else {
 				_this.fromTowelToChiringuito();
@@ -442,6 +457,15 @@ Guiri.prototype.doSplash = function() {
 	game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
 		_this.splash.destroy();
 		_this.isSplashing = false;
+
+		// Solo le suma 5 ya que luego se lo restamos junto al grupo
+		_this.happiness += 10;
+
+		gameState.guirisGroup.forEach(function(guiri) {
+			if (guiri.isSwimming || guiri.isSplashing) {
+				guiri.happiness -= 5;
+			}
+		});
 
 		_this.swimming();
 	});

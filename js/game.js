@@ -1,5 +1,7 @@
 gameState = {
 	difficulty : 2,
+	money: 300,
+	moneyText : null,
 
 	beachSlots : [
 		{squareIndex: 1, titleY: 'top', titleX: 'left', x: 125, y: 240, taken: false},
@@ -39,23 +41,28 @@ gameState = {
 	],
 	trashSlots: [
 		{x: 130, y: 215},
-		//{x: 230, y: 215},
 		{x: 240, y: 135},
 		{x: 330, y: 215},
-		//{x: 425, y: 215},
 		{x: 425, y: 320},
 		{x: 520, y: 215},
-		//{x: 615, y: 215},
 		{x: 640, y: 135},
 		{x: 715, y: 215},
 	],
 	baywatchersSlot: [
-		//{x: 205, y: 250},
-		//{x: 400, y: 250},
-		//{x: 590, y: 250}
 		{x: 205, y: 180},
 		{x: 400, y: 160},
 		{x: 590, y: 180}
+	],
+	rubbishZones : [
+		{x: 50, y: 200},
+		{x: 50, y: 350},
+		{x: 445, y: 30},
+		{x: 840, y: 200},
+		{x: 840, y: 350},
+		{x: 150, y: 175},
+		{x: 330, y: 175},
+		{x: 530, y: 175},
+		{x: 740, y: 175},
 	],
 	guirisGroup : null,
 	chiringuitosGroup : null,
@@ -89,10 +96,13 @@ gameState = {
 		this.game.load.spritesheet('baywatcher', 'assets/baywatcher.png', 46, 74);
 		this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
 		this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
+		this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
 	},
 
 	create: function() {
 		var _this = this;
+
+		game.physics.startSystem(Phaser.Physics.ARCADE);
 		
 		var background = this.game.add.sprite(0, 0, 'background');
 		background.scale.set(scaleFactor);
@@ -101,9 +111,13 @@ gameState = {
 		background.animations.add('idle', [0, 1, 2, 3, 4, 5], 5, true);
 		background.animations.play('idle');
 
+		this.moneyText = this.game.add.text(20, 20);
+		this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
+
 		this.itemsGroup = this.add.group();
 		this.chiringuitosGroup = this.add.group();
 		this.trashGroup = this.add.group();
+		this.rubbishGroup = this.add.group();
 		this.guirisGroup = this.add.group();
 		this.baywatchersGroup = this.add.group();
 
@@ -122,18 +136,32 @@ gameState = {
 			})
 		}
 
-		this.time.events.loop(Phaser.Timer.SECOND * 5 / this.difficulty, function() {
+		this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
 			var guiri = new Guiri(game);
 			_this.guirisGroup.add(guiri);
-		}, this, 1);
+		}, this);
 
+		var chiringuitoActive = false;
 		this.chiringuitoSlots.forEach(function(chiringuito) {
 			var chiringuito = new Chiringuito(game, chiringuito.x, chiringuito.y);
+
+			if (!chiringuitoActive) {
+				chiringuito.buy(true);
+				chiringuitoActive = true;
+			}
+
 			_this.chiringuitosGroup.add(chiringuito);
 		});
 
+		var trashActive = false;
 		this.trashSlots.forEach(function(trash) {
 			var trash = new Trash(game, trash.x, trash.y);
+
+			if (!trashActive) {
+				trash.buy(true);
+				trashActive = true;
+			}
+
 			_this.trashGroup.add(trash);
 		});
 
@@ -141,6 +169,28 @@ gameState = {
 			var baywatcher = new Baywatcher(game, baywatcher.x, baywatcher.y);
 			_this.baywatchersGroup.add(baywatcher);
 		});
+		/*
+		this.rubbishZones.forEach(function(rubbish) {
+			var rubbish = new Rubbish(game, rubbish.x, rubbish.y);
+			_this.rubbishGroup.add(rubbish);
+		});
+		*/
+		this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
+			var proportion = 6/24;
+			var countGuiris = _this.guirisGroup.length;	
+			var totalRubbishCount = Math.floor(countGuiris * proportion);
+
+			for (i = 0; i < totalRubbishCount; i++) {
+				var rnd = _this.rnd.integerInRange(0, _this.rubbishZones.length - 1);
+				var arrRnd = _this.rubbishZones[rnd];
+
+				var xRubbish = _this.rnd.integerInRange(arrRnd.x - 20, arrRnd.x + 20);
+				var yRubbish = _this.rnd.integerInRange(arrRnd.y - 20, arrRnd.y + 20);
+
+				var rubbish = new Rubbish(game, xRubbish, yRubbish);
+				_this.rubbishGroup.add(rubbish);
+			}
+		}, this);
 	},
 
 	update: function() {
@@ -159,12 +209,18 @@ gameState = {
 				}
 			});
 			
-			this.game.debug.text('Free Beach Slots: ' + notTaken.length, gameWidth - 250, 40);
+			this.game.debug.text('Rubbish generated: ' + this.rubbishGroup.length, gameWidth - 250, 40);
 
 			if (this.test !== null) {
 				this.game.debug.text('Way: ' + this.test.way, gameWidth - 200, 130);
 			}
+
+			this.guirisGroup.forEach(function(guiri) {
+				this.game.debug.text('Happiness: ' + guiri.happiness, guiri.centerX, guiri.centerY);
+			});
 		}
+
+		this.moneyText.setText('Dinero: ' + this.money);
 	},
 
 	getUntakenBeachSlot: function(guiri) {

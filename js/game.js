@@ -2,6 +2,7 @@ gameState = {
 	difficulty : 2,
 	money: 300,
 	moneyText : null,
+	fame : 0,
 
 	beachSlots : [
 		{squareIndex: 1, titleY: 'top', titleX: 'left', x: 125, y: 240, taken: false},
@@ -171,10 +172,12 @@ gameState = {
 			_this.baywatchersGroup.add(baywatcher);
 		});
 
+		/*
 		this.rubbishZones.forEach(function(rubbish) {
 			var rubbish = new Rubbish(game, rubbish.x, rubbish.y);
 			_this.rubbishGroup.add(rubbish);
 		});
+		*/
 
 		this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
 			var proportion = 6/24;
@@ -222,6 +225,8 @@ gameState = {
 		}
 
 		this.moneyText.setText('Dinero: ' + this.money);
+
+		this.game.debug.text('Fama: ' + this.fame, 20, 70);
 	},
 
 	getUntakenBeachSlot: function(guiri) {

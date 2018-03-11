@@ -30,7 +30,9 @@ Rubbish.prototype = Object.create(Phaser.Sprite.prototype);
 Rubbish.prototype.constructor = Rubbish;
 
 Rubbish.prototype.update = function() {
-
+    if (!this.alive) {
+        this.destroy();
+    }
 };
 
 Rubbish.prototype.onDragStop = function() {

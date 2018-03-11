@@ -323,6 +323,12 @@ Guiri.prototype.fromMainPathToCity = function() {
 
 	// Back to city
 	movingRoute2.onComplete.add(function() {
+		var rubbishCount = gameState.rubbishGroup.length;
+
+		_this.happiness -= rubbishCount * 2;
+
+		gameState.fame += _this.happiness;
+
 		_this.destroy();
 	});
 }
@@ -384,7 +390,7 @@ Guiri.prototype.swimming = function() {
 
 	var rnd = gameState.rnd.integerInRange(4, 15);
 
-	game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
+	game.time.events.add(Phaser.Timer.SECOND * rnd / gameState.difficulty, function () {
 		var rnd = gameState.rnd.integerInRange(1, 100);
 
 		if (rnd > 75) {

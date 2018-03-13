@@ -1,6 +1,6 @@
 gameState = {
 	difficulty : 1,
-	money: 200,
+	money: 400,
 	moneyText : null,
 	fame : 0,
 
@@ -100,12 +100,12 @@ gameState = {
 		this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
 		this.game.load.spritesheet('icons', 'assets/icons.png', 16, 16);
 
-		game.load.audio('music', ['assets/music.mp3']);
-		game.load.audio('baywatacher', ['assets/baywatcher.mp3']);
-		game.load.audio('trash', ['assets/trash.mp3']);
-		game.load.audio('coin', ['assets/coin.mp3']);
-		game.load.audio('buyguiri', ['assets/buyguiri.mp3']);
-		game.load.audio('buy', ['assets/buy.mp3']);
+		this.game.load.audio('music', ['assets/music.mp3']);
+		this.game.load.audio('baywatacher', ['assets/baywatcher.mp3']);
+		this.game.load.audio('trash', ['assets/trash.mp3']);
+		this.game.load.audio('coin', ['assets/coin.mp3']);
+		this.game.load.audio('buyguiri', ['assets/buyguiri.mp3']);
+		this.game.load.audio('buy', ['assets/buy.mp3']);
 	},
 
 	create: function() {

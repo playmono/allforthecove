@@ -1,6 +1,5 @@
 menuState = {
 	preload: function() {
-		//this.game.load.spritesheet('catknight', 'assets/knight.png', 100, 100);
 	},
 
 	create : function() {
@@ -35,6 +34,7 @@ menuState = {
 
 howToPlayState = {
 	preload :  function() {
+
 		this.game.load.image('tutorial', 'assets/tutorial.png', 480, 270);
 		this.game.load.image('story', 'assets/story.png', 480, 270);
 		this.game.load.image('title', 'assets/title.png', 480, 270);

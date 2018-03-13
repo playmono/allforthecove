@@ -1,6 +1,6 @@
 gameState = {
 	difficulty : 1,
-	money: 400,
+	money: 4000,
 	moneyText : null,
 	fame : 0,
 	trashCost : 50,

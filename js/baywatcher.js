@@ -12,6 +12,8 @@ Baywatcher = function (game, x, y) {
     this.exclamationMarkInitialX = this.centerX - 5;
     this.exclamationMarkInitialY = this.centerY + 24;
 
+    this.isInCooldown = false;
+
     this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
@@ -121,9 +123,43 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
                 }
             }
         });
+
+        var distance = game.physics.arcade.distanceToXY(guiri, this.exclamationMarkInitialX, this.exclamationMarkInitialY);
+
+        this.startCooldown(distance);
     } else if (guiri.isSwimming) {
         guiri.happiness -= 10;
 
         guiri.fromWaterToTowel();
+
+        var distance = game.physics.arcade.distanceToXY(guiri, this.exclamationMarkInitialX, this.exclamationMarkInitialY);
+
+        this.startCooldown(distance);
     }
+}
+
+Baywatcher.prototype.startCooldown = function(distance) {
+     var _this = this;
+
+    this.isInCooldown = true;
+    this.exclamationMark.kill();
+
+    var cooldownSprite = gameState.add.sprite(this.exclamationMarkInitialX, this.exclamationMarkInitialY, 'icons');
+    cooldownSprite.smoothed = false;
+    cooldownSprite.scale.set(scaleFactor);
+
+    var seconds = Phaser.Timer.SECOND * (distance / 40);
+    var fps = 4 / (seconds / Phaser.Timer.SECOND);
+
+    cooldownSprite.animations.add('cooldown', [3, 2, 1, 0], fps, false);
+
+    cooldownSprite.animations.play('cooldown');
+
+    game.time.events.add(seconds, function () {
+        _this.isInCooldown = false;
+
+        cooldownSprite.destroy();
+
+        _this.exclamationMark.revive();
+    });
 }

@@ -260,7 +260,7 @@ gameState = {
 		var beachSlot = notTaken[Math.floor(Math.random() * notTaken.length)];
 		beachSlot.taken = true;
 
-		guiri.beachSlot = beachSlot;
+		return beachSlot;
 	},
 
 	getUntakenWaterSlot: function(guiri) {
@@ -284,10 +284,10 @@ gameState = {
 		var waterSlot = notTaken[Math.floor(Math.random() * notTaken.length)];
 		waterSlot.taken = true;
 
-		guiri.waterSlot = waterSlot;
+		return waterSlot;
 	},
 
-	getUntakenChiringuito: function(guiri) {
+	getUntakenChiringuito: function() {
 		var notTaken = [];
 
 		this.chiringuitosGroup.forEach(function(chiringuito) {
@@ -309,6 +309,6 @@ gameState = {
 		var chiringuito = notTaken[Math.floor(Math.random() * notTaken.length)];
 		chiringuito.taken = true;
 
-		guiri.chiringuito = chiringuito;
+		return chiringuito;
 	}
 }

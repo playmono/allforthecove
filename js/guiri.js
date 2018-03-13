@@ -1,5 +1,4 @@
 Guiri = function (game) {
-	this.beachSlot = null;
 	this.waterSlot = null;
 	this.chiringuito = null;
 	this.initialPosition = {x :445, y : -50};
@@ -30,7 +29,7 @@ Guiri = function (game) {
 	this.enableBody = true;
 	game.physics.arcade.enable(this);
 
-	gameState.getUntakenBeachSlot(this);
+	this.beachSlot = gameState.getUntakenBeachSlot();
 
 	this.fromCityToMainPath();
 };
@@ -69,8 +68,16 @@ Guiri.prototype.fromCityToMainPath = function() {
 	});
 
 	movingTransition1.onComplete.add(function() {
+		/*
+		_this.chiringuito = gameState.getUntakenChiringuito();
+
+		if (_this.chiringuito != null) {
+			_this.fromMainPathToChiringuito();
+		} else {
+			_this.fromMainPathToTowel();
+		}
+		*/
 		_this.fromMainPathToTowel();
-		//_this.fromMainPathToChiringuito();
 	});
 
 	movingRoute2.onComplete.add(function() {
@@ -145,7 +152,7 @@ Guiri.prototype.fromTowelToWater = function() {
 	}, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
 	// GET A WATER SLOT BRO !!!
-	gameState.getUntakenWaterSlot(this);
+	this.waterSlot = gameState.getUntakenWaterSlot(this);
 
 	movingRoute1.onComplete.add(function() {
 		movingRoute2.to({
@@ -339,7 +346,9 @@ Guiri.prototype.fromMainPathToCity = function() {
 Guiri.prototype.fromMainPathToChiringuito = function() {
 	var _this = this;
 
-	_this.buyCounter++;
+	this.buyCounter++;
+
+	this.animations.play('up');
 
 	var movingRoute1 = gameState.add.tween(this);
 	var time = Phaser.Math.difference(this.chiringuito.x + 60, this.x) * 20;
@@ -370,6 +379,9 @@ Guiri.prototype.fromChiringuitoToTowel = function() {
 
 	this.animations.play('down');
 
+	this.chiringuito.taken = false;
+	this.chiringuito = null;
+
 	var movingRoute1 = gameState.add.tween(this);
 
 	movingRoute1.to({
@@ -379,7 +391,6 @@ Guiri.prototype.fromChiringuitoToTowel = function() {
 	movingRoute1.onComplete.add(function() {
 		_this.fromMainPathToTowel();
 	});
-
 }
 
 Guiri.prototype.swimming = function() {
@@ -434,7 +445,7 @@ Guiri.prototype.layOnTowel = function() {
 			_this.fromTowelToWater();
 		} else if (buyProbability > (10 + _this.buyCounter * 20) && _this.buyCounter <= 3) {
 			// GET A CHIRINGUITO BRO!!!
-			gameState.getUntakenChiringuito(_this);
+			_this.chiringuito = gameState.getUntakenChiringuito();
 
 			if (_this.chiringuito == null) {
 				_this.happiness -= 5;

@@ -4,7 +4,6 @@ Trash = function (game, x, y) {
     var _this = this;
 
     this.bought = false;
-    this.cost = 50;
     this.isInCooldown = false;
 
     this.scale.set(scaleFactor);
@@ -18,7 +17,7 @@ Trash = function (game, x, y) {
     this.events.onInputOver.add(function () {
         if (!_this.bought) {
             _this.alpha = 0.7;
-            _this.moneyText.setText(_this.cost);
+            _this.moneyText.setText(gameState.trashCost);
         }
     }, this);
     this.events.onInputOut.add(function () {
@@ -28,7 +27,7 @@ Trash = function (game, x, y) {
         }
     }, this);
     this.events.onInputDown.add(function () {
-        if (gameState.money >= _this.cost) {
+        if (gameState.money >= gameState.trashCost) {
            _this.buy(false);
         }
     }, this);
@@ -50,14 +49,15 @@ Trash.prototype.buy = function(free) {
     this.moneyText.setText('');
 
     if (!free) {
-        gameState.money -= this.cost;
+        gameState.money -= gameState.trashCost;
+        gameState.trashCost += 20;
     }
 
     this.alpha = 1;
     this.bought = true;
 }
 
-Trash.prototype.startCooldown = function() {
+Trash.prototype.startCooldown = function(distance) {
     var _this = this;
 
     this.isInCooldown = true;
@@ -66,11 +66,14 @@ Trash.prototype.startCooldown = function() {
     cooldownSprite.smoothed = false;
     cooldownSprite.scale.set(scaleFactor);
 
-    cooldownSprite.animations.add('cooldown', [4, 5, 6, 7, 7], 1, false);
+    var seconds = Phaser.Timer.SECOND * (distance / 40);
+    var fps = 4 / (seconds / Phaser.Timer.SECOND);
+
+    cooldownSprite.animations.add('cooldown', [7, 6, 5, 4], fps, false);
 
     cooldownSprite.animations.play('cooldown');
 
-    game.time.events.add((Phaser.Timer.SECOND * 4), function () {
+    game.time.events.add(seconds, function () {
         _this.isInCooldown = false;
 
         cooldownSprite.destroy();

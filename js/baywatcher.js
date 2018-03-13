@@ -7,7 +7,6 @@ Baywatcher = function (game, x, y) {
     this.smoothed = false;
 
 	this.bought = false;
-    this.cost = 300;
 
     this.exclamationMark = null;
     this.exclamationMarkisDragging = false;
@@ -24,7 +23,7 @@ Baywatcher = function (game, x, y) {
     this.events.onInputOver.add(function () {
         if (!_this.bought) {
             _this.alpha = 0.7;
-            _this.moneyText.setText(_this.cost);
+            _this.moneyText.setText(gameState.baywatcherCost);
         } else {
             if (_this.exclamationMark == null) {
                 if (!_this.exclamationMark.alive) {
@@ -40,7 +39,7 @@ Baywatcher = function (game, x, y) {
         }
     }, this);
     this.events.onInputDown.add(function () {
-        if (gameState.money >= _this.cost) {
+        if (gameState.money >= gameState.baywatcherCost) {
            _this.buy(false);
         }
     }, this);
@@ -59,7 +58,8 @@ Baywatcher.prototype.buy = function(free) {
     this.moneyText.setText('');
 
     if (!free) {
-        gameState.money -= this.cost;
+        gameState.money -= gameState.baywatcherCost;
+        gameState.baywatcherCost += 150;
     }
 
     this.alpha = 1;

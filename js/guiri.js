@@ -61,9 +61,7 @@ Guiri.prototype.fromCityToMainPath = function() {
 				x: _this.x + offsetX
 			}, 1000 / gameState.difficulty, Phaser.Easing.Circular.None, true);
 		} else {
-			movingRoute2.to({
-				y: _this.initialPosition.y
-			}, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+			_this.fromMainPathToCity();
 		}
 	});
 
@@ -169,7 +167,6 @@ Guiri.prototype.fromTowelToWater = function() {
 
 	movingRoute3.onComplete.add(function() {
 		_this.swimming();
-		//_this.fromWaterToTowel();
 	});
 }
 
@@ -179,12 +176,11 @@ Guiri.prototype.fromWaterToTowel = function() {
 	this.animations.play('up');
 
 	this.isSwimming = false;
+	this.waterSlot.taken = false;
 
 	var movingRoute1 = gameState.add.tween(this);
 	var movingRoute2 = gameState.add.tween(this);
 	var movingRoute3 = gameState.add.tween(this);
-
-	this.waterSlot.taken = false;
 
 	movingRoute1.to({
 		x: _this.beachSlot.x + _this.getTowelOffsetX(false),
@@ -205,9 +201,6 @@ Guiri.prototype.fromWaterToTowel = function() {
 
 	movingRoute3.onComplete.add(function() {
 		_this.layOnTowel();
-
-		//_this.moveToInitialPosition();
-		//_this.fromTowelToMainPath(_this.fromMainPathToCity());
 	});
 }
 
@@ -230,6 +223,7 @@ Guiri.prototype.fromTowelToCity = function() {
 	var movingRoute2 = gameState.add.tween(this);
 	var movingTransition1 = gameState.add.tween(this);
 	var movingRoute3 = gameState.add.tween(this);
+	var movingTransition2 = gameState.add.tween(this);
 
 	movingRoute1.to({
 		x: _this.beachSlot.x + _this.getTowelOffsetX(false)
@@ -253,10 +247,52 @@ Guiri.prototype.fromTowelToCity = function() {
 	});
 
 	movingTransition1.onComplete.add(function() {
+		var time = Phaser.Math.difference(_this.initialPosition.x, _this.x) * 20;
+		var finalPoint = _this.initialPosition.x;
+
+		if (_this.initialPosition.x > _this.x) {
+			finalPoint -= 20;
+		} else {
+			finalPoint +=20;
+		}
+
+		movingRoute3.to({
+			x: finalPoint
+		}, time / gameState.difficulty, Phaser.Easing.Linear.None, true);
+	});
+
+	movingRoute3.onComplete.add(function() {
+		movingTransition2.to({
+			y: 100,
+			x: _this.initialPosition.x
+		}, 1000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+	});
+
+	movingTransition2.onComplete.add(function() {
 		_this.fromMainPathToCity();
 	});
 
 	movingRoute1.start();
+}
+
+Guiri.prototype.fromMainPathToCity = function() {
+	var _this = this;
+
+	var movingRoute1 = gameState.add.tween(this);
+
+	movingRoute1.to({
+		y: _this.initialPosition.y
+	}, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+
+	movingRoute1.onComplete.add(function() {
+		var rubbishCount = gameState.rubbishGroup.length;
+
+		_this.happiness -= rubbishCount * 2;
+
+		gameState.fame += _this.happiness;
+
+		_this.destroy();
+	});
 }
 
 
@@ -294,53 +330,6 @@ Guiri.prototype.fromTowelToChiringuito = function() {
 	});
 
 	movingRoute1.start();
-}
-
-Guiri.prototype.fromMainPathToCity = function() {
-	var _this = this;
-
-	this.animations.play('up');
-
-	var movingRoute1 = gameState.add.tween(this);
-	var movingTransition1 = gameState.add.tween(this);
-	var movingRoute2 = gameState.add.tween(this);
-
-	var time = Phaser.Math.difference(_this.initialPosition.x, _this.x) * 20;
-	var finalPoint = _this.initialPosition.x;
-
-	if (_this.initialPosition.x > _this.x) {
-		finalPoint -= 20;
-	} else {
-		finalPoint +=20;
-	}
-
-	movingRoute1.to({
-		x: finalPoint
-	}, time / gameState.difficulty, Phaser.Easing.Linear.None, true);
-
-	movingRoute1.onComplete.add(function() {
-		movingTransition1.to({
-			y: 100,
-			x: _this.initialPosition.x
-		}, 1000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
-	});
-
-	movingTransition1.onComplete.add(function() {
-		movingRoute2.to({
-			y: _this.initialPosition.y
-		}, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
-	});
-
-	// Back to city
-	movingRoute2.onComplete.add(function() {
-		var rubbishCount = gameState.rubbishGroup.length;
-
-		_this.happiness -= rubbishCount * 2;
-
-		gameState.fame += _this.happiness;
-
-		_this.destroy();
-	});
 }
 
 Guiri.prototype.fromMainPathToChiringuito = function() {

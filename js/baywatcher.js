@@ -9,7 +9,6 @@ Baywatcher = function (game, x, y) {
 	this.bought = false;
 
     this.exclamationMark = null;
-    this.exclamationMarkisDragging = false;
     this.exclamationMarkInitialX = this.centerX - 5;
     this.exclamationMarkInitialY = this.centerY + 24;
 
@@ -24,12 +23,6 @@ Baywatcher = function (game, x, y) {
         if (!_this.bought) {
             _this.alpha = 0.7;
             _this.moneyText.setText(gameState.baywatcherCost);
-        } else {
-            if (_this.exclamationMark == null) {
-                if (!_this.exclamationMark.alive) {
-                    _this.createExclamationMark();
-                }
-            }
         }
     }, this);
     this.events.onInputOut.add(function () {
@@ -87,31 +80,50 @@ Baywatcher.prototype.createExclamationMark = function() {
 
     game.physics.arcade.enable(this.exclamationMark);
 
-    this.exclamationMark.events.onInputDown.add(function () {
-        _this.exclamationMarkisDragging = true;
-    }, this);
-
     this.exclamationMark.events.onDragStop.add(this.onMarkExclamationDragStop, this);
 }
 
 Baywatcher.prototype.onMarkExclamationDragStop = function() {
     var overlap = game.physics.arcade.overlap(this.exclamationMark, gameState.guirisGroup, this.checkCollision, null, this);
 
-    if (!overlap) {
-        this.exclamationMark.x = this.exclamationMark.initialX;
-        this.exclamationMark.y = this.exclamationMark.initialY;
-    }
+    this.exclamationMark.x = this.exclamationMarkInitialX;
+    this.exclamationMark.y = this.exclamationMarkInitialY;
 }
 
 Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
     if (guiri.isSplashing) {
         guiri.splash.destroy();
         guiri.isSplashing = false;
-        guiri.fromWaterToTowel();
-    } else if (guiri.isSwimming) {
-        //
-    }
 
-    this.exclamationMark.x = this.exclamationMark.initialX;
-    this.exclamationMark.y = this.exclamationMark.initialY;
+        guiri.fromWaterToTowel();
+
+        guiri.happiness -= 10;
+
+        gameState.guirisGroup.forEach(function(waterGuiri) {
+            if (waterGuiri.isSwimming || waterGuiri.isSplashing) {
+                if (gameState.guirisGroup.getIndex(guiri) != gameState.guirisGroup.getIndex(waterGuiri)) {
+                    waterGuiri.happiness += 10;
+
+                    var happyFace = gameState.add.sprite(waterGuiri.x, waterGuiri.y - 10, 'icons');
+                    happyFace.smoothed = false;
+                    happyFace.scale.set(scaleFactor);
+                    happyFace.animations.add('idle', [14], 0, false);
+                    happyFace.animations.play('idle');
+
+                    var happyTween = gameState.add.tween(happyFace).to({
+                        alpha: 0,
+                        y: '-20'
+                    }, Phaser.Timer.SECOND * 3 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+
+                    happyTween.onComplete.add(function() {
+                        happyFace.destroy();
+                    })
+                }
+            }
+        });
+    } else if (guiri.isSwimming) {
+        guiri.happiness -= 10;
+
+        guiri.fromWaterToTowel();
+    }
 }

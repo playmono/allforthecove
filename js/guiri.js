@@ -396,12 +396,15 @@ Guiri.prototype.swimming = function() {
 	var rnd = gameState.rnd.integerInRange(4, 15);
 
 	game.time.events.add(Phaser.Timer.SECOND * rnd / gameState.difficulty, function () {
-		var rnd = gameState.rnd.integerInRange(1, 100);
+		// Podemos interrumptir este evento
+		if (_this.isSwimming) {
+			var rnd = gameState.rnd.integerInRange(1, 100);
 
-		if (rnd > 75) {
-			_this.doSplash();
-		} else {
-			_this.fromWaterToTowel();
+			if (rnd > 75) {
+				_this.doSplash();
+			} else {
+				_this.fromWaterToTowel();
+			}
 		}
 	}, this);
 }

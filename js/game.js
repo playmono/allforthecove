@@ -193,10 +193,14 @@ gameState = {
 			_this.rubbishGroup.add(rubbish);
 		});
 		*/
+
+		// Rubbish Generation
 		this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
-			var proportion = 6/24;
+			var proportion = 4/24;
 			var countGuiris = _this.guirisGroup.length;	
 			var totalRubbishCount = Math.floor(countGuiris * proportion);
+
+			console.log(totalRubbishCount);
 
 			for (i = 0; i < totalRubbishCount; i++) {
 				var rnd = _this.rnd.integerInRange(0, _this.rubbishZones.length - 1);

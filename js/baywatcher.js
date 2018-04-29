@@ -102,33 +102,10 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
         guiri.happiness -= 10;
 
         gameState.guirisGroup.forEach(function(waterGuiri) {
-            if (waterGuiri.isSwimming || waterGuiri.isSplashing) {
-                if (gameState.guirisGroup.getIndex(guiri) != gameState.guirisGroup.getIndex(waterGuiri)) {
-                    waterGuiri.happiness += 10;
-
-                    var happyFace = gameState.add.sprite(waterGuiri.x, waterGuiri.y - 10, 'icons');
-                    happyFace.smoothed = false;
-                    happyFace.scale.set(scaleFactor);
-                    happyFace.animations.add('idle', [16, 17, 18, 19], 8, true);
-                    happyFace.animations.play('idle');
-
-                    var happyTweenStatic = gameState.add.tween(this);
-                    var happyTweenFade = gameState.add.tween(this);
-
-                    var happyTweenStatic = gameState.add.tween(happyFace).to({
-                        // @ todo: this should be an event, not a tween
-                    }, Phaser.Timer.SECOND * 3 / gameState.difficulty, Phaser.Easing.Linear.None, true);
-
-                    happyTweenStatic.onComplete.add(function() {
-                        happyTweenFade = gameState.add.tween(happyFace).to({
-                            alpha: 0,
-                        }, Phaser.Timer.SECOND * 2 / gameState.difficulty, Phaser.Easing.Linear.None, true);
-                    })
-
-                    happyTweenFade.onComplete.add(function() {
-                        happyFace.destroy();
-                    })
-                }
+            if ((waterGuiri.isSwimming || waterGuiri.isSplashing)
+                && (gameState.guirisGroup.getIndex(guiri) != gameState.guirisGroup.getIndex(waterGuiri))
+            ) {
+                waterGuiri.increaseHappiness(10);
             }
         });
 

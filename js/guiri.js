@@ -2,12 +2,13 @@ Guiri = function (game) {
 	this.waterSlot = null;
 	this.chiringuito = null;
 	this.initialPosition = {x :445, y : -50};
-	this.item = null;
+	this.towel = null;
 	this.swimmingCounter = 0;
 	this.buyCounter = 0;
 	this.splash = null;
 	this.isSplashing = false;
 	this.isSwimming = false;
+	this.emoji = null;
 
 	this.happiness = 0;
 
@@ -38,7 +39,10 @@ Guiri.prototype = Object.create(Phaser.Sprite.prototype);
 Guiri.prototype.constructor = Guiri;
 
 Guiri.prototype.update = function() {
-
+	if (this.emoji !== null) {
+		this.emoji.x = this.x;
+		this.emoji.y = this.y;
+	}
 };
 
 Guiri.prototype.fromCityToMainPath = function() {
@@ -217,7 +221,7 @@ Guiri.prototype.fromTowelToCity = function() {
 
 	this.animations.play('up');
 
-	this.item.destroy();
+	this.towel.destroy();
 
 	var movingRoute1 = gameState.add.tween(this);
 	var movingRoute2 = gameState.add.tween(this);
@@ -416,15 +420,15 @@ Guiri.prototype.layOnTowel = function() {
 
 	_this.happiness += 2;
 
-	if (this.item == null) {
-		this.item = gameState.add.sprite(this.beachSlot.x, this.beachSlot.y, 'towel');
+	if (this.towel == null) {
+		this.towel = gameState.add.sprite(this.beachSlot.x, this.beachSlot.y, 'towel');
 
-		gameState.itemsGroup.add(_this.item);
-		this.item.scale.set(scaleFactor);
+		gameState.itemsGroup.add(_this.towel);
+		this.towel.scale.set(scaleFactor);
 
 		var i = gameState.rnd.integerInRange(0, 7);
-		this.item.animations.add('idle', [i], 0, false);
-		this.item.animations.play('idle');
+		this.towel.animations.add('idle', [i], 0, false);
+		this.towel.animations.play('idle');
 	}
 
 	var rnd = gameState.rnd.integerInRange(4, 15);
@@ -486,6 +490,35 @@ Guiri.prototype.doSplash = function() {
 			_this.swimming();
 		}
 	});
+}
+
+Guiri.prototype.increaseHappiness = function(happiness) {
+	var _this = this;
+
+    this.happiness += happiness;
+
+    this.emoji = gameState.add.sprite(this.x, this.y - 10, 'icons');
+    this.emoji.smoothed = false;
+    this.emoji.scale.set(scaleFactor);
+    this.emoji.animations.add('idle', [16, 17, 18, 19], 8, true);
+    this.emoji.animations.play('idle');
+
+    var happyTweenStatic = gameState.add.tween(this);
+    var happyTweenFade = gameState.add.tween(this);
+
+    var happyTweenStatic = gameState.add.tween(this.emoji).to({
+        // @ todo: this should be an event, not a tween
+    }, Phaser.Timer.SECOND * 3 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+
+    happyTweenStatic.onComplete.add(function() {
+        happyTweenFade = gameState.add.tween(_this.emoji).to({
+            alpha: 0,
+        }, Phaser.Timer.SECOND * 2 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+    })
+
+    happyTweenFade.onComplete.add(function() {
+        this.emoji.destroy();
+    });
 }
 
 

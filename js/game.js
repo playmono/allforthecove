@@ -109,12 +109,12 @@ gameState = {
 		this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
 		this.game.load.spritesheet('icons', 'assets/icons.png', 16, 16);
 
-		this.game.load.audio('music', ['assets/music.mp3']);
-		this.game.load.audio('baywatacher', ['assets/baywatcher.mp3']);
-		this.game.load.audio('trash', ['assets/trash.mp3']);
-		this.game.load.audio('coin', ['assets/coin.mp3']);
-		this.game.load.audio('buyguiri', ['assets/buyguiri.mp3']);
-		this.game.load.audio('buy', ['assets/buy.mp3']);
+		this.game.load.audio('music', ['audio/music.mp3']);
+		this.game.load.audio('baywatacher', ['audio/baywatcher.mp3']);
+		this.game.load.audio('trash', ['audio/trash.mp3']);
+		this.game.load.audio('coin', ['audio/coin.mp3']);
+		this.game.load.audio('buyguiri', ['audio/buyguiri.mp3']);
+		this.game.load.audio('buy', ['audio/buy.mp3']);
 	},
 
 	create: function() {

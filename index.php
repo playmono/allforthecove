@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<script src="js/phaser.min.js"></script>
+<script src="lib/phaser.min.js"></script>
 <script src="js/guiri.js"></script>
 <script src="js/chiringuito.js"></script>
 <script src="js/baywatcher.js"></script>
@@ -29,7 +29,7 @@
 	debug = true;
 	<?php } else { ?>
 	debug = false;
-	<?php } ?>
+	<?php } ?>	
 
 	<?php if (array_key_exists('v', $_GET)) { ?>
 	velocity = <? echo $_GET['v']; ?>;

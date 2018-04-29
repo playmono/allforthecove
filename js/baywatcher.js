@@ -6,7 +6,7 @@ Baywatcher = function (game, x, y, name) {
     this.scale.set(scaleFactor);
     this.smoothed = false;
 
-	this.bought = false;
+    this.bought = false;
 
     this.exclamationMark = null;
     this.exclamationMarkInitialX = this.centerX - 5;
@@ -14,6 +14,7 @@ Baywatcher = function (game, x, y, name) {
 
     this.isInCooldown = false;
 
+    this.animations.add('unbought', [4], 1, false);
     this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
@@ -21,23 +22,34 @@ Baywatcher = function (game, x, y, name) {
 
     this.alpha = 0.2;
     this.inputEnabled = true;
-    this.events.onInputOver.add(function () {
-        if (!_this.bought) {
-            _this.alpha = 0.7;
-            _this.moneyText.setText(gameState.baywatcherCost);
+
+    this.dblClickTrigger = false;
+    this.events.onInputDown.add(function () {
+        if (!_this.dblClickTrigger) {
+            _this.dblClickTrigger = true;
+
+            gameState.time.events.add(300, function(){
+                _this.dblClickTrigger = false;
+            }, _this);
+
+            // SINGLE TAP
+            _this.click();
+            return;
         }
+
+        // DOUBLE TAP
+        _this.doubleClick();
+
     }, this);
-    this.events.onInputOut.add(function () {
+
+    this.events.onInputUp.add(function () {
         if (!_this.bought) {
             _this.alpha = 0.2;
             _this.moneyText.setText('');
         }
     }, this);
-    this.events.onInputDown.add(function () {
-        if (gameState.money >= gameState.baywatcherCost) {
-           _this.buy(false);
-        }
-    }, this);
+
+    this.animations.play('unbought');
 };
 
 Baywatcher.prototype = Object.create(Phaser.Sprite.prototype);
@@ -46,6 +58,23 @@ Baywatcher.prototype.constructor = Baywatcher;
 Baywatcher.prototype.update = function() {
 
 };
+
+Baywatcher.prototype.click = function() {
+    var _this = this;
+
+    if (!this.bought) {
+        this.alpha = 0.7;
+        this.moneyText.setText(gameState.baywatcherCost);
+    }
+}
+
+Baywatcher.prototype.doubleClick = function() {
+    var _this = this;
+
+    if (gameState.money >= gameState.baywatcherCost) {
+       this.buy(false);
+    }
+}
 
 Baywatcher.prototype.buy = function(free) {
     var _this = this;

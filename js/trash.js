@@ -14,21 +14,29 @@ Trash = function (game, x, y) {
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
     this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
 
-    this.events.onInputOver.add(function () {
-        if (!_this.bought) {
-            _this.alpha = 0.7;
-            _this.moneyText.setText(gameState.trashCost);
+    this.dblClickTrigger = false;
+    this.events.onInputDown.add(function () {
+        if (!_this.dblClickTrigger) {
+            _this.dblClickTrigger = true;
+
+            gameState.time.events.add(300, function(){
+                _this.dblClickTrigger = false;
+            }, _this);
+
+            // SINGLE TAP
+            _this.click();
+            return;
         }
+
+        // DOUBLE TAP
+        _this.doubleClick();
+
     }, this);
-    this.events.onInputOut.add(function () {
+
+    this.events.onInputUp.add(function () {
         if (!_this.bought) {
             _this.alpha = 0.2;
             _this.moneyText.setText('');
-        }
-    }, this);
-    this.events.onInputDown.add(function () {
-        if (gameState.money >= gameState.trashCost) {
-           _this.buy(false);
         }
     }, this);
 
@@ -42,6 +50,23 @@ Trash.prototype.constructor = Trash;
 Trash.prototype.update = function() {
 
 };
+
+Trash.prototype.click = function() {
+    var _this = this;
+
+    if (!this.bought) {
+        this.alpha = 0.7;
+        this.moneyText.setText(gameState.trashCost);
+    }
+}
+
+Trash.prototype.doubleClick = function() {
+    var _this = this;
+
+    if (gameState.money >= gameState.trashCost) {
+       this.buy(false);
+    }
+}
 
 Trash.prototype.buy = function(free) {
     _this = this;

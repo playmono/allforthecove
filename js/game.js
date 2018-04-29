@@ -1,6 +1,6 @@
 gameState = {
 	difficulty : 1,
-	money: 4000,
+	money: 10000,
 	moneyText : null,
 	fame : 0,
 	trashCost : 50,
@@ -37,10 +37,10 @@ gameState = {
 	],
 	waterSlots : [],
 	chiringuitoSlots: [
-		{x: 100, y: 10},
-		{x: 270, y: 10},
-		{x: 510, y: 10},
-		{x: 670, y: 10}
+		{x: 100, y: 10, name: 'chiringuito1'},
+		{x: 270, y: 10, name: 'chiringuito2'},
+		{x: 510, y: 10, name: 'chiringuito3'},
+		{x: 670, y: 10, name: 'chiringuito4'}
 	],
 	trashSlots: [
 		{x: 130, y: 215},
@@ -52,9 +52,9 @@ gameState = {
 		{x: 715, y: 215},
 	],
 	baywatchersSlot: [
-		{x: 205, y: 180},
-		{x: 400, y: 160},
-		{x: 590, y: 180}
+		{x: 205, y: 180, name: 'baywatcher1'},
+		{x: 400, y: 160, name: 'baywatcher2'},
+		{x: 590, y: 180, name: 'baywatcher3'}
 	],
 	rubbishZones : [
 		{x: 50, y: 200},
@@ -94,9 +94,16 @@ gameState = {
 		this.game.load.spritesheet('guiri6', 'assets/guiri6.png', 17, 37);
 		this.game.load.spritesheet('guiri7', 'assets/guiri7.png', 17, 37);
 		this.game.load.spritesheet('guiri8', 'assets/guiri8.png', 17, 37);
-		this.game.load.spritesheet('chiringuito', 'assets/chiringuito.png', 81, 80);
+		//this.game.load.spritesheet('chiringuito', 'assets/chiringuito.png', 81, 80);
+		this.game.load.spritesheet('chiringuito1', 'assets/chiringuito1.png', 80, 80);
+		this.game.load.spritesheet('chiringuito2', 'assets/chiringuito2.png', 81, 80);
+		this.game.load.spritesheet('chiringuito3', 'assets/chiringuito3.png', 80, 80);
+		this.game.load.spritesheet('chiringuito4', 'assets/chiringuito4.png', 80, 80);
 		this.game.load.spritesheet('trash', 'assets/trash.png', 33, 29);
-		this.game.load.spritesheet('baywatcher', 'assets/baywatcher.png', 46, 74);
+		//this.game.load.spritesheet('baywatcher', 'assets/baywatcher.png', 46, 74);
+		this.game.load.spritesheet('baywatcher1', 'assets/baywatcher1.png', 46, 74);
+		this.game.load.spritesheet('baywatcher2', 'assets/baywatcher2.png', 46, 74);
+		this.game.load.spritesheet('baywatcher3', 'assets/baywatcher3.png', 46, 74);
 		this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
 		this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
 		this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
@@ -154,7 +161,7 @@ gameState = {
 
 		var chiringuitoActive = false;
 		this.chiringuitoSlots.forEach(function(chiringuito) {
-			var chiringuito = new Chiringuito(game, chiringuito.x, chiringuito.y);
+			var chiringuito = new Chiringuito(game, chiringuito.x, chiringuito.y, chiringuito.name);
 
 			if (!chiringuitoActive) {
 				chiringuito.buy(true);
@@ -177,15 +184,15 @@ gameState = {
 		});
 
 		this.baywatchersSlot.forEach(function(baywatcher) {
-			var baywatcher = new Baywatcher(game, baywatcher.x, baywatcher.y);
+			var baywatcher = new Baywatcher(game, baywatcher.x, baywatcher.y, baywatcher.name);
 			_this.baywatchersGroup.add(baywatcher);
 		});
-
+		/*
 		this.rubbishZones.forEach(function(rubbish) {
 			var rubbish = new Rubbish(game, rubbish.x, rubbish.y);
 			_this.rubbishGroup.add(rubbish);
 		});
-
+		*/
 		this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
 			var proportion = 6/24;
 			var countGuiris = _this.guirisGroup.length;	

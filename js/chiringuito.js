@@ -1,7 +1,7 @@
-Chiringuito = function (game, x, y) {
+Chiringuito = function (game, x, y, name) {
     this.taken = false;
 
-    Phaser.Sprite.call(this, game, x, y, 'chiringuito');
+    Phaser.Sprite.call(this, game, x, y, name);
 
     var _this = this;
 

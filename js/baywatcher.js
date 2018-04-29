@@ -1,5 +1,5 @@
-Baywatcher = function (game, x, y) {
-    Phaser.Sprite.call(this, game, x, y, 'baywatcher');
+Baywatcher = function (game, x, y, name) {
+    Phaser.Sprite.call(this, game, x, y, name);
 
     var _this = this;
 
@@ -109,15 +109,23 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
                     var happyFace = gameState.add.sprite(waterGuiri.x, waterGuiri.y - 10, 'icons');
                     happyFace.smoothed = false;
                     happyFace.scale.set(scaleFactor);
-                    happyFace.animations.add('idle', [14], 0, false);
+                    happyFace.animations.add('idle', [16, 17, 18, 19], 8, true);
                     happyFace.animations.play('idle');
 
-                    var happyTween = gameState.add.tween(happyFace).to({
-                        alpha: 0,
-                        y: '-20'
+                    var happyTweenStatic = gameState.add.tween(this);
+                    var happyTweenFade = gameState.add.tween(this);
+
+                    var happyTweenStatic = gameState.add.tween(happyFace).to({
+                        // @ todo: this should be an event, not a tween
                     }, Phaser.Timer.SECOND * 3 / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
-                    happyTween.onComplete.add(function() {
+                    happyTweenStatic.onComplete.add(function() {
+                        happyTweenFade = gameState.add.tween(happyFace).to({
+                            alpha: 0,
+                        }, Phaser.Timer.SECOND * 2 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+                    })
+
+                    happyTweenFade.onComplete.add(function() {
                         happyFace.destroy();
                     })
                 }

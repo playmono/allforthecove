@@ -5,12 +5,11 @@ Guiri = function (game) {
     this.towel = null;
     this.swimmingCounter = 0;
     this.buyCounter = 0;
+    this.happiness = 0;
     this.splash = null;
     this.isSplashing = false;
     this.isSwimming = false;
-    this.emoji = null;
-
-    this.happiness = 0;
+    this.layOnTowelForFirstTime = true;
 
     var i = gameState.rnd.integerInRange(1, 8);
 
@@ -31,6 +30,14 @@ Guiri = function (game) {
     game.physics.arcade.enable(this);
 
     this.beachSlot = gameState.getUntakenBeachSlot();
+
+    // emoji
+    this.emoji = gameState.add.sprite(this.x, this.y - 10, 'icons');
+    this.emoji.smoothed = false;
+    this.emoji.scale.set(scaleFactor);
+    this.emoji.animations.add('positive', [16, 17, 18, 19], 8, true);
+    this.emoji.animations.add('negative', [20, 21, 22, 23], 8, true);
+    this.emoji.kill();
 
     this.fromCityToMainPath();
 };
@@ -291,7 +298,7 @@ Guiri.prototype.fromMainPathToCity = function() {
     movingRoute1.onComplete.add(function() {
         var rubbishCount = gameState.rubbishGroup.length;
 
-        _this.happiness -= rubbishCount * 2;
+        _this.happiness -= rubbishCount * 3;
 
         gameState.fame += _this.happiness;
 
@@ -352,16 +359,12 @@ Guiri.prototype.fromMainPathToChiringuito = function() {
     }, time / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
     movingRoute1.onComplete.add(function() {
-        // BUYING
-
-        gameState.money += 50;
-        _this.happiness += 2;
-
-        buyGuiriEffect.play();
+        _this.buyInChiringuito();
 
         var rnd = gameState.rnd.integerInRange(3, 7);
 
         game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
+            _this.chiringuito.sell();
             _this.fromChiringuitoToTowel();
         }, this);
     })
@@ -395,7 +398,7 @@ Guiri.prototype.swimming = function() {
 
     this.animations.play('swim');
 
-    this.happiness += 5;
+    this.modifyHappiness(5);
 
     var rnd = gameState.rnd.integerInRange(4, 15);
 
@@ -416,9 +419,12 @@ Guiri.prototype.swimming = function() {
 Guiri.prototype.layOnTowel = function() {
     var _this = this;
 
-    _this.animations.play('lay');
+    this.animations.play('lay');
 
-    _this.happiness += 2;
+    if (this.layOnTowelForFirstTime) {
+        this.layOnTowelForFirstTime = false;
+        this.modifyHappiness(2);
+    }
 
     if (this.towel == null) {
         this.towel = gameState.add.sprite(this.beachSlot.x, this.beachSlot.y, 'towel');
@@ -444,7 +450,7 @@ Guiri.prototype.layOnTowel = function() {
             _this.chiringuito = gameState.getUntakenChiringuito();
 
             if (_this.chiringuito == null) {
-                _this.happiness -= 5;
+                _this.modifyHappiness(-5);
                 _this.layOnTowel();
             } else {
                 _this.fromTowelToChiringuito();
@@ -472,6 +478,8 @@ Guiri.prototype.doSplash = function() {
 
     var rnd = gameState.rnd.integerInRange(6, 10);
 
+    console.log(gameState.difficulty);
+
     game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
         // Podemos interrumpir este evento
         if (_this.isSplashing) {
@@ -479,11 +487,11 @@ Guiri.prototype.doSplash = function() {
             _this.isSplashing = false;
 
             // Solo le suma 5 ya que luego se lo restamos junto al grupo
-            _this.happiness += 10;
+            _this.modifyHappiness(10);
 
             gameState.guirisGroup.forEach(function(guiri) {
                 if (guiri.isSwimming || guiri.isSplashing) {
-                    guiri.happiness -= 5;
+                    guiri.modifyHappiness(-5);
                 }
             });
 
@@ -492,16 +500,37 @@ Guiri.prototype.doSplash = function() {
     });
 }
 
-Guiri.prototype.increaseHappiness = function(happiness) {
+Guiri.prototype.buyInChiringuito = function() {
     var _this = this;
+
+    gameState.money += 50;
+    this.modifyHappiness(2);
+
+    buyGuiriEffect.play();
+}
+
+Guiri.prototype.modifyHappiness = function(happiness) {
+    var _this = this;
+
+    if (happiness == 0) {
+        return;
+    }
 
     this.happiness += happiness;
 
-    this.emoji = gameState.add.sprite(this.x, this.y - 10, 'icons');
-    this.emoji.smoothed = false;
-    this.emoji.scale.set(scaleFactor);
-    this.emoji.animations.add('idle', [16, 17, 18, 19], 8, true);
-    this.emoji.animations.play('idle');
+    if (this.emoji.alive) {
+        this.emoji.kill();
+    }
+
+    this.emoji.revive();
+
+    if (happiness > 0) {
+        this.emoji.animations.play('positive');
+    } else {
+        this.emoji.animations.play('negative');
+    }
+
+    this.emoji.alpha = 1;
 
     var happyTweenStatic = gameState.add.tween(this);
     var happyTweenFade = gameState.add.tween(this);
@@ -517,7 +546,7 @@ Guiri.prototype.increaseHappiness = function(happiness) {
     })
 
     happyTweenFade.onComplete.add(function() {
-        this.emoji.destroy();
+        _this.emoji.kill();
     });
 }
 

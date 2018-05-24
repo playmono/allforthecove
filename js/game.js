@@ -39,7 +39,7 @@ gameState = {
     chiringuitoSlots: [
         {x: 100, y: 10, name: 'chiringuito1'},
         {x: 270, y: 10, name: 'chiringuito2'},
-        {x: 510, y: 10, name: 'chiringuito3'},
+        {x: 500, y: 10, name: 'chiringuito3'},
         {x: 670, y: 10, name: 'chiringuito4'}
     ],
     trashSlots: [
@@ -48,7 +48,7 @@ gameState = {
         {x: 330, y: 215},
         {x: 425, y: 320},
         {x: 520, y: 215},
-        {x: 640, y: 135},
+        {x: 635, y: 135},
         {x: 715, y: 215},
     ],
     baywatchersSlot: [
@@ -96,7 +96,7 @@ gameState = {
         this.game.load.spritesheet('guiri8', 'assets/guiri8.png', 17, 37);
         //this.game.load.spritesheet('chiringuito', 'assets/chiringuito.png', 81, 80);
         this.game.load.spritesheet('chiringuito1', 'assets/chiringuito1.png', 80, 80);
-        this.game.load.spritesheet('chiringuito2', 'assets/chiringuito1.png', 80, 80);
+        this.game.load.spritesheet('chiringuito2', 'assets/chiringuito2.png', 80, 80);
         this.game.load.spritesheet('chiringuito3', 'assets/chiringuito3.png', 80, 80);
         this.game.load.spritesheet('chiringuito4', 'assets/chiringuito4.png', 80, 80);
         this.game.load.spritesheet('trash', 'assets/trash.png', 33, 29);
@@ -159,16 +159,13 @@ gameState = {
             _this.guirisGroup.add(guiri);
         }, this);
 
-        var chiringuitoActive = false;
-        this.chiringuitoSlots.forEach(function(chiringuito) {
-            var chiringuito = new Chiringuito(game, chiringuito.x, chiringuito.y, chiringuito.name);
-
-            if (!chiringuitoActive) {
-                chiringuito.buy(true);
-                chiringuitoActive = true;
-            }
-
+        this.chiringuitoSlots.forEach(function(chiringuitoSlot) {
+            var chiringuito = new Chiringuito(game, chiringuitoSlot.x, chiringuitoSlot.y, chiringuitoSlot.name);
             _this.chiringuitosGroup.add(chiringuito);
+
+            if (chiringuitoSlot.name == 'chiringuito2') {
+                chiringuito.buy(true);
+            }
         });
 
         var trashActive = false;
@@ -183,9 +180,13 @@ gameState = {
             _this.trashGroup.add(trash);
         });
 
-        this.baywatchersSlot.forEach(function(baywatcher) {
-            var baywatcher = new Baywatcher(game, baywatcher.x, baywatcher.y, baywatcher.name);
+        this.baywatchersSlot.forEach(function(baywatcherSlot) {
+            var baywatcher = new Baywatcher(game, baywatcherSlot.x, baywatcherSlot.y, baywatcherSlot.name);
             _this.baywatchersGroup.add(baywatcher);
+
+            if (baywatcherSlot.name == 'baywatcher2') {
+                baywatcher.buy(true);
+            }
         });
         /*
         this.rubbishZones.forEach(function(rubbish) {
@@ -196,7 +197,7 @@ gameState = {
 
         // Rubbish Generation
         this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
-            var proportion = 4/24;
+            var proportion = 2  /24;
             var countGuiris = _this.guirisGroup.length; 
             var totalRubbishCount = Math.floor(countGuiris * proportion);
 
@@ -305,6 +306,10 @@ gameState = {
             }
 
             if (!chiringuito.bought) {
+                return;
+            }
+
+            if (chiringuito.stock < 1) {
                 return;
             }
 

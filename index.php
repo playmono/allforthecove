@@ -34,7 +34,7 @@
     <?php if (array_key_exists('v', $_GET)) { ?>
     velocity = <? echo $_GET['v']; ?>;
     <?php } else { ?>
-    velocity = 2;
+    velocity = 1;
     <?php } ?>
 
     scaleFactor = 2;

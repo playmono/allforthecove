@@ -8,7 +8,7 @@ Trash = function (game, x, y) {
 
     this.scale.set(scaleFactor);
     this.smoothed = false;
-    this.alpha = 0.2;
+    this.alpha = 0.7;
     this.inputEnabled = true;
 
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
@@ -35,13 +35,18 @@ Trash = function (game, x, y) {
 
     this.events.onInputUp.add(function () {
         if (!_this.bought) {
-            _this.alpha = 0.2;
+            _this.alpha = 0.7;
             _this.moneyText.setText('');
         }
     }, this);
 
     this.enableBody = true;
     game.physics.arcade.enable(this);
+
+    this.animations.add('unbought', [1], 0, false);
+    this.animations.add('idle', [0], 0, false);
+
+    this.animations.play('unbought');
 };
 
 Trash.prototype = Object.create(Phaser.Sprite.prototype);
@@ -55,7 +60,7 @@ Trash.prototype.click = function() {
     var _this = this;
 
     if (!this.bought) {
-        this.alpha = 0.7;
+        this.alpha = 1;
         this.moneyText.setText(gameState.trashCost);
     }
 }
@@ -63,7 +68,7 @@ Trash.prototype.click = function() {
 Trash.prototype.doubleClick = function() {
     var _this = this;
 
-    if (gameState.money >= gameState.trashCost) {
+    if (!this.bought && gameState.money >= gameState.trashCost) {
        this.buy(false);
     }
 }
@@ -80,6 +85,8 @@ Trash.prototype.buy = function(free) {
 
     this.alpha = 1;
     this.bought = true;
+
+    this.animations.play('idle');
 }
 
 Trash.prototype.startCooldown = function(distance) {

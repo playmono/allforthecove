@@ -5,19 +5,22 @@ Chiringuito = function (game, x, y, name) {
 
     var _this = this;
 
+    this.stockSprite = null;
+
     this.scale.set(scaleFactor);
     this.smoothed = false;
 
 	this.bought = false;
     this.cost = 100;
+    this.stock = 3;
 
-    this.animations.add('unbought', [4], 1, false);
+    this.animations.add('unbought', [4], 0, false);
 	this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
     this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
 
-    this.alpha = 0.2;
+    this.alpha = 0.7;
     this.inputEnabled = true;
 
     this.dblClickTrigger = false;
@@ -41,7 +44,7 @@ Chiringuito = function (game, x, y, name) {
 
     this.events.onInputUp.add(function () {
         if (!_this.bought) {
-            _this.alpha = 0.2;
+            _this.alpha = 0.7;
             _this.moneyText.setText('');
         }
     }, this);
@@ -60,7 +63,7 @@ Chiringuito.prototype.click = function() {
     var _this = this;
 
     if (!this.bought) {
-        this.alpha = 0.7;
+        this.alpha = 1;
         this.moneyText.setText(this.cost);
     }
 }
@@ -68,8 +71,14 @@ Chiringuito.prototype.click = function() {
 Chiringuito.prototype.doubleClick = function() {
     var _this = this;
 
-    if (gameState.money >= this.cost) {
-       this.buy(false);
+    if (!this.bought) {
+        if (gameState.money >= this.cost) {
+           this.buy(false);
+        }
+    } else if (this.stock < 3) {
+        gameState.money -= 50;
+        this.stock = 3;
+        this.stockSprite.animations.play('stock3');
     }
 }
 
@@ -86,5 +95,31 @@ Chiringuito.prototype.buy = function(free) {
     this.bought = true;
     this.animations.play('idle');
 
-    //coinEffect.play();
+    this.createStock();
+}
+
+Chiringuito.prototype.sell = function() {
+    var _this = this;
+
+    if (this.stock < 0) {
+        return;
+    }
+
+    this.stock--;
+    this.stockSprite.animations.play('stock' + this.stock);
+}
+
+Chiringuito.prototype.createStock = function() {
+    var _this = this;
+
+    this.stockSprite = gameState.add.sprite(this.centerX + 30, this.centerY, 'icons');
+    this.stockSprite.smoothed = false;
+    this.stockSprite.scale.set(scaleFactor);
+
+    this.stockSprite.animations.add('stock0', [8], 0, false);
+    this.stockSprite.animations.add('stock1', [9], 0, false);
+    this.stockSprite.animations.add('stock2', [10], 0, false);
+    this.stockSprite.animations.add('stock3', [11], 0, false);
+
+    this.stockSprite.animations.play('stock3');
 }

@@ -14,13 +14,13 @@ Baywatcher = function (game, x, y, name) {
 
     this.isInCooldown = false;
 
-    this.animations.add('unbought', [4], 1, false);
+    this.animations.add('unbought', [4], 0, false);
     this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
     this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
 
-    this.alpha = 0.2;
+    this.alpha = 0.7;
     this.inputEnabled = true;
 
     this.dblClickTrigger = false;
@@ -44,7 +44,7 @@ Baywatcher = function (game, x, y, name) {
 
     this.events.onInputUp.add(function () {
         if (!_this.bought) {
-            _this.alpha = 0.2;
+            _this.alpha = 0.7;
             _this.moneyText.setText('');
         }
     }, this);
@@ -63,7 +63,7 @@ Baywatcher.prototype.click = function() {
     var _this = this;
 
     if (!this.bought) {
-        this.alpha = 0.7;
+        this.alpha = 1;
         this.moneyText.setText(gameState.baywatcherCost);
     }
 }
@@ -71,7 +71,7 @@ Baywatcher.prototype.click = function() {
 Baywatcher.prototype.doubleClick = function() {
     var _this = this;
 
-    if (gameState.money >= gameState.baywatcherCost) {
+    if (!this.bought && gameState.money >= gameState.baywatcherCost) {
        this.buy(false);
     }
 }
@@ -84,13 +84,12 @@ Baywatcher.prototype.buy = function(free) {
     if (!free) {
         gameState.money -= gameState.baywatcherCost;
         gameState.baywatcherCost += 150;
+        coinEffect.play();
     }
 
     this.alpha = 1;
     this.bought = true;
     this.animations.play('idle');
-
-    coinEffect.play();
 
     _this.createExclamationMark();
 }
@@ -128,13 +127,13 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
 
         guiri.fromWaterToTowel();
 
-        guiri.happiness -= 10;
+        guiri.modifyHappiness(-10);
 
         gameState.guirisGroup.forEach(function(waterGuiri) {
             if ((waterGuiri.isSwimming || waterGuiri.isSplashing)
                 && (gameState.guirisGroup.getIndex(guiri) != gameState.guirisGroup.getIndex(waterGuiri))
             ) {
-                waterGuiri.increaseHappiness(10);
+                waterGuiri.modifyHappiness(10);
             }
         });
 
@@ -142,7 +141,7 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
 
         this.startCooldown(distance);
     } else if (guiri.isSwimming) {
-        guiri.happiness -= 10;
+        guiri.modifyHappiness(-10);
 
         guiri.fromWaterToTowel();
 

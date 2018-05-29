@@ -51,7 +51,7 @@ gameState = {
         {x: 635, y: 135},
         {x: 715, y: 215},
     ],
-    baywatchersSlot: [
+    baywatchersSlots: [
         {x: 205, y: 180, name: 'baywatcher1'},
         {x: 400, y: 160, name: 'baywatcher2'},
         {x: 590, y: 180, name: 'baywatcher3'}
@@ -67,12 +67,15 @@ gameState = {
         {x: 530, y: 175},
         {x: 740, y: 175},
     ],
+    notificationSlotInitialX: 40,
+    notificationSlotInitialY: 0,
+    maxNotifications: 3,
     guirisGroup : null,
     chiringuitosGroup : null,
     trashGroup: null,
     baywatchersGroup: null,
     itemsGroup: null,
-    test : null,
+    notificationsGroup: null,
 
     preload: function() {
         // Just to debug FPS
@@ -94,13 +97,21 @@ gameState = {
         this.game.load.spritesheet('guiri6', 'assets/guiri6.png', 17, 37);
         this.game.load.spritesheet('guiri7', 'assets/guiri7.png', 17, 37);
         this.game.load.spritesheet('guiri8', 'assets/guiri8.png', 17, 37);
-        //this.game.load.spritesheet('chiringuito', 'assets/chiringuito.png', 81, 80);
+        this.game.load.spritesheet('icon1', 'assets/icon1.png', 18, 18);
+        this.game.load.spritesheet('icon2', 'assets/icon2.png', 18, 18);
+        this.game.load.spritesheet('icon3', 'assets/icon3.png', 18, 18);
+        this.game.load.spritesheet('icon4', 'assets/icon4.png', 18, 18);
+        this.game.load.spritesheet('icon5', 'assets/icon5.png', 18, 18);
+        this.game.load.spritesheet('icon6', 'assets/icon6.png', 18, 18);
+        this.game.load.spritesheet('icon7', 'assets/icon7.png', 18, 18);
+        this.game.load.spritesheet('icon8', 'assets/icon8.png', 18, 18);
+        this.game.load.spritesheet('like', 'assets/like.png', 20, 20);
+        this.game.load.spritesheet('dislike', 'assets/dislike.png', 20, 20);
         this.game.load.spritesheet('chiringuito1', 'assets/chiringuito1.png', 80, 80);
         this.game.load.spritesheet('chiringuito2', 'assets/chiringuito2.png', 80, 80);
         this.game.load.spritesheet('chiringuito3', 'assets/chiringuito3.png', 80, 80);
         this.game.load.spritesheet('chiringuito4', 'assets/chiringuito4.png', 80, 80);
         this.game.load.spritesheet('trash', 'assets/trash.png', 33, 29);
-        //this.game.load.spritesheet('baywatcher', 'assets/baywatcher.png', 46, 74);
         this.game.load.spritesheet('baywatcher1', 'assets/baywatcher1.png', 46, 74);
         this.game.load.spritesheet('baywatcher2', 'assets/baywatcher2.png', 46, 74);
         this.game.load.spritesheet('baywatcher3', 'assets/baywatcher3.png', 46, 74);
@@ -108,6 +119,7 @@ gameState = {
         this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
         this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
         this.game.load.spritesheet('icons', 'assets/icons.png', 16, 16);
+        this.game.load.spritesheet('bubble', 'assets/bubble.png', 180, 20);
 
         this.game.load.audio('music', ['audio/music.mp3']);
         this.game.load.audio('baywatacher', ['audio/baywatcher.mp3']);
@@ -129,7 +141,7 @@ gameState = {
         background.animations.add('idle', [0, 1, 2, 3, 4, 5], 5, true);
         background.animations.play('idle');
 
-        this.moneyText = this.game.add.text(20, 20);
+        this.moneyText = this.game.add.text(gameWidth - 250, 50);
         this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
 
         this.itemsGroup = this.add.group();
@@ -138,6 +150,7 @@ gameState = {
         this.rubbishGroup = this.add.group();
         this.guirisGroup = this.add.group();
         this.baywatchersGroup = this.add.group();
+        this.notificationsGroup = this.add.group();
 
         var waterPositionY = 420;
         var waterSlotsPositionsX = 0;
@@ -180,7 +193,7 @@ gameState = {
             _this.trashGroup.add(trash);
         });
 
-        this.baywatchersSlot.forEach(function(baywatcherSlot) {
+        this.baywatchersSlots.forEach(function(baywatcherSlot) {
             var baywatcher = new Baywatcher(game, baywatcherSlot.x, baywatcherSlot.y, baywatcherSlot.name);
             _this.baywatchersGroup.add(baywatcher);
 
@@ -237,11 +250,7 @@ gameState = {
                 }
             });
             
-            this.game.debug.text('Rubbish generated: ' + this.rubbishGroup.length, gameWidth - 250, 40);
-
-            if (this.test !== null) {
-                this.game.debug.text('Way: ' + this.test.way, gameWidth - 200, 130);
-            }
+            //this.game.debug.text('Rubbish generated: ' + this.rubbishGroup.length, gameWidth - 250, 40);
 
             this.guirisGroup.forEach(function(guiri) {
                 this.game.debug.text('Happiness: ' + guiri.happiness, guiri.centerX, guiri.centerY);
@@ -251,7 +260,7 @@ gameState = {
 
         this.moneyText.setText('Dinero: ' + this.money);
 
-        this.game.debug.text('Fama: ' + this.fame, 20, 70);
+        this.game.debug.text('FAMA: ' + this.fame, gameWidth - 250, 40);
     },
 
     getUntakenBeachSlot: function(guiri) {
@@ -324,5 +333,78 @@ gameState = {
         chiringuito.taken = true;
 
         return chiringuito;
-    }
+    },
+    /*
+    guiriLeavesBeach: function(guiri) {
+        var rubbishCount = this.rubbishGroup.length;
+
+        guiri.happiness -= rubbishCount * 3;
+
+        this.fame += guiri.happiness;
+    },
+    */
+    guiriLeavesBeach: function(guiri) {
+        var _this = this;
+
+        if (this.notificationsGroup.children.length == this.maxNotifications) {
+            this.notificationsGroup.children.forEach(function(notification) {
+                notification.children.forEach(function(sprite) {
+                    sprite.y = sprite.y - 35;
+                });
+            });
+
+            this.notificationsGroup.children[0].destroy();
+        }
+
+        if (this.notificationsGroup.length > 0) {
+            var x = this.notificationsGroup.children[this.notificationsGroup.children.length - 1].children[0].x;
+            var y = this.notificationsGroup.children[this.notificationsGroup.children.length - 1].children[0].y + 35;
+        } else {
+            var x = this.notificationSlotInitialX;
+            var y = this.notificationSlotInitialY;
+        }
+
+        this.createNotification(guiri, x, y);
+
+        if (guiri.happiness > 0) {
+            this.fame++
+        } else {
+            this.fame--;
+        }
+    },
+
+    createNotification: function(guiri, x, y) {
+        var notification = this.add.group();
+
+        var bubble = gameState.add.sprite(x, y, 'bubble');
+        bubble.smoothed = false;
+        bubble.scale.set(scaleFactor);
+
+        var icon = gameState.add.sprite(x - 35, y + 5, 'icon' + guiri.id);
+        icon.smoothed = false;
+        icon.scale.set(scaleFactor);
+
+        var review = gameState.add.sprite(x + 2, y, guiri.happiness >= 0 ? 'like' : 'dislike');
+        review.smoothed = false;
+        review.scale.set(scaleFactor);
+
+        notification.add(bubble);
+        notification.add(icon);
+        notification.add(review);
+
+        this.notificationsGroup.add(notification);
+
+        var disappear = gameState.add.tween(notification);
+
+        disappear.to({
+            y: '-20',
+            alpha: 0,
+        }, 1000 / gameState.difficulty, Phaser.Easing.Circular.None, true, 5000 / gameState.difficulty);
+
+        disappear.onComplete.add(function() {
+            notification.destroy();
+        });
+
+        disappear.start();
+    },
 }

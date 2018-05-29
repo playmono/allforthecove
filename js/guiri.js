@@ -1,4 +1,5 @@
 Guiri = function (game) {
+    this.id = 0;
     this.waterSlot = null;
     this.chiringuito = null;
     this.initialPosition = {x :445, y : -50};
@@ -11,9 +12,9 @@ Guiri = function (game) {
     this.isSwimming = false;
     this.layOnTowelForFirstTime = true;
 
-    var i = gameState.rnd.integerInRange(1, 8);
+    this.id = gameState.rnd.integerInRange(1, 8);
 
-    Phaser.Sprite.call(this, game, this.initialPosition.x, this.initialPosition.y, 'guiri' + i);
+    Phaser.Sprite.call(this, game, this.initialPosition.x, this.initialPosition.y, 'guiri' + this.id);
 
     this.smoothed = false;
 
@@ -77,16 +78,19 @@ Guiri.prototype.fromCityToMainPath = function() {
     });
 
     movingTransition1.onComplete.add(function() {
-        /*
-        _this.chiringuito = gameState.getUntakenChiringuito();
+        var rnd = gameState.rnd.integerInRange(1, 10);
 
-        if (_this.chiringuito != null) {
-            _this.fromMainPathToChiringuito();
+        if (rnd > 9) {
+            _this.chiringuito = gameState.getUntakenChiringuito();
+
+            if (_this.chiringuito != null) {
+                _this.fromMainPathToChiringuito();
+            } else {
+                _this.fromMainPathToTowel();
+            }
         } else {
             _this.fromMainPathToTowel();
         }
-        */
-        _this.fromMainPathToTowel();
     });
 
     movingRoute2.onComplete.add(function() {
@@ -94,6 +98,7 @@ Guiri.prototype.fromCityToMainPath = function() {
     });
 
     movingRoute1.start();
+    //gameState.guiriEntersBeach(this);
 }
 
 Guiri.prototype.fromMainPathToTowel = function() {
@@ -297,10 +302,11 @@ Guiri.prototype.fromMainPathToCity = function() {
 
     movingRoute1.onComplete.add(function() {
         var rubbishCount = gameState.rubbishGroup.length;
+        this.happiness -= rubbishCount * 3;
 
-        _this.happiness -= rubbishCount * 3;
-
-        gameState.fame += _this.happiness;
+        if (this.hapiness != 0) {
+            gameState.guiriLeavesBeach(_this);
+        }
 
         _this.destroy();
     });
@@ -477,8 +483,6 @@ Guiri.prototype.doSplash = function() {
     this.splash.animations.play('idle');
 
     var rnd = gameState.rnd.integerInRange(6, 10);
-
-    console.log(gameState.difficulty);
 
     game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
         // Podemos interrumpir este evento

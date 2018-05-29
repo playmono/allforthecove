@@ -112,7 +112,7 @@ Chiringuito.prototype.sell = function() {
 Chiringuito.prototype.createStock = function() {
     var _this = this;
 
-    this.stockSprite = gameState.add.sprite(this.centerX + 30, this.centerY, 'icons');
+    this.stockSprite = gameState.add.sprite(this.centerX + 30, this.centerY + 22, 'icons');
     this.stockSprite.smoothed = false;
     this.stockSprite.scale.set(scaleFactor);
 

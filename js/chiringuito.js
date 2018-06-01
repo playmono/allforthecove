@@ -77,7 +77,7 @@ Chiringuito.prototype.doubleClick = function() {
            this.buy(false);
         }
     } else if (this.stock < 3 && gameState.money >= this.stockPrice) {
-        gameState.money -= stockPrice;
+        gameState.money -= this.stockPrice;
         this.stock = 3;
         this.stockSprite.animations.play('stock3');
     }

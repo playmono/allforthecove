@@ -128,26 +128,33 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
         guiri.fromWaterToTowel();
 
         guiri.modifyHappiness(-10);
+        //guiri.actions.freeActions = false;
 
         gameState.guirisGroup.forEach(function(waterGuiri) {
             if ((waterGuiri.isSwimming || waterGuiri.isSplashing)
                 && (gameState.guirisGroup.getIndex(guiri) != gameState.guirisGroup.getIndex(waterGuiri))
             ) {
                 waterGuiri.modifyHappiness(10);
+                waterGuiri.actions.quietSwam = true;
             }
         });
 
         var distance = game.physics.arcade.distanceToXY(guiri, this.exclamationMarkInitialX, this.exclamationMarkInitialY);
 
         this.startCooldown(distance);
+
+        guiri.actions.unalertedByBaywatcher = false;
     } else if (guiri.isSwimming) {
         guiri.modifyHappiness(-10);
+        //guiri.actions.freeActions = false;
 
         guiri.fromWaterToTowel();
 
         var distance = game.physics.arcade.distanceToXY(guiri, this.exclamationMarkInitialX, this.exclamationMarkInitialY);
 
         this.startCooldown(distance);
+
+        guiri.actions.unalertedByBaywatcher = false;
     }
 }
 
@@ -167,6 +174,8 @@ Baywatcher.prototype.startCooldown = function(distance) {
     cooldownSprite.animations.add('cooldown', [3, 2, 1, 0], fps, false);
 
     cooldownSprite.animations.play('cooldown');
+
+    gameState.baywatcherCooldownsGroup.add(cooldownSprite);
 
     game.time.events.add(seconds, function () {
         _this.isInCooldown = false;

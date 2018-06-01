@@ -5,11 +5,11 @@ menuState = {
     create : function() {
         var _this = this;
 
-        this.add.text(300, 100, "All for the Cove", {fill: "white", fontSize: 50});
+        this.add.text(300, 100, "All for the Cove", {fill: "white", font: "50px pixellari"});
 
-        var startGameText = this.add.text(120, 200, "Empezar Juego", {fill: "white", fontSize: 50});
-        var howtoPlayText = this.add.text(120, 300, "Cómo jugar", {fill: "white", fontSize: 50});
-        var creditsText = this.add.text(120, 400, "Credits", {fill: "white", fontSize: 50});
+        var startGameText = this.add.text(120, 200, "Empezar Juego", {fill: "white", font: "50px pixellari"});
+        var howtoPlayText = this.add.text(120, 300, "Cómo jugar", {fill: "white", font: "50px pixellari"});
+        var creditsText = this.add.text(120, 400, "Credits", {fill: "white", font: "50px pixellari"});
 
         startGameText.inputEnabled = true;
         howtoPlayText.inputEnabled = true;
@@ -85,12 +85,15 @@ creditsState = {
     create : function () {
         _this = this;
 
-        this.add.text(50, 100, "All for the Cove", {fill: "white", fontSize: 50});
-        this.add.text(50, 170, "Game Design: Noé Fernández", {fill: "white", fontSize: 24});
-        this.add.text(50, 200, "Programmer: Adrián Granado", {fill: "white", fontSize: 24});
-        this.add.text(50, 230, "Artist: Noé Fernández", {fill: "white", fontSize: 24});
+        this.add.text(50, 100, "All for the Cove", {fill: "white", font: "50px pixellari"});
+        this.add.text(50, 170, "Game Design: Noé Fernández", {fill: "white", font: "24px pixellari"});
+        this.add.text(50, 200, "Programmer: Adrián Granado", {fill: "white", font: "24px pixellari"});
+        this.add.text(50, 230, "Artist: Noé Fernández", {fill: "white", font: "24px pixellari"});
+
+        this.add.text(50, 300, "Fuente: Zacchary Dempsey-Plante (https://www.dafont.com/pixellari.font)", {fill: "white", font: "24px pixellari"});
+        this.add.text(50, 330, "Música: Kevin MacLeod", {fill: "white", font: "24px pixellari"});
     
-        var backText = this.add.text(50, 400, "Volver a Menú", {fill: "white", fontSize: 24});
+        var backText = this.add.text(50, 400, "Volver a Menú", {fill: "white", font: "24px pixellari"});
         
         backText.inputEnabled = true;
 

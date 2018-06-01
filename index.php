@@ -10,6 +10,12 @@
         canvas {
             margin: 50px auto;
         }
+        @font-face {
+            font-family: 'pixellari';
+            font-style: 'normal';
+            src: url('fonts/pixellari.ttf');
+            font-weight: 100;
+        }
     </style>
 </head>
 <body>
@@ -22,6 +28,8 @@
 <script src="js/rubbish.js"></script>
 <script src="js/menu.js"></script>
 <script src="js/game.js"></script>
+
+<p style="font-family: pixellari;">.</p>
 
 <script>
 (function() {

@@ -1,10 +1,15 @@
 gameState = {
     difficulty : 1,
-    money: 10000,
+    money: 250,
     moneyText : null,
-    fame : 0,
+    moneySprite : null,
+    famePercentageText : null,
+    fameSprite : null,
+    famePercentage : 0,
     trashCost : 50,
     baywatcherCost : 300,
+    guirisTotalCount : 0,
+    guirisHappyCount : 0,
 
     beachSlots : [
         {squareIndex: 1, titleY: 'top', titleX: 'left', x: 125, y: 240, taken: false},
@@ -72,10 +77,13 @@ gameState = {
     maxNotifications: 3,
     guirisGroup : null,
     chiringuitosGroup : null,
+    rubbishGroup : null,
     trashGroup: null,
     baywatchersGroup: null,
     itemsGroup: null,
     notificationsGroup: null,
+    cooldownsGroup: null,
+    baywatcherCooldownsGroup : null,
 
     preload: function() {
         // Just to debug FPS
@@ -118,7 +126,7 @@ gameState = {
         this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
         this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
         this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
-        this.game.load.spritesheet('icons', 'assets/icons.png', 16, 16);
+        this.game.load.spritesheet('icons', 'assets/icons1.png', 16, 16);
         this.game.load.spritesheet('bubble', 'assets/bubble.png', 180, 20);
 
         this.game.load.audio('music', ['audio/music.mp3']);
@@ -141,15 +149,36 @@ gameState = {
         background.animations.add('idle', [0, 1, 2, 3, 4, 5], 5, true);
         background.animations.play('idle');
 
-        this.moneyText = this.game.add.text(gameWidth - 250, 50);
-        this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
+        this.moneyText = this.game.add.text(0, 0, this.money, {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
+        this.moneyText.setTextBounds(gameWidth - 55, 14, 0, 50);
+
+        this.moneySprite = this.game.add.sprite(gameWidth - 50, 10, 'icons');
+        this.moneySprite.smoothed = false;
+        this.moneySprite.scale.set(scaleFactor);
+        this.moneySprite.animations.add('money', [13], 1);
+        this.moneySprite.animations.play('money');
+
+        this.famePercentageText = this.game.add.text(0, 0, '0%', {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
+        this.famePercentageText.setTextBounds(gameWidth - 55, 55, 0, 50);
+
+        this.fameSprite = this.game.add.sprite(gameWidth - 50, 50, 'icons');
+        this.fameSprite.smoothed = false;
+        this.fameSprite.scale.set(scaleFactor);
+        this.fameSprite.animations.add('red', [24], 1);
+        this.fameSprite.animations.add('yellow', [25], 1);
+        this.fameSprite.animations.add('green', [26], 1);
+        this.fameSprite.animations.add('blue', [27], 1);
+
+        this.fameSprite.animations.play('yellow');
 
         this.itemsGroup = this.add.group();
         this.chiringuitosGroup = this.add.group();
         this.trashGroup = this.add.group();
+        this.cooldownsGroup = this.add.group();
         this.rubbishGroup = this.add.group();
         this.guirisGroup = this.add.group();
         this.baywatchersGroup = this.add.group();
+        this.baywatcherCooldownsGroup = this.add.group();
         this.notificationsGroup = this.add.group();
 
         var waterPositionY = 420;
@@ -210,7 +239,11 @@ gameState = {
 
         // Rubbish Generation
         this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
-            var proportion = 2  /24;
+            if (this.rubbishGroup.children.length >= 24) {
+                return;
+            }
+
+            var proportion = 4/24;
             var countGuiris = _this.guirisGroup.length; 
             var totalRubbishCount = Math.floor(countGuiris * proportion);
 
@@ -253,14 +286,41 @@ gameState = {
             //this.game.debug.text('Rubbish generated: ' + this.rubbishGroup.length, gameWidth - 250, 40);
 
             this.guirisGroup.forEach(function(guiri) {
-                this.game.debug.text('Happiness: ' + guiri.happiness, guiri.centerX, guiri.centerY);
+                this.game.debug.text('Happiness: ' + guiri.happiness, guiri.centerX, guiri.centerY, { color: 'black'});
+                this.game.debug.text('LayedOnTowel: ' + guiri.actions.layedOnTowel, guiri.centerX, guiri.centerY + 45, { color: 'black'});
+                //this.game.debug.text('Swam: ' + guiri.actions.swam, guiri.centerX, guiri.centerY + 30, { color: 'black'});
+                //this.game.debug.text('Did Splash: ' + guiri.actions.didSplash, guiri.centerX, guiri.centerY + 45, { color: 'black'});
+                //this.game.debug.text('Quiet Swam: ' + guiri.actions.quietSwam, guiri.centerX, guiri.centerY + 60, { color: 'black'});
+                //this.game.debug.text('Could Boy: ' + guiri.actions.couldBuy, guiri.centerX, guiri.centerY + 75, { color: 'black'});
+                //this.game.debug.text('Clean: ' + guiri.actions.clean, guiri.centerX, guiri.centerY + 90, { color: 'black'});
                 //this.game.debug.body(guiri);
             });
+
+            this.game.debug.text('FAMA: ' + this.fame, gameWidth - 120, 120);
+
+            this.game.debug.geom(this.famePercentageText.getBounds());
+            this.game.debug.geom(this.moneyText.getBounds());
         }
 
-        this.moneyText.setText('Dinero: ' + this.money);
 
-        this.game.debug.text('FAMA: ' + this.fame, gameWidth - 250, 40);
+        this.moneyText.setText(this.money);
+        this.famePercentageText.setText(this.famePercentage + '%');
+
+        if (this.guirisTotalCount == 0) {
+            this.fameSprite.animations.play('yellow');
+        } else {
+            if (this.famePercentage > 80) {
+                this.fameSprite.animations.play('blue');
+            } else if (this.famePercentage > 60) {
+                this.fameSprite.animations.play('green');
+            } else if (this.famePercentage > 40) {
+                this.fameSprite.animations.play('yellow');
+            } else {
+                this.fameSprite.animations.play('red');
+            }
+        }
+
+        //this.game.debug.text('FAMA: ' + this.fame, gameWidth - 50, 100);
     },
 
     getUntakenBeachSlot: function(guiri) {
@@ -334,26 +394,12 @@ gameState = {
 
         return chiringuito;
     },
-    /*
-    guiriLeavesBeach: function(guiri) {
-        var rubbishCount = this.rubbishGroup.length;
 
-        guiri.happiness -= rubbishCount * 3;
-
-        this.fame += guiri.happiness;
-    },
-    */
-    guiriLeavesBeach: function(guiri) {
+    createNotification: function(guiri) {
         var _this = this;
 
         if (this.notificationsGroup.children.length == this.maxNotifications) {
-            this.notificationsGroup.children.forEach(function(notification) {
-                notification.children.forEach(function(sprite) {
-                    sprite.y = sprite.y - 35;
-                });
-            });
-
-            this.notificationsGroup.children[0].destroy();
+            this.destroyNotification(this.notificationsGroup.children[0]);
         }
 
         if (this.notificationsGroup.length > 0) {
@@ -364,16 +410,12 @@ gameState = {
             var y = this.notificationSlotInitialY;
         }
 
-        this.createNotification(guiri, x, y);
-
-        if (guiri.happiness > 0) {
-            this.fame++
-        } else {
-            this.fame--;
-        }
+        this.renderNotification(guiri, x, y);
     },
 
-    createNotification: function(guiri, x, y) {
+    renderNotification: function(guiri, x, y) {
+        var _this = this;
+
         var notification = this.add.group();
 
         var bubble = gameState.add.sprite(x, y, 'bubble');
@@ -388,9 +430,12 @@ gameState = {
         review.smoothed = false;
         review.scale.set(scaleFactor);
 
+        var text = gameState.add.text(x + 45, y + 12, guiri.getNotificationText(), {font: "16px pixellari"});
+
         notification.add(bubble);
         notification.add(icon);
         notification.add(review);
+        notification.add(text);
 
         this.notificationsGroup.add(notification);
 
@@ -401,10 +446,20 @@ gameState = {
             alpha: 0,
         }, 1000 / gameState.difficulty, Phaser.Easing.Circular.None, true, 5000 / gameState.difficulty);
 
-        disappear.onComplete.add(function() {
-            notification.destroy();
+        disappear.onComplete.add(function(notification) {
+            _this.destroyNotification(notification);
         });
 
         disappear.start();
     },
+
+    destroyNotification: function(notificationToDestroy) {
+        this.notificationsGroup.children.forEach(function(notification) {
+            notification.children.forEach(function(sprite) {
+                sprite.y = sprite.y - 35;
+            });
+        });
+
+        notificationToDestroy.destroy();
+    }
 }

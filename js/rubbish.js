@@ -52,6 +52,8 @@ Rubbish.prototype.checkCollision = function(rubbish, trash) {
         var distance = game.physics.arcade.distanceToXY(trash, this.initialX, this.initialY);
 
         trash.startCooldown(distance);
+
+        gameState.money += 5;
     } else {
         this.x = this.initialX;
         this.y = this.initialY;

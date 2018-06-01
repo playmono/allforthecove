@@ -105,6 +105,8 @@ Trash.prototype.startCooldown = function(distance) {
 
     cooldownSprite.animations.play('cooldown');
 
+    gameState.cooldownsGroup.add(cooldownSprite);
+
     game.time.events.add(seconds, function () {
         _this.isInCooldown = false;
 

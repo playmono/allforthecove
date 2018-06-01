@@ -33,12 +33,23 @@ Guiri = function (game) {
     this.beachSlot = gameState.getUntakenBeachSlot();
 
     // emoji
-    this.emoji = gameState.add.sprite(this.x, this.y - 10, 'icons');
+    this.emoji = gameState.add.sprite(this.x, this.y, 'icons');
     this.emoji.smoothed = false;
     this.emoji.scale.set(scaleFactor);
     this.emoji.animations.add('positive', [16, 17, 18, 19], 8, true);
     this.emoji.animations.add('negative', [20, 21, 22, 23], 8, true);
     this.emoji.kill();
+
+    // actions
+    this.actions = {
+        layedOnTowel : null,
+        swam: null,
+        didSplash : null,
+        quietSwam : null,
+        couldBuy : null,
+        clean : null,
+        unalertedByBaywatcher : true
+    };
 
     this.fromCityToMainPath();
 };
@@ -49,7 +60,13 @@ Guiri.prototype.constructor = Guiri;
 Guiri.prototype.update = function() {
     if (this.emoji !== null) {
         this.emoji.x = this.x;
-        this.emoji.y = this.y;
+
+        if (this.animations.currentAnim.name == 'up' || this.animations.currentAnim.name == 'down') {
+            this.emoji.y = this.y - 20;
+        } else {
+            this.emoji.y = this.y - 5;
+        }
+
     }
 };
 
@@ -83,10 +100,12 @@ Guiri.prototype.fromCityToMainPath = function() {
         if (rnd > 9) {
             _this.chiringuito = gameState.getUntakenChiringuito();
 
-            if (_this.chiringuito != null) {
-                _this.fromMainPathToChiringuito();
-            } else {
+            if (_this.chiringuito == null) {
+                _this.modifyHappiness(-5);
+                _this.actions.couldBuy = false;
                 _this.fromMainPathToTowel();
+            } else {
+                _this.fromMainPathToChiringuito();
             }
         } else {
             _this.fromMainPathToTowel();
@@ -111,9 +130,9 @@ Guiri.prototype.fromMainPathToTowel = function() {
     var movingRoute4 = gameState.add.tween(this);
 
     var finalPoint = this.beachSlot.x + this.getTowelOffsetX(false);
-    var time = Phaser.Math.difference(finalPoint, _this.x) * 20;
+    var time = Phaser.Math.difference(finalPoint, this.x) * 20;
 
-    if (_this.beachSlot.x > _this.x) {
+    if (this.beachSlot.x > this.x) {
         finalPoint -= 30;
     } else {
         finalPoint += 30;
@@ -301,11 +320,24 @@ Guiri.prototype.fromMainPathToCity = function() {
     }, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
     movingRoute1.onComplete.add(function() {
-        var rubbishCount = gameState.rubbishGroup.length;
-        this.happiness -= rubbishCount * 3;
+        if (_this.beachSlot !== null) {
+            var rubbishCount = gameState.rubbishGroup.length * 2;
 
-        if (this.hapiness != 0) {
-            gameState.guiriLeavesBeach(_this);
+            if (_this.happiness >= 0) {
+                _this.actions.clean = (_this.happiness - rubbishCount <= 0) ? false : true;
+            }
+
+            _this.modifyHappiness(-rubbishCount);
+
+            gameState.createNotification(_this);
+
+            gameState.guirisTotalCount++;
+
+            if (_this.happiness >= 0) {
+                gameState.guirisHappyCount++;
+            }
+
+            gameState.famePercentage = parseInt(gameState.guirisHappyCount * 100 / gameState.guirisTotalCount);
         }
 
         _this.destroy();
@@ -372,7 +404,7 @@ Guiri.prototype.fromMainPathToChiringuito = function() {
         game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
             _this.chiringuito.sell();
             _this.fromChiringuitoToTowel();
-        }, this);
+        }, _this);
     })
 }
 
@@ -405,6 +437,7 @@ Guiri.prototype.swimming = function() {
     this.animations.play('swim');
 
     this.modifyHappiness(5);
+    this.actions.swam = true;
 
     var rnd = gameState.rnd.integerInRange(4, 15);
 
@@ -419,7 +452,7 @@ Guiri.prototype.swimming = function() {
                 _this.fromWaterToTowel();
             }
         }
-    }, this);
+    }, _this);
 }
 
 Guiri.prototype.layOnTowel = function() {
@@ -430,6 +463,7 @@ Guiri.prototype.layOnTowel = function() {
     if (this.layOnTowelForFirstTime) {
         this.layOnTowelForFirstTime = false;
         this.modifyHappiness(2);
+        this.actions.layedOnTowel = true;
     }
 
     if (this.towel == null) {
@@ -457,6 +491,7 @@ Guiri.prototype.layOnTowel = function() {
 
             if (_this.chiringuito == null) {
                 _this.modifyHappiness(-5);
+                _this.actions.couldBuy = false;
                 _this.layOnTowel();
             } else {
                 _this.fromTowelToChiringuito();
@@ -464,7 +499,7 @@ Guiri.prototype.layOnTowel = function() {
         } else {
             _this.fromTowelToCity();
         }
-    }, this);
+    }, _this);
 }
 
 Guiri.prototype.doSplash = function() {
@@ -472,7 +507,7 @@ Guiri.prototype.doSplash = function() {
 
     this.isSplashing = true;
 
-    this.splash = gameState.add.sprite(this.x - 22, this.y - 10, 'splash');
+    this.splash = gameState.add.sprite(this.x - 30, this.y - 15, 'splash');
 
     gameState.itemsGroup.add(this.splash);
     this.splash.scale.set(scaleFactor);
@@ -487,19 +522,27 @@ Guiri.prototype.doSplash = function() {
     game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
         // Podemos interrumpir este evento
         if (_this.isSplashing) {
-            _this.splash.destroy();
-            _this.isSplashing = false;
+            var destroySplash = gameState.add.tween(_this.splash).to({
+                alpha: 0,
+            }, Phaser.Timer.SECOND * 1 / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
-            // Solo le suma 5 ya que luego se lo restamos junto al grupo
-            _this.modifyHappiness(10);
+            destroySplash.onComplete.add(function() {
+                _this.modifyHappiness(5);
+                _this.actions.didSplash = true;
 
-            gameState.guirisGroup.forEach(function(guiri) {
-                if (guiri.isSwimming || guiri.isSplashing) {
-                    guiri.modifyHappiness(-5);
-                }
+                _this.splash.destroy();
+
+                gameState.guirisGroup.forEach(function(guiri) {
+                    if ((guiri.isSwimming || guiri.isSplashing)
+                        && (gameState.guirisGroup.getIndex(guiri) != gameState.guirisGroup.getIndex(_this))
+                    ) {
+                        guiri.modifyHappiness(-5);
+                        guiri.actions.quietSwam = false;
+                    }
+                });
+
+                _this.swimming();
             });
-
-            _this.swimming();
         }
     });
 }
@@ -509,6 +552,7 @@ Guiri.prototype.buyInChiringuito = function() {
 
     gameState.money += 50;
     this.modifyHappiness(2);
+    this.actions.couldBuy = true;
 
     buyGuiriEffect.play();
 }
@@ -536,22 +580,112 @@ Guiri.prototype.modifyHappiness = function(happiness) {
 
     this.emoji.alpha = 1;
 
-    var happyTweenStatic = gameState.add.tween(this);
-    var happyTweenFade = gameState.add.tween(this);
-
-    var happyTweenStatic = gameState.add.tween(this.emoji).to({
+    var emojiTweenStatic = gameState.add.tween(this.emoji).to({
         // @ todo: this should be an event, not a tween
     }, Phaser.Timer.SECOND * 3 / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
-    happyTweenStatic.onComplete.add(function() {
-        happyTweenFade = gameState.add.tween(_this.emoji).to({
+    emojiTweenStatic.onComplete.add(function() {
+        var emojiTweenFade = gameState.add.tween(_this.emoji).to({
             alpha: 0,
         }, Phaser.Timer.SECOND * 2 / gameState.difficulty, Phaser.Easing.Linear.None, true);
-    })
+   
+        emojiTweenFade.onComplete.add(function() {
+            _this.emoji.kill();
+        });
 
-    happyTweenFade.onComplete.add(function() {
-        _this.emoji.kill();
     });
+}
+
+Guiri.prototype.getNotificationText = function() {
+    var result = [];
+
+    for (var key in this.actions) {
+        if (this.happiness >= 0 && this.actions[key] === true) {
+            result.push(key);
+        }
+
+        if (this.happiness < 0 && this.actions[key] === false) {
+            result.push(key);
+        }
+    }
+
+    var rnd = gameState.rnd.integerInRange(0, (result.length - 1));
+
+    return this.getNotificationTexts(result[rnd], this.happiness >= 0);
+}
+
+Guiri.prototype.getNotificationTexts = function(key, positive) {
+    var positiveTexts = {
+        layedOnTowel: [
+            'La playa está impecable <3',
+            'Vuelvo mañana mismo.'
+        ],
+        swam: [
+            '¡Qué fresquita está el agua!',
+            'El mar está muy tranquilo'
+        ],
+        didSplash: [
+            'Me lo he pasasado genial',
+            'ANARKIA Y BIRRA FRIA!'
+        ],
+        quietSwam: [
+            'Vale la pena venir a bañarse.',
+            'Una playa muy tranquila.',
+        ],
+        couldBuy: [
+            'Muy rica la comida.',
+            'Me encanta la piña colada'
+        ],
+        clean: [
+            '¡Qué limpio está todo!',
+            'La playa está impecable'
+        ],
+        unalertedByBaywatcher: [
+            '¡Que guay! Dejan meter pelotas en el agua',
+            'Me encantan las guerras de agua'
+        ]
+    };
+
+    var negativeTexts = {
+        quietSwam: [
+            '¿Es que nadie vigila o qué?',
+            'Los Guardacostas van a su bola ¬¬'
+        ],
+        couldBuy: [
+            'No quedan helados y hace calor...',
+            'Me gustaría poder comer algo...'
+        ],
+        clean: [
+            '¡La playa está super sucia!!!1!',
+            'Que asco de la playa.'
+        ],
+        unalertedByBaywatcher: [
+            '¡No se puede hacer nada en el agua!',
+            'Los guardacostas son unos aguafiestas'
+        ]
+    }
+
+    var rnd = gameState.rnd.integerInRange(0, 1);
+
+    // EDGE CASE
+    // -----------
+    // SE PUEDEN DAR CASOS DE DEFAULT SI LA PERSONA HA TENIDO EXPERIENCIAS MUY NEGATIVAS, DESPUES POSITIVAS (Por lo que todas las acciones = true) 
+    // PERO AUN ASÍ, SU FELICIDAD ES NEGATIVA
+
+    var defaultPositiveText = [
+        'Me lo he pasado genial.',
+        'Ha sido un día genial'
+    ];
+    var defaultNegativeText = [
+        'No pienso volver a esta playa.',
+        'Ha sido el peor día de mi vida'
+    ];
+
+    if (positive) {
+        return (positiveTexts[key] !== undefined) ? positiveTexts[key][rnd] : defaultPositiveText[rnd]; 
+    } else {
+        return (negativeTexts[key] !== undefined) ? negativeTexts[key][rnd] : defaultNegativeText[rnd];
+    }
 }
 
 

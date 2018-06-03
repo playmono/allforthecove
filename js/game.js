@@ -296,10 +296,8 @@ gameState = {
                 //this.game.debug.body(guiri);
             });
 
-            this.game.debug.text('FAMA: ' + this.fame, gameWidth - 120, 120);
-
-            this.game.debug.geom(this.famePercentageText.getBounds());
-            this.game.debug.geom(this.moneyText.getBounds());
+            //this.game.debug.geom(this.famePercentageText.getBounds());
+            //this.game.debug.geom(this.moneyText.getBounds());
         }
 
 

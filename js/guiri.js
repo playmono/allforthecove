@@ -401,7 +401,7 @@ Guiri.prototype.fromMainPathToChiringuito = function() {
 
         var rnd = gameState.rnd.integerInRange(3, 7);
 
-        game.time.events.add(Phaser.Timer.SECOND * rnd, function () {
+        game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
             _this.chiringuito.sell();
             _this.fromChiringuitoToTowel();
         }, _this);
@@ -420,7 +420,7 @@ Guiri.prototype.fromChiringuitoToTowel = function() {
 
     movingRoute1.to({
         y: '+25'
-    }, 2000 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+    }, (Phaser.Timer.SECOND * 2) / gameState.difficulty, Phaser.Easing.Linear.None, true);
 
     movingRoute1.onComplete.add(function() {
         _this.fromMainPathToTowel();
@@ -472,9 +472,7 @@ Guiri.prototype.layOnTowel = function() {
         gameState.itemsGroup.add(_this.towel);
         this.towel.scale.set(scaleFactor);
 
-        var i = gameState.rnd.integerInRange(0, 7);
-        this.towel.animations.add('idle', [i], 0, false);
-        this.towel.animations.play('idle');
+        this.towel.frame = gameState.rnd.integerInRange(0, 7);
     }
 
     var rnd = gameState.rnd.integerInRange(4, 15);

@@ -14,10 +14,7 @@ Rubbish = function (game, x, y) {
 
     this.scale.set(scaleFactor);
     this.smoothed = false;
-
-    var i = gameState.rnd.integerInRange(0, 7);
-    this.animations.add('idle', [i], 0, false);
-    this.animations.play('idle');
+    this.frame = gameState.rnd.integerInRange(0, 7);
 
     this.enableBody = true;
 

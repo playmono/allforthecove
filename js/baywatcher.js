@@ -14,7 +14,6 @@ Baywatcher = function (game, x, y, name) {
 
     this.isInCooldown = false;
 
-    this.animations.add('unbought', [4], 0, false);
     this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
@@ -49,7 +48,7 @@ Baywatcher = function (game, x, y, name) {
         }
     }, this);
 
-    this.animations.play('unbought');
+    this.frame = 4;
 };
 
 Baywatcher.prototype = Object.create(Phaser.Sprite.prototype);
@@ -100,10 +99,7 @@ Baywatcher.prototype.createExclamationMark = function() {
     this.exclamationMark = gameState.add.sprite(this.exclamationMarkInitialX, this.exclamationMarkInitialY, 'icons');
     this.exclamationMark.smoothed = false;
     this.exclamationMark.scale.set(scaleFactor);
-
-    this.exclamationMark.animations.add('idle', [12], 0, false);
-
-    this.exclamationMark.animations.play('idle');
+    this.exclamationMark.frame = 12;
 
     this.exclamationMark.inputEnabled = true;
     this.exclamationMark.input.enableDrag(true);

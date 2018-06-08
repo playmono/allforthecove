@@ -6,6 +6,7 @@ Chiringuito = function (game, x, y, name) {
     var _this = this;
 
     this.stockSprite = null;
+    this.stockSpriteMap = [8, 9, 10, 11];
 
     this.scale.set(scaleFactor);
     this.smoothed = false;
@@ -18,7 +19,6 @@ Chiringuito = function (game, x, y, name) {
     this.isRefreshed = false;
     this.lastStock = null;
 
-    this.animations.add('unbought', [4], 0, false);
 	this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
@@ -55,7 +55,7 @@ Chiringuito = function (game, x, y, name) {
         }
     }, this);
 
-    this.animations.play('unbought');
+    this.frame = 4;
 };
 
 Chiringuito.prototype = Object.create(Phaser.Sprite.prototype);
@@ -77,7 +77,7 @@ Chiringuito.prototype.update = function() {
         }
 
         this.stock++;
-        this.stockSprite.animations.play('stock' + this.stock);
+        this.stockSprite.frame = this.stockSpriteMap[this.stock];
 
         this.isRefreshed = true;
     }
@@ -139,7 +139,7 @@ Chiringuito.prototype.sell = function() {
     }
 
     this.stock--;
-    this.stockSprite.animations.play('stock' + this.stock);
+    this.stockSprite.frame = this.stockSpriteMap[this.stock];
 }
 
 Chiringuito.prototype.createStock = function() {
@@ -148,13 +148,7 @@ Chiringuito.prototype.createStock = function() {
     this.stockSprite = gameState.add.sprite(this.centerX + 30, this.centerY + 22, 'icons');
     this.stockSprite.smoothed = false;
     this.stockSprite.scale.set(scaleFactor);
-
-    this.stockSprite.animations.add('stock0', [8], 0, false);
-    this.stockSprite.animations.add('stock1', [9], 0, false);
-    this.stockSprite.animations.add('stock2', [10], 0, false);
-    this.stockSprite.animations.add('stock3', [11], 0, false);
-
-    this.stockSprite.animations.play('stock3');
+    this.stockSprite.frame = this.stockSpriteMap[3];
 
     gameState.cooldownsGroup.add(this.stockSprite);
 }

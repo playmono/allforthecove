@@ -155,8 +155,7 @@ gameState = {
         this.moneySprite = this.game.add.sprite(gameWidth - 50, 10, 'icons');
         this.moneySprite.smoothed = false;
         this.moneySprite.scale.set(scaleFactor);
-        this.moneySprite.animations.add('money', [13], 1);
-        this.moneySprite.animations.play('money');
+        this.moneySprite.frame = 13;
 
         this.famePercentageText = this.game.add.text(0, 0, '0%', {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
         this.famePercentageText.setTextBounds(gameWidth - 55, 55, 0, 50);
@@ -164,12 +163,7 @@ gameState = {
         this.fameSprite = this.game.add.sprite(gameWidth - 50, 50, 'icons');
         this.fameSprite.smoothed = false;
         this.fameSprite.scale.set(scaleFactor);
-        this.fameSprite.animations.add('red', [24], 1);
-        this.fameSprite.animations.add('yellow', [25], 1);
-        this.fameSprite.animations.add('green', [26], 1);
-        this.fameSprite.animations.add('blue', [27], 1);
-
-        this.fameSprite.animations.play('yellow');
+        this.fameSprite.frame = 25; // 25 = yellow face
 
         this.itemsGroup = this.add.group();
         this.chiringuitosGroup = this.add.group();
@@ -306,21 +300,27 @@ gameState = {
             //this.game.debug.geom(this.moneyText.getBounds());
         }
 
+        var fameSpriteMap = {
+            red: 24,
+            yellow: 25,
+            green: 26,
+            blue: 27
+        };
 
         this.moneyText.setText(this.money);
         this.famePercentageText.setText(this.famePercentage + '%');
 
         if (this.guirisTotalCount == 0) {
-            this.fameSprite.animations.play('yellow');
+            this.fameSprite.frame = fameSpriteMap.yellow;
         } else {
             if (this.famePercentage > 80) {
-                this.fameSprite.animations.play('blue');
+                this.fameSprite.frame = fameSpriteMap.blue;
             } else if (this.famePercentage > 60) {
-                this.fameSprite.animations.play('green');
+                this.fameSprite.frame = fameSpriteMap.green;
             } else if (this.famePercentage > 40) {
-                this.fameSprite.animations.play('yellow');
+                this.fameSprite.frame = fameSpriteMap.yellow;
             } else {
-                this.fameSprite.animations.play('red');
+                this.fameSprite.frame = fameSpriteMap.red;
             }
         }
 

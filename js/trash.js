@@ -14,6 +14,11 @@ Trash = function (game, x, y) {
     this.moneyText = gameState.add.text(this.centerX, this.centerY);
     this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
 
+    this.mapFrame = {
+        unbought : 1,
+        bought: 0
+    };
+
     this.dblClickTrigger = false;
     this.events.onInputDown.add(function () {
         if (!_this.dblClickTrigger) {
@@ -43,10 +48,7 @@ Trash = function (game, x, y) {
     this.enableBody = true;
     game.physics.arcade.enable(this);
 
-    this.animations.add('unbought', [1], 0, false);
-    this.animations.add('idle', [0], 0, false);
-
-    this.animations.play('unbought');
+    this.frame = this.mapFrame.unbought;
 };
 
 Trash.prototype = Object.create(Phaser.Sprite.prototype);
@@ -85,8 +87,7 @@ Trash.prototype.buy = function(free) {
 
     this.alpha = 1;
     this.bought = true;
-
-    this.animations.play('idle');
+    this.frame = this.mapFrame.bought;
 }
 
 Trash.prototype.startCooldown = function(distance) {

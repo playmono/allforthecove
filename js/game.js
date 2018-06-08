@@ -126,8 +126,11 @@ gameState = {
         this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
         this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
         this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
-        this.game.load.spritesheet('icons', 'assets/icons1.png', 16, 16);
+        this.game.load.spritesheet('icons', 'assets/icons2.png', 16, 16);
         this.game.load.spritesheet('bubble', 'assets/bubble.png', 180, 20);
+        this.game.load.spritesheet('refill', 'assets/refill1.png', 28, 36);
+        this.game.load.spritesheet('exit', 'assets/back2.png', 42, 42);
+        this.game.load.spritesheet('price', 'assets/buy.png', 28, 28);
 
         this.game.load.audio('music', ['audio/music.mp3']);
         this.game.load.audio('baywatacher', ['audio/baywatcher.mp3']);
@@ -149,21 +152,32 @@ gameState = {
         background.animations.add('idle', [0, 1, 2, 3, 4, 5], 5, true);
         background.animations.play('idle');
 
-        this.moneyText = this.game.add.text(0, 0, this.money, {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
-        this.moneyText.setTextBounds(gameWidth - 55, 14, 0, 50);
+        var exit = this.game.add.sprite(gameWidth -70, 15, 'exit');
+        exit.smoothed = false;
+        exit.inputEnabled = true;
+        //exit.scale.set(scaleFactor);
 
-        this.moneySprite = this.game.add.sprite(gameWidth - 50, 10, 'icons');
+        exit.events.onInputDown.add(function () {
+            _this.state.start("menuState");
+        }, this);
+
+        this.moneyText = this.game.add.text(0, 0, this.money, {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
+        this.moneyText.setTextBounds(gameWidth - 320, 12, 0, 50);
+
+        this.moneySprite = this.game.add.sprite(gameWidth - 310, 6, 'icons');
         this.moneySprite.smoothed = false;
         this.moneySprite.scale.set(scaleFactor);
         this.moneySprite.frame = 13;
 
         this.famePercentageText = this.game.add.text(0, 0, '0%', {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
-        this.famePercentageText.setTextBounds(gameWidth - 55, 55, 0, 50);
+        this.famePercentageText.setTextBounds(gameWidth - 190, 12, 0, 50);
 
-        this.fameSprite = this.game.add.sprite(gameWidth - 50, 50, 'icons');
+        this.fameSprite = this.game.add.sprite(gameWidth - 180, 8, 'icons');
         this.fameSprite.smoothed = false;
         this.fameSprite.scale.set(scaleFactor);
         this.fameSprite.frame = 25; // 25 = yellow face
+
+        // LAYERS
 
         this.itemsGroup = this.add.group();
         this.chiringuitosGroup = this.add.group();
@@ -267,7 +281,7 @@ gameState = {
 
     render: function() {
         if (debug) {
-            this.game.debug.text('FPS: ' + this.time.fps, gameWidth - 250, 20);
+            //this.game.debug.text('FPS: ' + this.time.fps, gameWidth - 250, 20);
 
             var notTaken = [];
 
@@ -465,5 +479,22 @@ gameState = {
         });
 
         notificationToDestroy.destroy();
+    },
+
+    createPrice: function(x, y, cost) {
+        priceSprite = gameState.add.sprite(x, y, 'price');
+        priceSprite.alive = false;
+        priceSprite.smoothed = false;
+        priceSprite.scale.set(scaleFactor);
+
+        if (this.money >= cost) {
+            var textColor = '#FFFFFF';
+        } else {
+            var textColor = '#FF0000';
+        }
+
+        moneyText = gameState.add.text(priceSprite.x + 12, priceSprite.y + 27, '-' + cost, {fill: textColor, font: '14px pixellari', boundsAlignH: 'right'});
+
+        return {priceSprite, moneyText};
     }
 }

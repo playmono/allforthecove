@@ -16,8 +16,8 @@ Baywatcher = function (game, x, y, name) {
 
     this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
-    this.moneyText = gameState.add.text(this.centerX, this.centerY);
-    this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
+    this.moneyText = null;
+    this.priceSprite = null;
 
     this.alpha = 0.7;
     this.inputEnabled = true;
@@ -44,7 +44,14 @@ Baywatcher = function (game, x, y, name) {
     this.events.onInputUp.add(function () {
         if (!_this.bought) {
             _this.alpha = 0.7;
-            _this.moneyText.setText('');
+
+            if (_this.priceSprite != null) {
+                _this.priceSprite.destroy();
+            }
+
+            if (_this.moneyText != null) {
+                _this.moneyText.destroy();
+            }
         }
     }, this);
 
@@ -63,7 +70,10 @@ Baywatcher.prototype.click = function() {
 
     if (!this.bought) {
         this.alpha = 1;
-        this.moneyText.setText(gameState.baywatcherCost);
+
+        var group = gameState.createPrice(this.centerX - 25, this.centerY - 40, gameState.baywatcherCost);
+        this.priceSprite = group.priceSprite;
+        this.moneyText = group.moneyText;
     }
 }
 
@@ -77,8 +87,6 @@ Baywatcher.prototype.doubleClick = function() {
 
 Baywatcher.prototype.buy = function(free) {
     var _this = this;
-
-    this.moneyText.setText('');
 
     if (!free) {
         gameState.money -= gameState.baywatcherCost;

@@ -3,6 +3,9 @@ Trash = function (game, x, y) {
 
     var _this = this;
 
+    this.priceSprite = null;
+    this.moneyText = null;
+
     this.bought = false;
     this.isInCooldown = false;
 
@@ -10,9 +13,6 @@ Trash = function (game, x, y) {
     this.smoothed = false;
     this.alpha = 0.7;
     this.inputEnabled = true;
-
-    this.moneyText = gameState.add.text(this.centerX, this.centerY);
-    this.moneyText.setStyle({fill: '#FFFFFF', fontSize: 16});
 
     this.mapFrame = {
         unbought : 1,
@@ -41,7 +41,14 @@ Trash = function (game, x, y) {
     this.events.onInputUp.add(function () {
         if (!_this.bought) {
             _this.alpha = 0.7;
-            _this.moneyText.setText('');
+
+            if (_this.priceSprite != null) {
+                _this.priceSprite.destroy();
+            }
+
+            if (_this.moneyText != null) {
+                _this.moneyText.destroy();
+            }
         }
     }, this);
 
@@ -63,7 +70,10 @@ Trash.prototype.click = function() {
 
     if (!this.bought) {
         this.alpha = 1;
-        this.moneyText.setText(gameState.trashCost);
+
+        var group = gameState.createPrice(this.centerX - 20, this.centerY - 85, gameState.trashCost);
+        this.priceSprite = group.priceSprite;
+        this.moneyText = group.moneyText;
     }
 }
 
@@ -77,8 +87,6 @@ Trash.prototype.doubleClick = function() {
 
 Trash.prototype.buy = function(free) {
     _this = this;
-
-    this.moneyText.setText('');
 
     if (!free) {
         gameState.money -= gameState.trashCost;

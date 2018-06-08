@@ -110,6 +110,8 @@ Baywatcher.prototype.createExclamationMark = function() {
 
     game.physics.arcade.enable(this.exclamationMark);
 
+    this.exclamationMark.body.setSize(1, 1, 7, 7);
+
     this.exclamationMark.events.onDragStop.add(this.onMarkExclamationDragStop, this);
 }
 

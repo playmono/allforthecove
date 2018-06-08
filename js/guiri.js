@@ -449,7 +449,7 @@ Guiri.prototype.swimming = function() {
             if (rnd > 75) {
                 _this.doSplash();
             } else {
-                _this.fromWaterToTowel();
+               _this.fromWaterToTowel();
             }
         }
     }, _this);

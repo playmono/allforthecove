@@ -16,6 +16,7 @@ Chiringuito = function (game, x, y, name) {
     this.stockPrice = 50;
     this.isRefreshing = false;
     this.isRefreshed = false;
+    this.lastStock = null;
 
     this.animations.add('unbought', [4], 0, false);
 	this.animations.add('idle', [0, 1, 2, 3], 5, true);
@@ -71,6 +72,10 @@ Chiringuito.prototype.update = function() {
     }
 
     if (this.isRefreshing && !this.isRefreshed && game.input.activePointer.duration % 1000 > 900) {
+        if (this.lastStock == this.stock) {
+            gameState.money -= this.stockPrice;
+        }
+
         this.stock++;
         this.stockSprite.animations.play('stock' + this.stock);
 
@@ -95,8 +100,8 @@ Chiringuito.prototype.click = function() {
         this.alpha = 1;
         this.moneyText.setText(this.cost);
     } else if (this.stock < 3 && gameState.money >= this.stockPrice) {
-        gameState.money -= this.stockPrice;
         this.isRefreshing = true;
+        this.lastStock = this.stock;
     }
 }
 

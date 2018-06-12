@@ -86,6 +86,15 @@ gameState = {
     baywatcherCooldownsGroup : null,
 
     preload: function() {
+        //this.game.stage.backgroundColor = "#4488AA";
+        var preloadBarFrame = this.game.add.sprite(this.game.world.centerX - 75, this.game.world.centerY - 25, 'loading');
+        preloadBarFrame.animations.add('preloadBarFrame', [1, 2, 3], 2, true);
+        preloadBarFrame.animations.play('preloadBarFrame');
+
+        var preloadBar = this.game.add.sprite(this.game.world.centerX - 75, this.game.world.centerY - 25, 'loading');
+
+        this.game.load.setPreloadSprite(preloadBar);
+
         // Just to debug FPS
         this.time.advancedTiming = true;
 
@@ -312,6 +321,8 @@ gameState = {
 
             //this.game.debug.geom(this.famePercentageText.getBounds());
             //this.game.debug.geom(this.moneyText.getBounds());
+
+            this.game.debug.text(this.game.world.children.length, gameWidth - 50, 80);
         }
 
         var fameSpriteMap = {
@@ -337,8 +348,6 @@ gameState = {
                 this.fameSprite.frame = fameSpriteMap.red;
             }
         }
-
-        //this.game.debug.text('FAMA: ' + this.fame, gameWidth - 50, 100);
     },
 
     getUntakenBeachSlot: function(guiri) {
@@ -481,8 +490,8 @@ gameState = {
         notificationToDestroy.destroy();
     },
 
-    createPrice: function(x, y, cost) {
-        priceSprite = gameState.add.sprite(x, y, 'price');
+    createPriceInfo: function(x, y, cost, priceInfo) {
+        var priceSprite = gameState.add.sprite(x, y, 'price');
         priceSprite.alive = false;
         priceSprite.smoothed = false;
         priceSprite.scale.set(scaleFactor);
@@ -493,8 +502,13 @@ gameState = {
             var textColor = '#FF0000';
         }
 
-        moneyText = gameState.add.text(priceSprite.x + 12, priceSprite.y + 27, '-' + cost, {fill: textColor, font: '14px pixellari', boundsAlignH: 'right'});
+        var moneyText = gameState.add.text(priceSprite.x + 28, priceSprite.y + 37, cost, {fill: textColor, font: '14px pixellari', boundsAlignH: 'right'});
+        moneyText.anchor.set(0.5);
 
-        return {priceSprite, moneyText};
+        var priceGroup = this.game.add.group();
+        priceGroup.add(priceSprite);
+        priceGroup.add(moneyText);
+
+        return priceGroup;
     }
 }

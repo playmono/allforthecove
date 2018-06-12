@@ -7,11 +7,9 @@ Chiringuito = function (game, x, y, name) {
 
     this.stockSprite = null;
     this.stockSpriteMap = [8, 9, 10, 11];
-    this.moneyText = null;
-    this.priceSprite = null;
 
-    this.refillSprite = null;
-    this.refillText = null;
+    this.priceInfo = null;
+    this.refillInfo = null;
 
     this.scale.set(scaleFactor);
     this.smoothed = false;
@@ -52,22 +50,14 @@ Chiringuito = function (game, x, y, name) {
         if (!_this.bought) {
             _this.alpha = 0.7;
 
-            if (_this.priceSprite != null) {
-                _this.priceSprite.destroy();
-            }
-
-            if (_this.moneyText != null) {
-                _this.moneyText.destroy();
+            if (_this.priceInfo != null) {
+                _this.priceInfo.destroy();
             }
         } else {
             this.isRefreshing = false;
 
-            if (this.refillSprite != null) {
-                this.refillSprite.kill();
-            }
-
-            if (this.refillText != null) {
-                this.refillText.kill();
+            if (this.refillInfo != null) {
+                this.refillInfo.destroy();
             }
         }
     }, this);
@@ -113,15 +103,16 @@ Chiringuito.prototype.click = function() {
 
     if (!this.bought) {
         this.alpha = 1;
-
-        var group = gameState.createPrice(this.centerX - 20, this.centerY - 50, this.cost);
-        this.priceSprite = group.priceSprite;
-        this.moneyText = group.moneyText;
-    } else if (this.stock < 3 && gameState.money >= this.stockPrice) {
-        this.isRefreshing = true;
-        this.lastStock = this.stock;
-
-        this.createRefill();
+        this.priceInfo = gameState.createPriceInfo(this.centerX - 20, this.centerY - 50, this.cost);
+    } else {
+        if (this.stock < 3) {
+            this.createRefillInfo();
+       
+            if (gameState.money >= this.stockPrice) {
+                this.isRefreshing = true;
+                this.lastStock = this.stock;
+            }
+        }
     }
 }
 
@@ -171,20 +162,30 @@ Chiringuito.prototype.createStock = function() {
     gameState.cooldownsGroup.add(this.stockSprite);
 }
 
-Chiringuito.prototype.createRefill = function() {
-    if (this.refillSprite == null) {
-        this.refillSprite = gameState.add.sprite(this.centerX + 60, this.centerY - 15, 'refill');
+Chiringuito.prototype.createRefillInfo = function() {
+    if (this.refillInfo == null) {
+        var refillSprite = gameState.add.sprite(this.centerX + 60, this.centerY - 15, 'refill');
     } else {
-        this.refillSprite.revive();
+        refillSprite.revive();
     }
 
-    this.refillSprite.smoothed = false;
-    this.refillSprite.scale.set(scaleFactor);
-    this.refillSprite.animations.add('refill', [1, 2, 3, 4], 5, true);
+    refillSprite.smoothed = false;
+    refillSprite.scale.set(scaleFactor);
+    refillSprite.animations.add('refill', [1, 2, 3, 4], 5, true);
 
-    gameState.cooldownsGroup.add(this.refillSprite);
+    gameState.cooldownsGroup.add(refillSprite);
 
-    this.refillSprite.animations.play('refill');
+    refillSprite.animations.play('refill');
 
-    this.refillText = gameState.add.text(this.refillSprite.x + 20, this.refillSprite.y + 50, '-' + this.stockPrice, {fill: '#FFFFFF', font: '16px pixellari', boundsAlignH: 'right'});
+    if (gameState.money >= this.stockPrice) {
+        var textColor = '#FFFFFF';
+    } else {
+        var textColor = '#FF0000';
+    }
+
+    var refillText = gameState.add.text(refillSprite.x + 25, refillSprite.y + 50, this.stockPrice, {fill: textColor, font: '16px pixellari', boundsAlignH: 'right'});
+
+    this.refillInfo = this.game.add.group();
+    this.refillInfo.add(refillSprite);
+    this.refillInfo.add(refillText);
 }

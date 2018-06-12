@@ -3,8 +3,7 @@ Trash = function (game, x, y) {
 
     var _this = this;
 
-    this.priceSprite = null;
-    this.moneyText = null;
+    this.priceInfo = null;
 
     this.bought = false;
     this.isInCooldown = false;
@@ -42,12 +41,8 @@ Trash = function (game, x, y) {
         if (!_this.bought) {
             _this.alpha = 0.7;
 
-            if (_this.priceSprite != null) {
-                _this.priceSprite.destroy();
-            }
-
-            if (_this.moneyText != null) {
-                _this.moneyText.destroy();
+            if (_this.priceInfo != null) {
+                _this.priceInfo.destroy();
             }
         }
     }, this);
@@ -71,9 +66,7 @@ Trash.prototype.click = function() {
     if (!this.bought) {
         this.alpha = 1;
 
-        var group = gameState.createPrice(this.centerX - 20, this.centerY - 85, gameState.trashCost);
-        this.priceSprite = group.priceSprite;
-        this.moneyText = group.moneyText;
+        this.priceInfo = gameState.createPriceInfo(this.centerX - 20, this.centerY - 85, gameState.trashCost);
     }
 }
 

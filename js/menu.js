@@ -1,5 +1,6 @@
 menuState = {
     preload: function() {
+        this.load.spritesheet('loading', 'assets/loading.png', 150, 50);
     },
 
     create : function() {

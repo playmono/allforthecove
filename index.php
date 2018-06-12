@@ -50,16 +50,14 @@
     gameHeight = 270 * scaleFactor;
 
     game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, '');
+    game.state.add("bootState", bootState);
+    game.state.add("loadState", loadState);
     game.state.add("menuState", menuState);
     game.state.add("gameState", gameState);
     game.state.add("howToPlayState", howToPlayState);
     game.state.add("creditsState", creditsState);
 
-    if (debug) {
-        game.state.start("gameState");
-    } else {
-        game.state.start("menuState");
-    }
+    game.state.start("bootState");
 })();
 </script>
 

@@ -1,15 +1,17 @@
 gameState = {
-    difficulty : 1,
-    money: 250,
+    // Level properties
+    difficulty : 0,
+    money: 0,
+    famePercentage : 0,
+    trashCost : 0,
+    baywatcherCost : 0,
+    guirisTotalCount : 0,
+    guirisHappyCount : 0,
+
     moneyText : null,
     moneySprite : null,
     famePercentageText : null,
     fameSprite : null,
-    famePercentage : 0,
-    trashCost : 50,
-    baywatcherCost : 300,
-    guirisTotalCount : 0,
-    guirisHappyCount : 0,
 
     beachSlots : [
         {squareIndex: 1, titleY: 'top', titleX: 'left', x: 125, y: 240, taken: false},
@@ -86,71 +88,20 @@ gameState = {
     baywatcherCooldownsGroup : null,
 
     preload: function() {
-        //this.game.stage.backgroundColor = "#4488AA";
-        var preloadBarFrame = this.game.add.sprite(this.game.world.centerX - 75, this.game.world.centerY - 25, 'loading');
-        preloadBarFrame.animations.add('preloadBarFrame', [1, 2, 3], 2, true);
-        preloadBarFrame.animations.play('preloadBarFrame');
-
-        var preloadBar = this.game.add.sprite(this.game.world.centerX - 75, this.game.world.centerY - 25, 'loading');
-
-        this.game.load.setPreloadSprite(preloadBar);
-
-        // Just to debug FPS
-        this.time.advancedTiming = true;
-
-        if (debug) {
-            this.game.load.spritesheet('background', 'assets/beach-debug.png', 480, 270);
-        } else {
-            this.game.load.spritesheet('background', 'assets/beach.png', 480, 270);
-        }
-
-        this.difficulty = velocity;
-
-        this.game.load.spritesheet('guiri1', 'assets/guiri1.png', 17, 37);
-        this.game.load.spritesheet('guiri2', 'assets/guiri2.png', 17, 37);
-        this.game.load.spritesheet('guiri3', 'assets/guiri3.png', 17, 37);
-        this.game.load.spritesheet('guiri4', 'assets/guiri4.png', 17, 37);
-        this.game.load.spritesheet('guiri5', 'assets/guiri5.png', 17, 37);
-        this.game.load.spritesheet('guiri6', 'assets/guiri6.png', 17, 37);
-        this.game.load.spritesheet('guiri7', 'assets/guiri7.png', 17, 37);
-        this.game.load.spritesheet('guiri8', 'assets/guiri8.png', 17, 37);
-        this.game.load.spritesheet('icon1', 'assets/icon1.png', 18, 18);
-        this.game.load.spritesheet('icon2', 'assets/icon2.png', 18, 18);
-        this.game.load.spritesheet('icon3', 'assets/icon3.png', 18, 18);
-        this.game.load.spritesheet('icon4', 'assets/icon4.png', 18, 18);
-        this.game.load.spritesheet('icon5', 'assets/icon5.png', 18, 18);
-        this.game.load.spritesheet('icon6', 'assets/icon6.png', 18, 18);
-        this.game.load.spritesheet('icon7', 'assets/icon7.png', 18, 18);
-        this.game.load.spritesheet('icon8', 'assets/icon8.png', 18, 18);
-        this.game.load.spritesheet('like', 'assets/like.png', 20, 20);
-        this.game.load.spritesheet('dislike', 'assets/dislike.png', 20, 20);
-        this.game.load.spritesheet('chiringuito1', 'assets/chiringuito1.png', 80, 80);
-        this.game.load.spritesheet('chiringuito2', 'assets/chiringuito2.png', 80, 80);
-        this.game.load.spritesheet('chiringuito3', 'assets/chiringuito3.png', 80, 80);
-        this.game.load.spritesheet('chiringuito4', 'assets/chiringuito4.png', 80, 80);
-        this.game.load.spritesheet('trash', 'assets/trash.png', 33, 29);
-        this.game.load.spritesheet('baywatcher1', 'assets/baywatcher1.png', 46, 74);
-        this.game.load.spritesheet('baywatcher2', 'assets/baywatcher2.png', 46, 74);
-        this.game.load.spritesheet('baywatcher3', 'assets/baywatcher3.png', 46, 74);
-        this.game.load.spritesheet('towel', 'assets/towels.png', 17, 33);
-        this.game.load.spritesheet('splash', 'assets/splash.png', 50, 50);
-        this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
-        this.game.load.spritesheet('icons', 'assets/icons2.png', 16, 16);
-        this.game.load.spritesheet('bubble', 'assets/bubble.png', 180, 20);
-        this.game.load.spritesheet('refill', 'assets/refill1.png', 28, 36);
-        this.game.load.spritesheet('exit', 'assets/back2.png', 42, 42);
-        this.game.load.spritesheet('price', 'assets/buy.png', 28, 28);
-
-        this.game.load.audio('music', ['audio/music.mp3']);
-        this.game.load.audio('baywatacher', ['audio/baywatcher.mp3']);
-        this.game.load.audio('trash', ['audio/trash.mp3']);
-        this.game.load.audio('coin', ['audio/coin.mp3']);
-        this.game.load.audio('buyguiri', ['audio/buyguiri.mp3']);
-        this.game.load.audio('buy', ['audio/buy.mp3']);
     },
 
     create: function() {
         var _this = this;
+
+        // Level properties
+
+        this.difficulty = velocity,
+        this.money = 250,
+        this.famePercentage = 0,
+        this.trashCost = 50,
+        this.baywatcherCost = 300,
+        this.guirisTotalCount = 0,
+        this.guirisHappyCount = 0,
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
         

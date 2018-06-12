@@ -1,22 +1,22 @@
 <!doctype html> 
 <html lang="en"> 
 <head> 
-	<meta charset="UTF-8" />
-	<title>All for the Cove</title>
-	<style type="text/css">
-		body {
-			background-color: black;
-		}
-		canvas {
-			margin: 50px auto;
-		}
-		@font-face {
+    <meta charset="UTF-8" />
+    <title>All for the Cove</title>
+    <style type="text/css">
+        body {
+            background-color: black;
+        }
+        canvas {
+            margin: 50px auto;
+        }
+        @font-face {
             font-family: 'pixellari';
             font-style: 'normal';
             src: url('fonts/pixellari.ttf');
             font-weight: 100;
         }
-	</style>
+    </style>
 </head>
 <body>
 
@@ -39,18 +39,15 @@
 	gameWidth = 480 * scaleFactor;
 	gameHeight = 270 * scaleFactor;
 
-	game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, '');
+    game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, '');
+    game.state.add("bootState", bootState);
+    game.state.add("loadState", loadState);
+    game.state.add("menuState", menuState);
+    game.state.add("gameState", gameState);
+    game.state.add("howToPlayState", howToPlayState);
+    game.state.add("creditsState", creditsState);
 
-	game.state.add("menuState", menuState);
-	game.state.add("gameState", gameState);
-	game.state.add("howToPlayState", howToPlayState);
-	game.state.add("creditsState", creditsState);
-
-	if (debug) {
-		game.state.start("gameState");
-	} else {
-		game.state.start("menuState");
-	}
+    game.state.start("bootState");
 })();
 </script>
 

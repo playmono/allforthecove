@@ -10,11 +10,17 @@ bootState = {
 
 loadState = {
     preload : function() {
-        preloadBarFrame = this.game.add.sprite(this.game.world.centerX - 75, this.game.world.centerY - 25, 'loading');
+        //this.game.stage.backgroundColor = "#4488AA";
+        var preloadBarFrame = this.game.add.sprite(this.game.world.centerX - 150, this.game.world.centerY - 75, 'loading');
+        preloadBarFrame.scale.set(scaleFactor);
+        preloadBarFrame.smoothed = false;
+
         preloadBarFrame.animations.add('preloadBarFrame', [1, 2, 3], 2, true);
         preloadBarFrame.animations.play('preloadBarFrame');
 
-        preloadBar = this.game.add.sprite(this.game.world.centerX - 75, this.game.world.centerY - 25, 'loading');
+        var preloadBar = this.game.add.sprite(this.game.world.centerX - 150, this.game.world.centerY - 75, 'loading');
+        preloadBar.scale.set(scaleFactor);
+        preloadBar.smoothed = false;
 
         this.game.load.setPreloadSprite(preloadBar);
 

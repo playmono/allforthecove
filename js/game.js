@@ -252,7 +252,7 @@ gameState = {
             //this.game.debug.geom(this.famePercentageText.getBounds());
             //this.game.debug.geom(this.moneyText.getBounds());
 
-            this.game.debug.text(this.rubbishGroup.countLiving(), gameWidth - 50, 80);
+            this.game.debug.text(this.rubbishGroup.length, gameWidth - 50, 80);
 
             this.game.debug.text(levels[this.currentLevel].title, gameWidth - 80, 120);
         }
@@ -285,8 +285,6 @@ gameState = {
     createRubbishLoop: function() {
         var _this = this;
 
-        this.rubbishGroup.classType = Rubbish;
-
         this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
             if (_this.rubbishGroup.children.length >= 24) {
                 return;
@@ -303,7 +301,10 @@ gameState = {
                 var x = _this.rnd.integerInRange(arrRnd.x - 20, arrRnd.x + 20);
                 var y = _this.rnd.integerInRange(arrRnd.y - 20, arrRnd.y + 20);
 
-                this.rubbishGroup.getFirstDead(true, x, y);
+                //this.rubbishGroup.getFirstDead(true, x, y);
+
+                var rubbish = new Rubbish(game, x, y);
+                _this.rubbishGroup.add(rubbish);
             }
         }, this);
     },

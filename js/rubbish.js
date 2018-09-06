@@ -26,12 +26,6 @@ Rubbish = function (game, x, y) {
 Rubbish.prototype = Object.create(Phaser.Sprite.prototype);
 Rubbish.prototype.constructor = Rubbish;
 
-Rubbish.prototype.update = function() {
-    if (!this.alive) {
-        this.destroy();
-    }
-};
-
 Rubbish.prototype.onDragStop = function() {
     var overlap = game.physics.arcade.overlap(this, gameState.trashGroup, this.checkCollision, null, this);
 

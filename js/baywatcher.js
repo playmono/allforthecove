@@ -16,8 +16,6 @@ Baywatcher = function (game, x, y, name) {
 
     this.animations.add('idle', [0, 1, 2, 3], 5, true);
 
-    this.priceInfo = null;
-
     this.alpha = 0.7;
     this.inputEnabled = true;
 
@@ -44,9 +42,8 @@ Baywatcher = function (game, x, y, name) {
         if (!_this.bought) {
             _this.alpha = 0.7;
 
-            if (_this.priceInfo != null) {
-                _this.priceInfo.destroy();
-            }
+            gameState.priceSprite.kill();
+            gameState.priceText.visible = false;
         }
     }, this);
 
@@ -65,7 +62,7 @@ Baywatcher.prototype.click = function() {
 
     if (!this.bought) {
         this.alpha = 1;
-        this.priceInfo = gameState.createPriceInfo(this.centerX - 25, this.centerY - 40, gameState.baywatcherCost);
+        gameState.showPriceInfo(this.centerX - 25, this.centerY - 40, gameState.baywatcherCost);
     }
 }
 

@@ -5,13 +5,15 @@ gameState = {
     famePercentage : 0,
     trashCost : 0,
     baywatcherCost : 0,
-    guirisTotalCount : 0,
-    guirisHappyCount : 0,
+    currentGuirisTotalCount : 0,
+    realGuirisTotalCount : 0,
 
     moneyText : null,
     moneySprite : null,
     famePercentageText : null,
     fameSprite : null,
+
+    currentLevel : 0,
 
     beachSlots : [
         {squareIndex: 1, titleY: 'top', titleX: 'left', x: 125, y: 240, taken: false},
@@ -86,6 +88,7 @@ gameState = {
     notificationsGroup: null,
     cooldownsGroup: null,
     baywatcherCooldownsGroup : null,
+    priceInfo: null,
 
     preload: function() {
     },
@@ -100,8 +103,7 @@ gameState = {
         this.famePercentage = 0,
         this.trashCost = 50,
         this.baywatcherCost = 300,
-        this.guirisTotalCount = 0,
-        this.guirisHappyCount = 0,
+        this.currentGuirisTotalCount = 0,
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
         
@@ -137,6 +139,12 @@ gameState = {
         this.fameSprite.scale.set(scaleFactor);
         this.fameSprite.frame = 25; // 25 = yellow face
 
+        this.refillSprite = null;
+        this.refillText = null;
+
+        this.priceSprite = null;
+        this.priceText = null;
+
         // LAYERS
 
         this.itemsGroup = this.add.group();
@@ -163,11 +171,6 @@ gameState = {
                 taken: false
             })
         }
-
-        this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
-            var guiri = new Guiri(game);
-            _this.guirisGroup.add(guiri);
-        }, this);
 
         this.chiringuitoSlots.forEach(function(chiringuitoSlot) {
             var chiringuito = new Chiringuito(game, chiringuitoSlot.x, chiringuitoSlot.y, chiringuitoSlot.name);
@@ -198,34 +201,10 @@ gameState = {
                 baywatcher.buy(true);
             }
         });
-        /*
-        this.rubbishZones.forEach(function(rubbish) {
-            var rubbish = new Rubbish(game, rubbish.x, rubbish.y);
-            _this.rubbishGroup.add(rubbish);
-        });
-        */
 
-        // Rubbish Generation
-        this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
-            if (this.rubbishGroup.children.length >= 24) {
-                return;
-            }
 
-            var proportion = 4/24;
-            var countGuiris = _this.guirisGroup.length; 
-            var totalRubbishCount = Math.floor(countGuiris * proportion);
-
-            for (i = 0; i < totalRubbishCount; i++) {
-                var rnd = _this.rnd.integerInRange(0, _this.rubbishZones.length - 1);
-                var arrRnd = _this.rubbishZones[rnd];
-
-                var xRubbish = _this.rnd.integerInRange(arrRnd.x - 20, arrRnd.x + 20);
-                var yRubbish = _this.rnd.integerInRange(arrRnd.y - 20, arrRnd.y + 20);
-
-                var rubbish = new Rubbish(game, xRubbish, yRubbish);
-                _this.rubbishGroup.add(rubbish);
-            }
-        }, this);
+        this.createRubbishLoop();
+        this.createGuirisLoop();
 
         var music = game.add.audio("music");
         trashEffect = game.add.audio("trash");
@@ -273,7 +252,9 @@ gameState = {
             //this.game.debug.geom(this.famePercentageText.getBounds());
             //this.game.debug.geom(this.moneyText.getBounds());
 
-            this.game.debug.text(this.game.world.children.length, gameWidth - 50, 80);
+            this.game.debug.text(this.rubbishGroup.countLiving(), gameWidth - 50, 80);
+
+            this.game.debug.text(levels[this.currentLevel].title, gameWidth - 80, 120);
         }
 
         var fameSpriteMap = {
@@ -299,6 +280,41 @@ gameState = {
                 this.fameSprite.frame = fameSpriteMap.red;
             }
         }
+    },
+
+    createRubbishLoop: function() {
+        var _this = this;
+
+        this.rubbishGroup.classType = Rubbish;
+
+        this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
+            if (_this.rubbishGroup.children.length >= 24) {
+                return;
+            }
+
+            var proportion = 4/24;
+            var countGuiris = _this.guirisGroup.length;
+            var totalRubbishCount = Math.floor(countGuiris * proportion);
+
+            for (i = 0; i < totalRubbishCount; i++) {
+                var rnd = _this.rnd.integerInRange(0, _this.rubbishZones.length - 1);
+                var arrRnd = _this.rubbishZones[rnd];
+
+                var x = _this.rnd.integerInRange(arrRnd.x - 20, arrRnd.x + 20);
+                var y = _this.rnd.integerInRange(arrRnd.y - 20, arrRnd.y + 20);
+
+                this.rubbishGroup.getFirstDead(true, x, y);
+            }
+        }, this);
+    },
+
+    createGuirisLoop: function() {
+        var _this = this;
+
+        this.game.time.events.repeat(Phaser.Timer.SECOND * 10 / levels[this.currentLevel].velocity, levels[this.currentLevel].guirisTotalCount, function() {
+            var guiri = new Guiri(game);
+            _this.guirisGroup.add(guiri);
+        }, this);
     },
 
     getUntakenBeachSlot: function(guiri) {
@@ -391,7 +407,29 @@ gameState = {
         this.renderNotification(guiri, x, y);
     },
 
-    renderNotification: function(guiri, x, y) {
+    evaluateGuiriExperience : function(guiri) {
+        this.createNotification(guiri);
+        this.currentGuirisTotalCount++;
+
+        if (guiri.happiness >= 0) {
+            levels[this.currentLevel].guirisHappyCount++;
+        }
+
+        this.famePercentage = parseInt(levels[this.currentLevel].guirisHappyCount * 100 / gameState.currentGuirisTotalCount);
+    },
+
+    checkNextLevel : function() {
+        gameState.realGuirisTotalCount++;
+
+        if (this.realGuirisTotalCount == levels[this.currentLevel].guirisTotalCount) {
+            this.currentGuirisTotalCount = 0;
+            this.realGuirisTotalCount = 0;
+            this.currentLevel++;
+            this.createGuirisLoop();
+        }
+    },
+
+    renderNotification : function(guiri, x, y) {
         var _this = this;
 
         var notification = this.add.group();
@@ -441,11 +479,24 @@ gameState = {
         notificationToDestroy.destroy();
     },
 
-    createPriceInfo: function(x, y, cost, priceInfo) {
-        var priceSprite = gameState.add.sprite(x, y, 'price');
-        priceSprite.alive = false;
-        priceSprite.smoothed = false;
-        priceSprite.scale.set(scaleFactor);
+    // createPriceInfo
+    showPriceInfo: function(x, y, cost, priceInfo) {
+        if (this.priceSprite == null) {
+            this.priceSprite = gameState.add.sprite(x, y, 'price');
+            this.priceSprite.smoothed = false;
+            this.priceSprite.scale.set(scaleFactor);
+        } else {
+            this.priceSprite.revive();
+        }
+
+        this.priceSprite.x = x;
+        this.priceSprite.y = y;
+
+        if (this.priceText == null) {
+            this.priceText = gameState.add.text(0, 0, '');
+        } else {
+            this.priceText.visible = true;
+        }
 
         if (this.money >= cost) {
             var textColor = '#FFFFFF';
@@ -453,13 +504,45 @@ gameState = {
             var textColor = '#FF0000';
         }
 
-        var moneyText = gameState.add.text(priceSprite.x + 28, priceSprite.y + 37, cost, {fill: textColor, font: '14px pixellari', boundsAlignH: 'right'});
-        moneyText.anchor.set(0.5);
+        this.priceText.setStyle({fill: textColor, font: '14px pixellari', boundsAlignH: 'right'});
+        this.priceText.x = this.priceSprite.x + 28;
+        this.priceText.y = this.priceSprite.y + 37;
+        this.priceText.setText(cost)
+        this.priceText.anchor.set(0.5);
+    },
 
-        var priceGroup = this.game.add.group();
-        priceGroup.add(priceSprite);
-        priceGroup.add(moneyText);
+    showRefillInfo: function(chiringuito) {
+        if (this.refillSprite == null) {
+            this.refillSprite = gameState.add.sprite(0, 0, 'refill');
+            this.refillSprite.smoothed = false;
+            this.refillSprite.scale.set(scaleFactor);
+            this.refillSprite.animations.add('refill', [1, 2, 3, 4], 5, true);
 
-        return priceGroup;
+            this.cooldownsGroup.add(this.refillSprite);
+
+            this.refillSprite.animations.play('refill');
+        } else {
+            this.refillSprite.revive();
+        }
+
+        this.refillSprite.x = chiringuito.centerX + 60;
+        this.refillSprite.y = chiringuito.centerY - 15;
+
+        if (this.refillText == null) {
+            this.refillText = gameState.add.text(0, 0, '');
+        } else {
+            this.refillText.visible = true;
+        }
+
+        if (this.money >= chiringuito.stockPrice) {
+            var textColor = '#FFFFFF';
+        } else {
+            var textColor = '#FF0000';
+        }
+
+        this.refillText.setStyle({fill: textColor, font: '16px pixellari', boundsAlignH: 'right'});
+        this.refillText.x = this.refillSprite.x + 25;
+        this.refillText.y = this.refillSprite.y + 50;
+        this.refillText.setText(chiringuito.stockPrice);
     }
 }

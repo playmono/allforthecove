@@ -40,6 +40,8 @@ Guiri = function (game) {
     this.emoji.animations.add('negative', [20, 21, 22, 23], 8, true);
     this.emoji.kill();
 
+    this.emojiTweenFade = null;
+
     // actions
     this.actions = {
         layedOnTowel : null,
@@ -321,7 +323,9 @@ Guiri.prototype.fromMainPathToCity = function() {
 
     movingRoute1.onComplete.add(function() {
         if (_this.beachSlot !== null) {
-            var rubbishCount = gameState.rubbishGroup.length * 2;
+            var rubbishCount = gameState.rubbishGroup.countLiving() * 2;
+
+            console.log(gameState.rubbishGroup.countLiving());
 
             if (_this.happiness >= 0) {
                 _this.actions.clean = (_this.happiness - rubbishCount <= 0) ? false : true;
@@ -329,18 +333,12 @@ Guiri.prototype.fromMainPathToCity = function() {
 
             _this.modifyHappiness(-rubbishCount);
 
-            gameState.createNotification(_this);
-
-            gameState.guirisTotalCount++;
-
-            if (_this.happiness >= 0) {
-                gameState.guirisHappyCount++;
-            }
-
-            gameState.famePercentage = parseInt(gameState.guirisHappyCount * 100 / gameState.guirisTotalCount);
+            gameState.evaluateGuiriExperience(_this);
         }
 
         _this.destroy();
+
+        gameState.checkNextLevel();
     });
 }
 
@@ -383,8 +381,6 @@ Guiri.prototype.fromTowelToChiringuito = function() {
 
 Guiri.prototype.fromMainPathToChiringuito = function() {
     var _this = this;
-
-    this.buyCounter++;
 
     this.animations.play('up');
 
@@ -432,8 +428,6 @@ Guiri.prototype.swimming = function() {
 
     this.isSwimming = true;
 
-    this.swimmingCounter++;
-
     this.animations.play('swim');
 
     this.modifyHappiness(5);
@@ -477,13 +471,18 @@ Guiri.prototype.layOnTowel = function() {
 
     var rnd = gameState.rnd.integerInRange(4, 15);
 
+    // Make decisions
+
     game.time.events.add((Phaser.Timer.SECOND * rnd) / gameState.difficulty, function () {
         var swimProbability = gameState.rnd.integerInRange(0, 100);
         var buyProbability = gameState.rnd.integerInRange(0, 100);
 
         if (swimProbability > (25 + _this.swimmingCounter * 20) && _this.swimmingCounter <= 3) {
+            this.swimmingCounter++;
             _this.fromTowelToWater();
         } else if (buyProbability > (10 + _this.buyCounter * 20) && _this.buyCounter <= 3) {
+            this.buyCounter++;
+
             // GET A CHIRINGUITO BRO!!!
             _this.chiringuito = gameState.getUntakenChiringuito();
 
@@ -578,19 +577,22 @@ Guiri.prototype.modifyHappiness = function(happiness) {
 
     this.emoji.alpha = 1;
 
-    var emojiTweenStatic = gameState.add.tween(this.emoji).to({
-        // @ todo: this should be an event, not a tween
-    }, Phaser.Timer.SECOND * 3 / gameState.difficulty, Phaser.Easing.Linear.None, true);
+    if (this.emojiTweenFade != null && this.emojiTweenFade.isRunning) {
+        this.emojiTweenFade.stop();
+        gameState.tweens.remove(this.emojiTweenFade);
+    }
 
-    emojiTweenStatic.onComplete.add(function() {
-        var emojiTweenFade = gameState.add.tween(_this.emoji).to({
+    this.emojiTweenFade = gameState.add.tween(_this.emoji).to({
             alpha: 0,
-        }, Phaser.Timer.SECOND * 2 / gameState.difficulty, Phaser.Easing.Linear.None, true);
-   
-        emojiTweenFade.onComplete.add(function() {
-            _this.emoji.kill();
-        });
+        },
+        Phaser.Timer.SECOND * 2 / gameState.difficulty,
+        Phaser.Easing.Linear.None,
+        true,
+        Phaser.Timer.SECOND * 3 / gameState.difficulty
+    );
 
+    this.emojiTweenFade.onComplete.add(function() {
+        _this.emoji.kill();
     });
 }
 

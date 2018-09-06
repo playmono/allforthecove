@@ -8,9 +8,6 @@ Chiringuito = function (game, x, y, name) {
     this.stockSprite = null;
     this.stockSpriteMap = [8, 9, 10, 11];
 
-    this.priceInfo = null;
-    this.refillInfo = null;
-
     this.scale.set(scaleFactor);
     this.smoothed = false;
 
@@ -18,6 +15,7 @@ Chiringuito = function (game, x, y, name) {
     this.cost = 100;
     this.stock = 3;
     this.stockPrice = 50;
+    this.maxStock = 3;
     this.isRefreshing = false;
     this.isRefreshed = false;
     this.lastStock = null;
@@ -50,14 +48,14 @@ Chiringuito = function (game, x, y, name) {
         if (!_this.bought) {
             _this.alpha = 0.7;
 
-            if (_this.priceInfo != null) {
-                _this.priceInfo.destroy();
-            }
+            gameState.priceSprite.kill();
+            gameState.priceText.visible = false;
         } else {
-            this.isRefreshing = false;
+            if (gameState.refillSprite != null) {
+                this.isRefreshing = false;
 
-            if (this.refillInfo != null) {
-                this.refillInfo.destroy();
+                gameState.refillSprite.kill();
+                gameState.refillText.visible = false;
             }
         }
     }, this);
@@ -74,7 +72,7 @@ Chiringuito.prototype.update = function() {
      * isRefreshed es la variable que usamos como "flag" entre sumas de stock
      * ya que game.input.activePointer.duration no nos puede dar la duracion exacta
      *************************************/
-    if (this.stock === 3) {
+    if (this.stock === this.maxStock) {
         this.isRefreshing = false;
     }
 
@@ -91,6 +89,11 @@ Chiringuito.prototype.update = function() {
         this.stockSprite.frame = this.stockSpriteMap[this.stock];
 
         this.isRefreshed = true;
+
+        if (this.stock === this.maxStock) {
+            gameState.refillSprite.kill();
+            gameState.refillText.visible = false;
+        }
     }
 
     if (this.game.input.activePointer.duration % 1000 < 900) {
@@ -103,10 +106,10 @@ Chiringuito.prototype.click = function() {
 
     if (!this.bought) {
         this.alpha = 1;
-        this.priceInfo = gameState.createPriceInfo(this.centerX - 20, this.centerY - 50, this.cost);
+        gameState.showPriceInfo(this.centerX - 20, this.centerY - 50, this.cost);
     } else {
-        if (this.stock < 3) {
-            this.createRefillInfo();
+        if (this.stock < this.maxStock) {
+            gameState.showRefillInfo(this);
        
             if (gameState.money >= this.stockPrice) {
                 this.isRefreshing = true;
@@ -160,32 +163,4 @@ Chiringuito.prototype.createStock = function() {
     this.stockSprite.frame = this.stockSpriteMap[3];
 
     gameState.cooldownsGroup.add(this.stockSprite);
-}
-
-Chiringuito.prototype.createRefillInfo = function() {
-    if (this.refillInfo == null) {
-        var refillSprite = gameState.add.sprite(this.centerX + 60, this.centerY - 15, 'refill');
-    } else {
-        refillSprite.revive();
-    }
-
-    refillSprite.smoothed = false;
-    refillSprite.scale.set(scaleFactor);
-    refillSprite.animations.add('refill', [1, 2, 3, 4], 5, true);
-
-    gameState.cooldownsGroup.add(refillSprite);
-
-    refillSprite.animations.play('refill');
-
-    if (gameState.money >= this.stockPrice) {
-        var textColor = '#FFFFFF';
-    } else {
-        var textColor = '#FF0000';
-    }
-
-    var refillText = gameState.add.text(refillSprite.x + 25, refillSprite.y + 50, this.stockPrice, {fill: textColor, font: '16px pixellari', boundsAlignH: 'right'});
-
-    this.refillInfo = this.game.add.group();
-    this.refillInfo.add(refillSprite);
-    this.refillInfo.add(refillText);
 }

@@ -21,6 +21,7 @@
 <body>
 
 <script src="lib/phaser.min.js"></script>
+<script src="js/levels.js"></script>
 <script src="js/guiri.js"></script>
 <script src="js/chiringuito.js"></script>
 <script src="js/baywatcher.js"></script>
@@ -41,6 +42,10 @@
 
     <?php if (array_key_exists('v', $_GET)) { ?>
     velocity = <? echo $_GET['v']; ?>;
+
+    levels.forEach(function(level) {
+        level.velocity = level.velocity * velocity;
+    })
     <?php } else { ?>
     velocity = 1;
     <?php } ?>

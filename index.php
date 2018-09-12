@@ -46,8 +46,6 @@
     levels.forEach(function(level) {
         level.velocity = level.velocity * velocity;
     })
-    <?php } else { ?>
-    velocity = 1;
     <?php } ?>
 
     scaleFactor = 2;

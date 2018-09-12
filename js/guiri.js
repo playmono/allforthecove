@@ -125,7 +125,7 @@ Guiri.prototype.fromCityToMainPath = function() {
 Guiri.prototype.fromMainPathToTowel = function() {
     var _this = this;
 
-    var movingRoute2 = game.add.tween(this);
+    var movingRoute2 = gameState.add.tween(this);
     var movingTransition2 = gameState.add.tween(this);
     var movingRoute3 = gameState.add.tween(this);
     var movingTransition3 = gameState.add.tween(this);
@@ -477,7 +477,9 @@ Guiri.prototype.layOnTowel = function() {
         var swimProbability = gameState.rnd.integerInRange(0, 100);
         var buyProbability = gameState.rnd.integerInRange(0, 100);
 
-        if (swimProbability > (25 + _this.swimmingCounter * 20) && _this.swimmingCounter <= 3) {
+        if (gameState.guirisGroup.countLiving() == 1) {
+            _this.fromTowelToCity();
+        } else if (swimProbability > (25 + _this.swimmingCounter * 20) && _this.swimmingCounter <= 3) {
             this.swimmingCounter++;
             _this.fromTowelToWater();
         } else if (buyProbability > (10 + _this.buyCounter * 20) && _this.buyCounter <= 3) {
@@ -548,6 +550,8 @@ Guiri.prototype.buyInChiringuito = function() {
     var _this = this;
 
     gameState.money += 50;
+    levels[gameState.currentLevel].moneySpent += 50;
+
     this.modifyHappiness(2);
     this.actions.couldBuy = true;
 

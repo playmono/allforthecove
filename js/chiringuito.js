@@ -12,7 +12,7 @@ Chiringuito = function (game, x, y, name) {
     this.smoothed = false;
 
 	this.bought = false;
-    this.cost = 100;
+    this.costOffset = 100;
     this.stock = 3;
     this.stockPrice = 50;
     this.maxStock = 3;
@@ -79,10 +79,7 @@ Chiringuito.prototype.update = function() {
     if (this.isRefreshing && !this.isRefreshed && game.input.activePointer.duration % 1000 > 900) {
         if (this.lastStock == this.stock) {
             gameState.money -= this.stockPrice;
-
-            if (this.refillText != null) {
-                this.refillText.kill();
-            }
+            gameState.refillText.setText('');
         }
 
         this.stock++;
@@ -106,7 +103,7 @@ Chiringuito.prototype.click = function() {
 
     if (!this.bought) {
         this.alpha = 1;
-        gameState.showPriceInfo(this.centerX - 20, this.centerY - 50, this.cost);
+        gameState.showPriceInfo(this.centerX - 20, this.centerY - 50, gameState.chiringuitoCost);
     } else {
         if (this.stock < this.maxStock) {
             gameState.showRefillInfo(this);
@@ -123,7 +120,7 @@ Chiringuito.prototype.doubleClick = function() {
     var _this = this;
 
     if (!this.bought) {
-        if (gameState.money >= this.cost) {
+        if (gameState.money >= gameState.chiringuitoCost) {
            this.buy(false);
         }
     }
@@ -133,7 +130,8 @@ Chiringuito.prototype.buy = function(free) {
     var _this = this;
 
     if (!free) {
-        gameState.money -= this.cost;
+        gameState.money -= gameState.chiringuitoCost;
+        gameState.chiringuitoCost += this.costOffset;
     }
 
     this.alpha = 1;

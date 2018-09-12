@@ -7,6 +7,7 @@ Baywatcher = function (game, x, y, name) {
     this.smoothed = false;
 
     this.bought = false;
+    this.costOffset = 150;
 
     this.exclamationMark = null;
     this.exclamationMarkInitialX = this.centerX - 5;
@@ -79,7 +80,7 @@ Baywatcher.prototype.buy = function(free) {
 
     if (!free) {
         gameState.money -= gameState.baywatcherCost;
-        gameState.baywatcherCost += 150;
+        gameState.baywatcherCost += this.costOffset;
         coinEffect.play();
     }
 
@@ -102,6 +103,7 @@ Baywatcher.prototype.createExclamationMark = function() {
     this.exclamationMark.input.enableDrag(true);
 
     game.physics.arcade.enable(this.exclamationMark);
+    gameState.baywatcherCooldownsGroup.add(this.exclamationMark);
 
     this.exclamationMark.body.setSize(1, 1, 7, 7);
 
@@ -139,6 +141,7 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
         this.startCooldown(distance);
 
         guiri.actions.unalertedByBaywatcher = false;
+        levels[gameState.currentLevel].warningCount++;
     } else if (guiri.isSwimming) {
         guiri.modifyHappiness(-10);
         //guiri.actions.freeActions = false;
@@ -150,6 +153,7 @@ Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
         this.startCooldown(distance);
 
         guiri.actions.unalertedByBaywatcher = false;
+        levels[gameState.currentLevel].warningCount++;
     }
 }
 

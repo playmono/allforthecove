@@ -3,6 +3,7 @@ gameState = {
     difficulty : 0,
     money: 0,
     famePercentage : 0,
+    chiringuitoCost : 0,
     trashCost : 0,
     baywatcherCost : 0,
     currentGuirisTotalCount : 0,
@@ -90,6 +91,13 @@ gameState = {
     baywatcherCooldownsGroup : null,
     priceInfo: null,
 
+    fameSpriteMap : {
+        red: 24,
+        yellow: 25,
+        green: 26,
+        blue: 27
+    },
+
     preload: function() {
     },
 
@@ -98,54 +106,25 @@ gameState = {
 
         // Level properties
 
-        this.difficulty = velocity,
-        this.money = 250,
-        this.famePercentage = 0,
-        this.trashCost = 50,
-        this.baywatcherCost = 300,
-        this.currentGuirisTotalCount = 0,
+        this.difficulty = levels[this.currentLevel].velocity;
+        this.money = 100;
+        this.famePercentage = 0;
+        this.currentGuirisTotalCount = 0;
+
+        this.chiringuitoCost = 150;
+        this.trashCost = 50;
+        this.baywatcherCost = 300;
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
-        
+
+        // LAYERS
+
         var background = this.game.add.sprite(0, 0, 'background');
         background.scale.set(scaleFactor);
         background.smoothed = false;
 
         background.animations.add('idle', [0, 1, 2, 3, 4, 5], 5, true);
         background.animations.play('idle');
-
-        var exit = this.game.add.sprite(gameWidth -70, 15, 'exit');
-        exit.smoothed = false;
-        exit.inputEnabled = true;
-        //exit.scale.set(scaleFactor);
-
-        exit.events.onInputDown.add(function () {
-            _this.state.start("menuState");
-        }, this);
-
-        this.moneyText = this.game.add.text(0, 0, this.money, {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
-        this.moneyText.setTextBounds(gameWidth - 320, 12, 0, 50);
-
-        this.moneySprite = this.game.add.sprite(gameWidth - 310, 6, 'icons');
-        this.moneySprite.smoothed = false;
-        this.moneySprite.scale.set(scaleFactor);
-        this.moneySprite.frame = 13;
-
-        this.famePercentageText = this.game.add.text(0, 0, '0%', {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
-        this.famePercentageText.setTextBounds(gameWidth - 190, 12, 0, 50);
-
-        this.fameSprite = this.game.add.sprite(gameWidth - 180, 8, 'icons');
-        this.fameSprite.smoothed = false;
-        this.fameSprite.scale.set(scaleFactor);
-        this.fameSprite.frame = 25; // 25 = yellow face
-
-        this.refillSprite = null;
-        this.refillText = null;
-
-        this.priceSprite = null;
-        this.priceText = null;
-
-        // LAYERS
 
         this.itemsGroup = this.add.group();
         this.chiringuitosGroup = this.add.group();
@@ -156,6 +135,43 @@ gameState = {
         this.baywatchersGroup = this.add.group();
         this.baywatcherCooldownsGroup = this.add.group();
         this.notificationsGroup = this.add.group();
+        this.ratingsGroup = this.add.group();
+        this.hudGroup = this.add.group();
+
+        var exit = this.game.add.sprite(gameWidth -70, 15, 'exit');
+        exit.smoothed = false;
+        exit.inputEnabled = true;
+        this.hudGroup.add(exit);
+
+        exit.events.onInputDown.add(function () {
+            _this.state.start("menuState");
+        }, this);
+
+        this.moneyText = this.game.add.text(0, 0, this.money, {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
+        this.moneyText.setTextBounds(gameWidth - 320, 12, 0, 50);
+        this.hudGroup.add(this.moneyText);
+
+        this.moneySprite = this.game.add.sprite(gameWidth - 310, 6, 'icons');
+        this.moneySprite.smoothed = false;
+        this.moneySprite.scale.set(scaleFactor);
+        this.moneySprite.frame = 13;
+        this.hudGroup.add(this.moneySprite);
+
+        this.famePercentageText = this.game.add.text(0, 0, '0%', {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
+        this.famePercentageText.setTextBounds(gameWidth - 190, 12, 0, 50);
+        this.hudGroup.add(this.famePercentageText);
+
+        this.fameSprite = this.game.add.sprite(gameWidth - 180, 8, 'icons');
+        this.fameSprite.smoothed = false;
+        this.fameSprite.scale.set(scaleFactor);
+        this.fameSprite.frame = 25; // 25 = yellow face
+        this.hudGroup.add(this.fameSprite);
+
+        this.refillSprite = null;
+        this.refillText = null;
+
+        this.priceSprite = null;
+        this.priceText = null;
 
         var waterPositionY = 420;
         var waterSlotsPositionsX = 0;
@@ -230,7 +246,7 @@ gameState = {
                 }
             });
             
-            //this.game.debug.text('Rubbish generated: ' + this.rubbishGroup.length, gameWidth - 250, 40);
+            //this.game.debug.text('Sprites: ' + this.ratingsGroup.countLiving(), gameWidth - 250, 40);
 
             this.guirisGroup.forEach(function(guiri) {
                 //this.game.debug.text('Happiness: ' + guiri.happiness, guiri.centerX, guiri.centerY, { color: 'black'});
@@ -252,32 +268,25 @@ gameState = {
             //this.game.debug.geom(this.famePercentageText.getBounds());
             //this.game.debug.geom(this.moneyText.getBounds());
 
-            this.game.debug.text(this.rubbishGroup.length, gameWidth - 50, 80);
+            this.game.debug.text(levels[this.currentLevel].moneySpent, gameWidth - 50, 80);
 
             this.game.debug.text(levels[this.currentLevel].title, gameWidth - 80, 120);
         }
 
-        var fameSpriteMap = {
-            red: 24,
-            yellow: 25,
-            green: 26,
-            blue: 27
-        };
-
         this.moneyText.setText(this.money);
         this.famePercentageText.setText(this.famePercentage + '%');
 
-        if (this.guirisTotalCount == 0) {
-            this.fameSprite.frame = fameSpriteMap.yellow;
+        if (this.currentGuirisTotalCount == 0) {
+            this.fameSprite.frame = this.fameSpriteMap.yellow;
         } else {
             if (this.famePercentage > 80) {
-                this.fameSprite.frame = fameSpriteMap.blue;
+                this.fameSprite.frame = this.fameSpriteMap.blue;
             } else if (this.famePercentage > 60) {
-                this.fameSprite.frame = fameSpriteMap.green;
+                this.fameSprite.frame = this.fameSpriteMap.green;
             } else if (this.famePercentage > 40) {
-                this.fameSprite.frame = fameSpriteMap.yellow;
+                this.fameSprite.frame = this.fameSpriteMap.yellow;
             } else {
-                this.fameSprite.frame = fameSpriteMap.red;
+                this.fameSprite.frame = this.fameSpriteMap.red;
             }
         }
     },
@@ -286,13 +295,17 @@ gameState = {
         var _this = this;
 
         this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
-            if (_this.rubbishGroup.children.length >= 24) {
+            if (_this.rubbishGroup.countLiving() >= 24) {
                 return;
             }
 
             var proportion = 4/24;
-            var countGuiris = _this.guirisGroup.length;
+            var countGuiris = _this.guirisGroup.countLiving();
             var totalRubbishCount = Math.floor(countGuiris * proportion);
+
+            if (totalRubbishCount == 0) {
+                totalRubbishCount = 1;
+            }
 
             for (i = 0; i < totalRubbishCount; i++) {
                 var rnd = _this.rnd.integerInRange(0, _this.rubbishZones.length - 1);
@@ -312,7 +325,7 @@ gameState = {
     createGuirisLoop: function() {
         var _this = this;
 
-        this.game.time.events.repeat(Phaser.Timer.SECOND * 10 / levels[this.currentLevel].velocity, levels[this.currentLevel].guirisTotalCount, function() {
+        this.game.time.events.repeat(Phaser.Timer.SECOND * 10 / this.difficulty, levels[this.currentLevel].guirisTotalCount, function() {
             var guiri = new Guiri(game);
             _this.guirisGroup.add(guiri);
         }, this);
@@ -419,18 +432,225 @@ gameState = {
         this.famePercentage = parseInt(levels[this.currentLevel].guirisHappyCount * 100 / gameState.currentGuirisTotalCount);
     },
 
-    checkNextLevel : function() {
+    checkNextLevel: function() {
         gameState.realGuirisTotalCount++;
 
-        if (this.realGuirisTotalCount == levels[this.currentLevel].guirisTotalCount) {
-            this.currentGuirisTotalCount = 0;
-            this.realGuirisTotalCount = 0;
-            this.currentLevel++;
-            this.createGuirisLoop();
+        if (this.realGuirisTotalCount != levels[this.currentLevel].guirisTotalCount) {
+            return;
+        }
+
+        this.showRatings();
+    },
+
+    showRatings: function() {
+        var _this = this;
+
+        this.itemsGroup.kill();
+        this.chiringuitosGroup.kill();
+        this.trashGroup.kill();
+        this.cooldownsGroup.kill();
+        this.rubbishGroup.kill();
+        this.guirisGroup.kill();
+        this.baywatchersGroup.kill();
+        this.baywatcherCooldownsGroup.kill();
+        this.notificationsGroup.kill();
+        this.hudGroup.kill();
+
+        var rating = gameState.add.sprite(gameState.world.centerX, gameState.world.centerY, 'rating');
+        rating.anchor.setTo(0.5, 0.5);
+        rating.smoothed = false;
+        rating.scale.set(scaleFactor);
+
+        this.ratingsGroup.add(rating);
+
+        rating.events.onInputDown.addOnce(function() {
+            _this.ratingsGroup.removeAll(true);
+
+            _this.itemsGroup.revive();
+            _this.chiringuitosGroup.revive();
+            _this.trashGroup.revive();
+            _this.cooldownsGroup.revive();
+            _this.rubbishGroup.revive();
+            _this.guirisGroup.revive();
+            _this.baywatchersGroup.revive();
+            _this.baywatcherCooldownsGroup.revive();
+            _this.notificationsGroup.revive();
+            _this.hudGroup.revive();
+
+            _this.nextLevel();
+        }, this);
+
+        var startY = 155;
+        var startX = 190;
+
+        for (var i = 0; i < this.currentLevel; i++) {
+            this.renderDayRating(levels[i], startX, startY, false);
+            startX += 85;
+        }
+
+        var lastTween = this.renderDayRating(levels[this.currentLevel], startX, startY, true);
+
+        lastTween.onComplete.add(function() {
+            rating.inputEnabled = true;
+        });
+    },
+
+    nextLevel: function() {
+        this.currentLevel++;
+        this.currentGuirisTotalCount = 0;
+        this.realGuirisTotalCount = 0;
+        this.famePercentage = 0;
+        this.difficulty = levels[this.currentLevel].velocity;
+
+        this.rubbishGroup.removeAll(true);
+
+        this.chiringuitosGroup.forEach(function(chiringuito) {
+            if (chiringuito.bought) {
+                chiringuito.stock = 3;
+                chiringuito.stockSprite.frame = 11;
+            }
+        });
+
+        this.createGuirisLoop();
+    },
+
+    renderDayRating: function(level, startX, startY, fadeIn) {
+        var textStyle = {font: '24px pixellari', boundsAlignH: 'right'};
+
+        var visitorsSprite = gameState.add.sprite(startX, startY, 'visitors');
+        visitorsSprite.smoothed = false;
+        visitorsSprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(visitorsSprite);
+
+        var visitorsCounter = gameState.add.text(startX + 40, startY + 10, level.guirisTotalCount);
+        visitorsCounter.setStyle(textStyle);
+        this.ratingsGroup.add(visitorsCounter);
+
+        var likeSprite = gameState.add.sprite(startX - 15, startY + 45, 'like');
+        likeSprite.smoothed = false;
+        likeSprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(likeSprite);
+
+        var likesCounter = gameState.add.text(startX + 40, startY + 55, level.guirisHappyCount);
+        likesCounter.setStyle(textStyle);
+        this.ratingsGroup.add(likesCounter);
+
+        var dislikeSprite = gameState.add.sprite(startX - 15, startY + 80, 'dislike');
+        dislikeSprite.smoothed = false;
+        dislikeSprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(dislikeSprite);
+
+        var dislikesCounter = gameState.add.text(startX + 40, startY + 89, level.guirisTotalCount - level.guirisHappyCount);
+        dislikesCounter.setStyle(textStyle);
+        this.ratingsGroup.add(dislikesCounter);
+
+        var hapinessSprite = gameState.add.sprite(startX + 10, startY + 125, 'icons');
+        hapinessSprite.smoothed = false;
+        hapinessSprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(hapinessSprite);
+
+        var happinessPercentatge = (level.guirisHappyCount * 100 / level.guirisTotalCount);
+
+        if (happinessPercentatge > 80) {
+            hapinessSprite.frame = this.fameSpriteMap.blue;
+        } else if (happinessPercentatge > 60) {
+            hapinessSprite.frame = this.fameSpriteMap.green;
+        } else if (happinessPercentatge > 40) {
+            hapinessSprite.frame = this.fameSpriteMap.yellow;
+        } else {
+            hapinessSprite.frame = this.fameSpriteMap.red;
+        }
+
+        var happinessPercentatgeText = gameState.add.text(startX + 10, startY + 160, happinessPercentatge + '%');
+        happinessPercentatgeText.setStyle(textStyle);
+        this.ratingsGroup.add(happinessPercentatgeText);
+
+        var rubbishSprite = gameState.add.sprite(startX - 7, startY + 190, 'rubbish');
+        rubbishSprite.frame = 4;
+        rubbishSprite.smoothed = false;
+        rubbishSprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(rubbishSprite);
+
+        var rubbishCounter = gameState.add.text(startX + 40, startY + 197, level.rubbishCleaned);
+        rubbishCounter.setStyle(textStyle);
+        this.ratingsGroup.add(rubbishCounter);
+
+        var whistleSprite = gameState.add.sprite(startX - 3, startY + 232, 'icons');
+        whistleSprite.frame = 12;
+        whistleSprite.smoothed = false;
+        whistleSprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(whistleSprite);
+
+        var warningCounter = gameState.add.text(startX + 40, startY + 235, level.warningCount);
+        warningCounter.setStyle(textStyle);
+        this.ratingsGroup.add(warningCounter);
+
+        var moneySprite = gameState.add.sprite(startX + 15, startY + 275, 'icons');
+        moneySprite.frame = 13;
+        moneySprite.smoothed = false;
+        moneySprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(moneySprite);
+
+        var moneySpent = gameState.add.text(startX + 20, startY + 315, level.moneySpent);
+        moneySpent.setStyle(textStyle);
+        this.ratingsGroup.add(moneySpent);
+
+        if (fadeIn) {
+            visitorsCounter.alpha = 0;
+            likesCounter.alpha = 0;
+            dislikesCounter.alpha = 0;
+            happinessPercentatgeText.alpha = 0;
+            rubbishCounter.alpha = 0;
+            warningCounter.alpha = 0;
+            moneySpent.alpha = 0;
+
+            visitorsCounter.x += 10;
+            likesCounter.x += 10;
+            dislikesCounter.x += 10;
+            happinessPercentatge.x += 10;
+            rubbishCounter.x += 10;
+            warningCounter.x += 10;
+            moneySpent.x += 10;
+
+            var visitorsCounterFadeIn = gameState.add.tween(visitorsCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, false, Phaser.Timer.SECOND);
+            var likesCounterFadeIn = gameState.add.tween(likesCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+            var dislikesCounterFadeIn = gameState.add.tween(dislikesCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+            var happinessPercentatgeFadeIn = gameState.add.tween(happinessPercentatgeText).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+            var rubbishCounterFadeIn = gameState.add.tween(rubbishCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+            var warningCounterFadeIn = gameState.add.tween(warningCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+            var moneySpentCounterFadeIn = gameState.add.tween(moneySpent).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+
+            visitorsCounterFadeIn.onComplete.add(function() {
+                likesCounterFadeIn.start();
+            });
+
+            likesCounterFadeIn.onComplete.add(function() {
+                dislikesCounterFadeIn.start();
+            })
+
+            dislikesCounterFadeIn.onComplete.add(function() {
+                happinessPercentatgeFadeIn.start();
+            });
+
+            happinessPercentatgeFadeIn.onComplete.add(function() {
+                rubbishCounterFadeIn.start();
+            });
+
+            rubbishCounterFadeIn.onComplete.add(function() {
+                warningCounterFadeIn.start();
+            });
+
+            warningCounterFadeIn.onComplete.add(function() {
+                moneySpentCounterFadeIn.start();
+            })
+
+            visitorsCounterFadeIn.start();
+
+            return moneySpentCounterFadeIn;
         }
     },
 
-    renderNotification : function(guiri, x, y) {
+    renderNotification: function(guiri, x, y) {
         var _this = this;
 
         var notification = this.add.group();

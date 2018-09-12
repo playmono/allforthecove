@@ -8,8 +8,10 @@ Rubbish = function (game, x, y) {
 
     var _this = this;
 
+    this.moneyReward = 5;
     this.initialX = this.x;
     this.initialY = this.y;
+    this.alpha = 0;
 
     this.scale.set(scaleFactor);
     this.smoothed = false;
@@ -20,6 +22,8 @@ Rubbish = function (game, x, y) {
     this.events.onDragStop.add(this.onDragStop, this);
 
     game.physics.arcade.enable(this);
+
+    gameState.add.tween(this).to({alpha: 1}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, true);
 };
 
 Rubbish.prototype = Object.create(Phaser.Sprite.prototype);
@@ -49,7 +53,9 @@ Rubbish.prototype.checkCollision = function(rubbish, trash) {
 
         trash.startCooldown(distance);
 
-        gameState.money += 5;
+        gameState.money += this.moneyReward;
+        levels[gameState.currentLevel].rubbishCleaned++;
+        levels[gameState.currentLevel].moneySpent += this.moneyReward;
     } else {
         this.x = this.initialX;
         this.y = this.initialY;

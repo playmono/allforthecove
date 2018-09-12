@@ -10,7 +10,7 @@ levels = [
     }, 
     {
         title: 'Tuesday',
-        guirisTotalCount: 10,
+        guirisTotalCount: 7,
         velocity: 1.5,
         guirisHappyCount: 0,
         rubbishCleaned: 0,

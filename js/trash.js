@@ -4,6 +4,8 @@ Trash = function (game, x, y) {
     var _this = this;
 
     this.bought = false;
+    this.costOffset = 30;
+
     this.isInCooldown = false;
 
     this.scale.set(scaleFactor);
@@ -71,11 +73,11 @@ Trash.prototype.doubleClick = function() {
 }
 
 Trash.prototype.buy = function(free) {
-    _this = this;
+    var _this = this;
 
     if (!free) {
         gameState.money -= gameState.trashCost;
-        gameState.trashCost += 20;
+        gameState.trashCost += this.costOffset;
     }
 
     this.alpha = 1;

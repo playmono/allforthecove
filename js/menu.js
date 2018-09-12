@@ -74,6 +74,8 @@ loadState = {
         this.game.load.spritesheet('refill', 'assets/refill1.png', 28, 36);
         this.game.load.spritesheet('exit', 'assets/back2.png', 42, 42);
         this.game.load.spritesheet('price', 'assets/buy.png', 28, 28);
+        this.game.load.image('rating', 'assets/ratings.png', 330, 250);
+        this.game.load.image('visitors', 'assets/visitors.png', 10, 20);
     },
 
     create : function() {
@@ -126,7 +128,6 @@ menuState = {
 
 howToPlayState = {
     preload :  function() {
-
         this.game.load.image('tutorial', 'assets/tutorial.png', 480, 270);
         this.game.load.image('story', 'assets/story.png', 480, 270);
         this.game.load.image('title', 'assets/title.png', 480, 270);
@@ -175,7 +176,7 @@ creditsState = {
     },
 
     create : function () {
-        _this = this;
+        var _this = this;
 
         this.add.text(50, 100, "All for the Cove", {fill: "white", font: "50px pixellari"});
         this.add.text(50, 170, "Game Design: Noé Fernández", {fill: "white", font: "24px pixellari"});

@@ -79,6 +79,7 @@ loadState = {
         this.game.load.spritesheet('price', 'assets/buy.png', 28, 28);
         this.game.load.image('rating', 'assets/ratings.png', 330, 250);
         this.game.load.image('visitors', 'assets/visitors.png', 10, 20);
+        this.game.load.image('gameover', 'assets/gameover1.png', 480, 270);
     },
 
     create : function() {

@@ -107,12 +107,12 @@ gameState = {
     create: function() {
         var _this = this;
 
-        // Level properties
+        this.currentLevel = 0;
 
-        this.difficulty = levels[this.currentLevel].velocity;
-        this.money = 100;
+        // Level properties
         this.famePercentage = 0;
         this.currentGuirisTotalCount = 0;
+        this.money = levels[this.currentLevel].startMoney;
 
         this.chiringuitoCost = 150;
         this.trashCost = 50;
@@ -221,16 +221,14 @@ gameState = {
             }
         });
 
-
-        this.createRubbishLoop();
-        this.createGuirisLoop();
-
         var music = game.add.audio("music");
         trashEffect = game.add.audio("trash");
         buyGuiriEffect = game.add.audio("buyguiri");
         coinEffect = game.add.audio("coin");
 
         music.play();
+
+        this.startLevel();
     },
 
     update: function() {
@@ -338,6 +336,47 @@ gameState = {
         gameState.time.events.repeat(Phaser.Timer.SECOND * 10 / gameState.difficulty, (levels[gameState.currentLevel].guirisTotalCount - 1), function() {
             var guiri = new Guiri(game);
             gameState.guirisGroup.add(guiri);
+        });
+    },
+
+    startLevel: function() {
+        var _this = this;
+
+        this.currentGuirisTotalCount = 0;
+        this.realGuirisTotalCount = 0;
+        this.famePercentage = 0;
+        this.difficulty = levels[this.currentLevel].velocity;
+        this.money = levels[this.currentLevel].startMoney;
+
+        levels[this.currentLevel].moneySpent = 0;
+        levels[this.currentLevel].warningCount = 0;
+        levels[this.currentLevel].rubbishCleaned = 0;
+        levels[this.currentLevel].guirisHappyCount = 0;
+
+        this.background.revive();
+        gameState.itemsGroup.revive();
+        gameState.chiringuitosGroup.revive();
+        gameState.trashGroup.revive();
+        gameState.cooldownsGroup.revive();
+        gameState.rubbishGroup.revive();
+        gameState.guirisGroup.revive();
+        gameState.baywatchersGroup.revive();
+        gameState.baywatcherCooldownsGroup.revive();
+        gameState.notificationsGroup.revive();
+        gameState.hudGroup.revive();
+
+        this.rubbishGroup.removeAll(true);
+
+        this.chiringuitosGroup.forEach(function(chiringuito) {
+            if (chiringuito.bought) {
+                chiringuito.stock = 3;
+                chiringuito.stockSprite.frame = 11;
+            }
+        });
+
+        this.fadeAll(0x696969, 0xffffff, Phaser.Timer.SECOND * 2, function() {
+            _this.createGuirisLoop();
+            _this.createRubbishLoop();
         });
     },
 
@@ -478,18 +517,13 @@ gameState = {
         rating.events.onInputDown.addOnce(function() {
             gameState.ratingsGroup.removeAll(true);
 
-            gameState.itemsGroup.revive();
-            gameState.chiringuitosGroup.revive();
-            gameState.trashGroup.revive();
-            gameState.cooldownsGroup.revive();
-            gameState.rubbishGroup.revive();
-            gameState.guirisGroup.revive();
-            gameState.baywatchersGroup.revive();
-            gameState.baywatcherCooldownsGroup.revive();
-            gameState.notificationsGroup.revive();
-            gameState.hudGroup.revive();
-
-            gameState.nextLevel();
+            if (gameState.famePercentage <= 40) {
+                gameState.gameOver();
+            } else {
+                gameState.currentLevel++;
+                levels[gameState.currentLevel].startMoney = gameState.money;
+                gameState.startLevel();
+            }
         });
 
         var startY = 155;
@@ -504,30 +538,6 @@ gameState = {
 
         lastTween.onComplete.add(function() {
             rating.inputEnabled = true;
-        });
-    },
-
-    nextLevel: function() {
-        var _this = this;
-
-        this.currentLevel++;
-        this.currentGuirisTotalCount = 0;
-        this.realGuirisTotalCount = 0;
-        this.famePercentage = 0;
-        this.difficulty = levels[this.currentLevel].velocity;
-
-        this.rubbishGroup.removeAll(true);
-
-        this.chiringuitosGroup.forEach(function(chiringuito) {
-            if (chiringuito.bought) {
-                chiringuito.stock = 3;
-                chiringuito.stockSprite.frame = 11;
-            }
-        });
-
-        this.fadeAll(0x696969, 0xffffff, Phaser.Timer.SECOND * 2, function() {
-            _this.createGuirisLoop();
-            _this.createRubbishLoop();
         });
     },
 
@@ -837,5 +847,41 @@ gameState = {
         tintBackground.start();
 
         return tintBackground;
+    },
+
+    gameOver: function() {
+        var _this = this;
+
+        this.background.kill();
+
+        var gameOverBackground = gameState.add.sprite(0, 0, 'gameover');
+        gameOverBackground.smoothed = false;
+        gameOverBackground.scale.set(scaleFactor);
+
+        var tryAgainButton = this.add.image(345, 10, 'button');
+        tryAgainButton.scale.set(scaleFactor);
+        tryAgainButton.smoothed = false;
+        tryAgainButton.inputEnabled = true;
+        var tryAgainText = this.add.text(365, 35, "Intentarlo otra vez", {fill: "yellow", font: "30px pixellari"});
+
+        var mainMenuButton = this.add.image(645, 10, 'button');
+        mainMenuButton.scale.set(scaleFactor);
+        mainMenuButton.smoothed = false;
+        mainMenuButton.inputEnabled = true;
+        var mainMenuText = this.add.text(695, 35, "Menú principal", {fill: "yellow", font: "30px pixellari"});
+
+        tryAgainButton.events.onInputDown.add(function () {
+            gameOverBackground.destroy();
+            tryAgainButton.destroy();
+            mainMenuButton.destroy();
+            tryAgainText.destroy();
+            mainMenuText.destroy();
+
+            _this.startLevel();
+        }, this);
+
+        mainMenuButton.events.onInputDown.add(function () {
+            _this.state.start("menuState");
+        }, this);
     }
 }

@@ -7,7 +7,7 @@ Baywatcher = function (game, x, y, name) {
     this.smoothed = false;
 
     this.bought = false;
-    this.costOffset = 150;
+    this.costOffset = 250;
 
     this.exclamationMark = null;
     this.exclamationMarkInitialX = this.centerX - 5;

@@ -12,7 +12,7 @@ Chiringuito = function (game, x, y, name) {
     this.smoothed = false;
 
 	this.bought = false;
-    this.costOffset = 100;
+    this.costOffset = 150;
     this.stock = 3;
     this.stockPrice = 50;
     this.maxStock = 3;

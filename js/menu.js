@@ -27,6 +27,9 @@ loadState = {
         // Just to debug FPS
         this.time.advancedTiming = true;
 
+        this.game.load.image('title', 'assets/titlemenu2.png', 480, 270);
+        this.game.load.image('button', 'assets/button1.png', 140, 40);
+        
         if (debug) {
             this.game.load.spritesheet('background', 'assets/beach-debug.png', 480, 270);
         } else {
@@ -99,25 +102,43 @@ menuState = {
 
         this.game.sound.stopAll();
 
-        this.add.text(300, 100, "All for the Cove", {fill: "white", font: "50px pixellari"});
+        var background = this.game.add.image(0, 0, 'title');
+        background.scale.set(scaleFactor);
+        background.smoothed = false;
 
-        var startGameText = this.add.text(120, 200, "Empezar Juego", {fill: "white", font: "50px pixellari"});
-        var howtoPlayText = this.add.text(120, 300, "Cómo jugar", {fill: "white", font: "50px pixellari"});
-        var creditsText = this.add.text(120, 400, "Credits", {fill: "white", font: "50px pixellari"});
+        var startButton = this.add.image(35, 250, 'button');
+        startButton.scale.set(scaleFactor);
+        startButton.smoothed = false;
+        this.add.text(75, 275, "Empezar Juego", {fill: "yellow", font: "30px pixellari"});
 
-        startGameText.inputEnabled = true;
-        howtoPlayText.inputEnabled = true;
-        creditsText.inputEnabled = true;
+        var endlessModeButton = this.add.image(35, 350, 'button');
+        endlessModeButton.scale.set(scaleFactor);
+        endlessModeButton.smoothed = false;
+        this.add.text(95, 375, "Modo Infinito", {fill: "yellow", font: "30px pixellari"});
 
-        startGameText.events.onInputDown.add(function () {
+        var howToPlayButton = this.add.image(35, 450, 'button');
+        howToPlayButton.scale.set(scaleFactor);
+        howToPlayButton.smoothed = false;
+        this.add.text(105, 475, "Cómo jugar", {fill: "yellow", font: "30px pixellari"});
+
+        var creditsButton = this.add.image(650, 450, 'button');
+        creditsButton.scale.set(scaleFactor);
+        creditsButton.smoothed = false;
+        this.add.text(745, 475, "Créditos", {fill: "yellow", font: "30px pixellari"});
+
+        startButton.inputEnabled = true;
+        howToPlayButton.inputEnabled = true;
+        creditsButton.inputEnabled = true;
+
+        startButton.events.onInputDown.add(function () {
             _this.state.start("gameState");
         }, this);
 
-        howtoPlayText.events.onInputDown.add(function () {
+        howToPlayButton.events.onInputDown.add(function () {
             _this.state.start("howToPlayState");
         }, this);
 
-        creditsText.events.onInputDown.add(function () {
+        creditsButton.events.onInputDown.add(function () {
             _this.state.start("creditsState");
         }, this);
     },

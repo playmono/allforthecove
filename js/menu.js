@@ -27,7 +27,7 @@ loadState = {
         // Just to debug FPS
         this.time.advancedTiming = true;
 
-        this.game.load.image('title', 'assets/titlemenu2.png', 480, 270);
+        this.game.load.image('title', 'assets/title.png', 480, 270);
         this.game.load.image('button', 'assets/button1.png', 140, 40);
         
         if (debug) {
@@ -107,46 +107,71 @@ menuState = {
         background.scale.set(scaleFactor);
         background.smoothed = false;
 
-        var startButton = this.add.image(35, 250, 'button');
+        var startButton = this.add.button(35, 250, 'button');
         startButton.scale.set(scaleFactor);
         startButton.smoothed = false;
-        this.add.text(75, 275, "Empezar Juego", {fill: "yellow", font: "30px pixellari"});
 
-        var endlessModeButton = this.add.image(35, 350, 'button');
+        var startText = this.add.text(startButton.x + startButton.width / 2, startButton.y + startButton.height / 2, "Empezar Juego", {fill: "yellow", font: "30px pixellari"});
+        startText.anchor.set(0.5);
+
+        var endlessModeButton = this.add.button(35, 350, 'button');
         endlessModeButton.scale.set(scaleFactor);
         endlessModeButton.smoothed = false;
-        this.add.text(95, 375, "Modo Infinito", {fill: "yellow", font: "30px pixellari"});
+        
+        var endlessModeText = this.add.text(endlessModeButton.x + endlessModeButton.width / 2, endlessModeButton.y + endlessModeButton.height / 2, "Modo Infinito", {fill: "yellow", font: "30px pixellari"});
+        endlessModeText.anchor.set(0.5);
 
-        var howToPlayButton = this.add.image(35, 450, 'button');
+        var howToPlayButton = this.add.button(35, 450, 'button');
         howToPlayButton.scale.set(scaleFactor);
         howToPlayButton.smoothed = false;
-        this.add.text(105, 475, "Cómo jugar", {fill: "yellow", font: "30px pixellari"});
+        
+        var howToPlayText = this.add.text(howToPlayButton.x + howToPlayButton.width / 2, howToPlayButton.y + howToPlayButton.height / 2, "Cómo jugar", {fill: "yellow", font: "30px pixellari"});
+        howToPlayText.anchor.set(0.5);
 
-        var creditsButton = this.add.image(650, 450, 'button');
+        var creditsButton = this.add.button(650, 450, 'button');
         creditsButton.scale.set(scaleFactor);
         creditsButton.smoothed = false;
-        this.add.text(745, 475, "Créditos", {fill: "yellow", font: "30px pixellari"});
+        
+        var creditsText = this.add.text(creditsButton.x + creditsButton.width / 2, creditsButton.y + creditsButton.height / 2, "Créditos", {fill: "yellow", font: "30px pixellari"});
+        creditsText.anchor.set(0.5);
 
-        startButton.inputEnabled = true;
-        howToPlayButton.inputEnabled = true;
-        creditsButton.inputEnabled = true;
-
-        startButton.events.onInputDown.add(function () {
-            _this.state.start("gameState");
+        startButton.onInputUp.add(function () {
+            _this.state.start("beforePlayState");
         }, this);
 
-        howToPlayButton.events.onInputDown.add(function () {
+        howToPlayButton.onInputUp.add(function () {
             _this.state.start("howToPlayState");
         }, this);
 
-        creditsButton.events.onInputDown.add(function () {
+        creditsButton.onInputUp.add(function () {
             _this.state.start("creditsState");
         }, this);
     },
 
     update : function() {
     }
-}
+},
+
+beforePlayState = {
+    preload : function() {
+        this.game.load.image('story', 'assets/story.png', 480, 270);
+    },
+
+    create : function() {
+        var _this = this;
+
+        var background = this.game.add.image(0, 0, 'story');
+        background.scale.set(scaleFactor);
+        background.smoothed = false;
+
+        background.inputEnabled = true;
+        background.input.useHandCursor = true;
+
+        background.events.onInputDown.add(function () {
+            _this.state.start("gameState");
+        }, this);
+    }
+},
 
 howToPlayState = {
     preload :  function() {
@@ -158,33 +183,23 @@ howToPlayState = {
     create : function() {
         var _this = this;
 
-        a = this.game.add.image(0, 0, 'title');
-        a.scale.set(scaleFactor);
-        a.smoothed = false;
+        b = this.game.add.image(0, 0, 'story');
+        b.scale.set(scaleFactor);
+        b.smoothed = false;
 
-        a.inputEnabled = true;
+        b.inputEnabled = true;
 
-        a.events.onInputDown.add(function () {
-            b = this.game.add.image(0, 0, 'story');
-            b.scale.set(scaleFactor);
-            b.smoothed = false;
+        b.events.onInputDown.add(function () {
+            c = this.game.add.image(0, 0, 'tutorial');
+            c.scale.set(scaleFactor);
+            c.smoothed = false;
 
-            b.inputEnabled = true;
+            c.inputEnabled = true;
 
-            b.events.onInputDown.add(function () {
-                c = this.game.add.image(0, 0, 'tutorial');
-                c.scale.set(scaleFactor);
-                c.smoothed = false;
-
-                c.inputEnabled = true;
-
-                c.events.onInputDown.add(function () {
-                    _this.state.start("menuState");
-                }, this);
-            });
-
-        }, this);
-
+            c.events.onInputDown.add(function () {
+                _this.state.start("menuState");
+            }, this);
+        });
     },
 
     update : function() {

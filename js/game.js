@@ -144,6 +144,7 @@ gameState = {
         var exit = this.game.add.sprite(gameWidth -70, 15, 'exit');
         exit.smoothed = false;
         exit.inputEnabled = true;
+        exit.input.useHandCursor = true;
         this.hudGroup.add(exit);
 
         exit.events.onInputDown.add(function () {
@@ -374,7 +375,7 @@ gameState = {
             }
         });
 
-        this.fadeAll(0x696969, 0xffffff, Phaser.Timer.SECOND * 2, function() {
+        this.fadeAll(0x213263, 0xffffff, Phaser.Timer.SECOND * 2, function() {
             _this.createGuirisLoop();
             _this.createRubbishLoop();
         });
@@ -490,7 +491,7 @@ gameState = {
 
         game.time.events.remove(this.rubbishLoop);
 
-        this.fadeAll(0xffffff, 0x696969, Phaser.Timer.SECOND * 2, this.showRatings);
+        this.fadeAll(0xffffff, 0x213263, Phaser.Timer.SECOND * 2, this.showRatings);
     },
 
     showRatings: function() {
@@ -513,6 +514,11 @@ gameState = {
         rating.scale.set(scaleFactor);
 
         gameState.ratingsGroup.add(rating);
+
+        var ratingText = gameState.add.text(gameState.world.centerX, 75, "Valoración del turismo" , {fill: "black", font: "36px pixellari"});
+        ratingText.anchor.setTo(0.5);
+        //ratingText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+        gameState.ratingsGroup.add(ratingText);
 
         rating.events.onInputDown.addOnce(function() {
             gameState.ratingsGroup.removeAll(true);
@@ -571,26 +577,15 @@ gameState = {
         dislikesCounter.setStyle(textStyle);
         this.ratingsGroup.add(dislikesCounter);
 
-        var hapinessSprite = gameState.add.sprite(startX + 10, startY + 125, 'icons');
-        hapinessSprite.smoothed = false;
-        hapinessSprite.scale.set(scaleFactor);
-        this.ratingsGroup.add(hapinessSprite);
+        var moneySprite = gameState.add.sprite(startX + 10, startY + 125, 'icons');
+        moneySprite.frame = 13;
+        moneySprite.smoothed = false;
+        moneySprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(moneySprite);
 
-        var happinessPercentatge = Math.floor(level.guirisHappyCount * 100 / level.guirisTotalCount);
-
-        if (happinessPercentatge > 80) {
-            hapinessSprite.frame = this.fameSpriteMap.blue;
-        } else if (happinessPercentatge > 60) {
-            hapinessSprite.frame = this.fameSpriteMap.green;
-        } else if (happinessPercentatge > 40) {
-            hapinessSprite.frame = this.fameSpriteMap.yellow;
-        } else {
-            hapinessSprite.frame = this.fameSpriteMap.red;
-        }
-
-        var happinessPercentatgeText = gameState.add.text(startX + 10, startY + 160, happinessPercentatge + '%');
-        happinessPercentatgeText.setStyle(textStyle);
-        this.ratingsGroup.add(happinessPercentatgeText);
+        var moneySpent = gameState.add.text(startX + 10, startY + 160, level.moneySpent);
+        moneySpent.setStyle(textStyle);
+        this.ratingsGroup.add(moneySpent);
 
         var rubbishSprite = gameState.add.sprite(startX - 7, startY + 190, 'rubbish');
         rubbishSprite.frame = 4;
@@ -612,40 +607,51 @@ gameState = {
         warningCounter.setStyle(textStyle);
         this.ratingsGroup.add(warningCounter);
 
-        var moneySprite = gameState.add.sprite(startX + 15, startY + 275, 'icons');
-        moneySprite.frame = 13;
-        moneySprite.smoothed = false;
-        moneySprite.scale.set(scaleFactor);
-        this.ratingsGroup.add(moneySprite);
+        var hapinessSprite = gameState.add.sprite(startX + 15, startY + 275, 'icons');
+        hapinessSprite.smoothed = false;
+        hapinessSprite.scale.set(scaleFactor);
+        this.ratingsGroup.add(hapinessSprite);
 
-        var moneySpent = gameState.add.text(startX + 20, startY + 315, level.moneySpent);
-        moneySpent.setStyle(textStyle);
-        this.ratingsGroup.add(moneySpent);
+        var happinessPercentatge = Math.floor(level.guirisHappyCount * 100 / level.guirisTotalCount);
+
+        if (happinessPercentatge > 80) {
+            hapinessSprite.frame = this.fameSpriteMap.blue;
+        } else if (happinessPercentatge > 60) {
+            hapinessSprite.frame = this.fameSpriteMap.green;
+        } else if (happinessPercentatge > 40) {
+            hapinessSprite.frame = this.fameSpriteMap.yellow;
+        } else {
+            hapinessSprite.frame = this.fameSpriteMap.red;
+        }
+
+        var happinessPercentatgeText = gameState.add.text(startX + 20, startY + 315, happinessPercentatge + '%');
+        happinessPercentatgeText.setStyle(textStyle);
+        this.ratingsGroup.add(happinessPercentatgeText);
 
         if (fadeIn) {
             visitorsCounter.alpha = 0;
             likesCounter.alpha = 0;
             dislikesCounter.alpha = 0;
-            happinessPercentatgeText.alpha = 0;
+            moneySpent.alpha = 0;
             rubbishCounter.alpha = 0;
             warningCounter.alpha = 0;
-            moneySpent.alpha = 0;
+            happinessPercentatgeText.alpha = 0;
 
             visitorsCounter.x += 10;
             likesCounter.x += 10;
             dislikesCounter.x += 10;
-            happinessPercentatge.x += 10;
+            moneySpent.x += 10;
             rubbishCounter.x += 10;
             warningCounter.x += 10;
-            moneySpent.x += 10;
+            happinessPercentatge.x += 10;
 
             var visitorsCounterFadeIn = gameState.add.tween(visitorsCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, false, Phaser.Timer.SECOND);
             var likesCounterFadeIn = gameState.add.tween(likesCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
             var dislikesCounterFadeIn = gameState.add.tween(dislikesCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
-            var happinessPercentatgeFadeIn = gameState.add.tween(happinessPercentatgeText).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+            var moneySpentCounterFadeIn = gameState.add.tween(moneySpent).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
             var rubbishCounterFadeIn = gameState.add.tween(rubbishCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
             var warningCounterFadeIn = gameState.add.tween(warningCounter).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
-            var moneySpentCounterFadeIn = gameState.add.tween(moneySpent).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
+            var happinessPercentatgeFadeIn = gameState.add.tween(happinessPercentatgeText).to({alpha: 1, x: '-10'}, Phaser.Timer.SECOND / 2);
 
             visitorsCounterFadeIn.onComplete.add(function() {
                 likesCounterFadeIn.start();
@@ -656,10 +662,10 @@ gameState = {
             })
 
             dislikesCounterFadeIn.onComplete.add(function() {
-                happinessPercentatgeFadeIn.start();
+                moneySpentCounterFadeIn.start();
             });
 
-            happinessPercentatgeFadeIn.onComplete.add(function() {
+            moneySpentCounterFadeIn.onComplete.add(function() {
                 rubbishCounterFadeIn.start();
             });
 
@@ -668,7 +674,7 @@ gameState = {
             });
 
             warningCounterFadeIn.onComplete.add(function() {
-                moneySpentCounterFadeIn.start();
+                happinessPercentatgeFadeIn.start();
             })
 
             visitorsCounterFadeIn.start();
@@ -858,19 +864,21 @@ gameState = {
         gameOverBackground.smoothed = false;
         gameOverBackground.scale.set(scaleFactor);
 
-        var tryAgainButton = this.add.image(345, 10, 'button');
+        var tryAgainButton = this.add.button(345, 10, 'button');
         tryAgainButton.scale.set(scaleFactor);
         tryAgainButton.smoothed = false;
-        tryAgainButton.inputEnabled = true;
-        var tryAgainText = this.add.text(365, 35, "Intentarlo otra vez", {fill: "yellow", font: "30px pixellari"});
 
-        var mainMenuButton = this.add.image(645, 10, 'button');
+        var tryAgainText = this.add.text(tryAgainButton.x + tryAgainButton.width / 2, tryAgainButton.y + tryAgainButton.height / 2, "Intentarlo otra vez", {fill: "yellow", font: "30px pixellari"});
+        tryAgainText.anchor.set(0.5);
+
+        var mainMenuButton = this.add.button(645, 10, 'button');
         mainMenuButton.scale.set(scaleFactor);
         mainMenuButton.smoothed = false;
-        mainMenuButton.inputEnabled = true;
-        var mainMenuText = this.add.text(695, 35, "Menú principal", {fill: "yellow", font: "30px pixellari"});
 
-        tryAgainButton.events.onInputDown.add(function () {
+        var mainMenuText = this.add.text(mainMenuButton.x + mainMenuButton.width / 2, mainMenuButton.y + mainMenuButton.height / 2, "Menú principal", {fill: "yellow", font: "30px pixellari"});
+        mainMenuText.anchor.set(0.5);
+
+        tryAgainButton.onInputUp.add(function () {
             gameOverBackground.destroy();
             tryAgainButton.destroy();
             mainMenuButton.destroy();
@@ -880,7 +888,7 @@ gameState = {
             _this.startLevel();
         }, this);
 
-        mainMenuButton.events.onInputDown.add(function () {
+        mainMenuButton.onInputUp.add(function () {
             _this.state.start("menuState");
         }, this);
     }

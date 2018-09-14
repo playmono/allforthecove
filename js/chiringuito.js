@@ -24,6 +24,7 @@ Chiringuito = function (game, x, y, name) {
 
     this.alpha = 0.7;
     this.inputEnabled = true;
+    this.input.useHandCursor = true;
 
     this.dblClickTrigger = false;
     this.events.onInputDown.add(function () {
@@ -72,6 +73,12 @@ Chiringuito.prototype.update = function() {
      * isRefreshed es la variable que usamos como "flag" entre sumas de stock
      * ya que game.input.activePointer.duration no nos puede dar la duracion exacta
      *************************************/
+    if (!this.bought || this.stock < 3) {
+        this.input.useHandCursor = true;
+    } else {
+        this.input.useHandCursor = false;
+    }
+
     if (this.stock === this.maxStock) {
         this.isRefreshing = false;
     }

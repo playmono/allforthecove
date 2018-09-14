@@ -2,9 +2,8 @@ Rubbish = function (game, x, y) {
     Phaser.Sprite.call(this, game, x, y, 'rubbish');
 
     this.inputEnabled = true;
-    this.input.enableDrag(true);
-
-    gameState.world.bringToTop(this);
+    this.input.enableDrag(true, true);
+    this.input.useHandCursor = true;
 
     var _this = this;
 
@@ -19,7 +18,7 @@ Rubbish = function (game, x, y) {
 
     this.enableBody = true;
 
-    this.events.onDragStop.add(this.onDragStop, this);
+    this.events.onDragStart.add(this.onDragStart, this);
 
     game.physics.arcade.enable(this);
 

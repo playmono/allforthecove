@@ -19,6 +19,7 @@ Baywatcher = function (game, x, y, name) {
 
     this.alpha = 0.7;
     this.inputEnabled = true;
+    this.input.useHandCursor = true;
 
     this.dblClickTrigger = false;
     this.events.onInputDown.add(function () {
@@ -87,6 +88,7 @@ Baywatcher.prototype.buy = function(free) {
     this.alpha = 1;
     this.bought = true;
     this.animations.play('idle');
+    this.input.useHandCursor = false;
 
     _this.createExclamationMark();
 }
@@ -100,7 +102,8 @@ Baywatcher.prototype.createExclamationMark = function() {
     this.exclamationMark.frame = 12;
 
     this.exclamationMark.inputEnabled = true;
-    this.exclamationMark.input.enableDrag(true);
+    this.exclamationMark.input.enableDrag(true, true);
+    this.exclamationMark.input.useHandCursor = true;
 
     game.physics.arcade.enable(this.exclamationMark);
     gameState.baywatcherCooldownsGroup.add(this.exclamationMark);

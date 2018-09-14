@@ -56,6 +56,7 @@
     game.state.add("bootState", bootState);
     game.state.add("loadState", loadState);
     game.state.add("menuState", menuState);
+    game.state.add("beforePlayState", beforePlayState);
     game.state.add("gameState", gameState);
     game.state.add("howToPlayState", howToPlayState);
     game.state.add("creditsState", creditsState);

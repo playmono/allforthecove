@@ -12,6 +12,7 @@ Trash = function (game, x, y) {
     this.smoothed = false;
     this.alpha = 0.7;
     this.inputEnabled = true;
+    this.input.useHandCursor = true;
 
     this.mapFrame = {
         unbought : 1,
@@ -83,6 +84,7 @@ Trash.prototype.buy = function(free) {
     this.alpha = 1;
     this.bought = true;
     this.frame = this.mapFrame.bought;
+    this.input.useHandCursor = false;
 }
 
 Trash.prototype.startCooldown = function(distance) {

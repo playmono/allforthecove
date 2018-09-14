@@ -325,8 +325,6 @@ Guiri.prototype.fromMainPathToCity = function() {
         if (_this.beachSlot !== null) {
             var rubbishCount = gameState.rubbishGroup.countLiving() * 2;
 
-            console.log(gameState.rubbishGroup.countLiving());
-
             if (_this.happiness >= 0) {
                 _this.actions.clean = (_this.happiness - rubbishCount <= 0) ? false : true;
             }

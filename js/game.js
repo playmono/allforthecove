@@ -101,6 +101,16 @@ gameState = {
         blue: 27
     },
 
+    weekdaysTitlesMap : {
+        'Monday' : 'Lunes',
+        'Tuesday' : 'Martes',
+        'Wednesday' : 'Miércoles',
+        'Thursday' : 'Jueves',
+        'Friday' : 'Viernes',
+        'Saturday' : 'Sábado',
+        'Sunday' : 'Domingo'
+    },
+
     preload: function() {
     },
 
@@ -375,10 +385,51 @@ gameState = {
             }
         });
 
+        var graphic = game.add.graphics(0, 0);
+        graphic.beginFill(0x000000, 0.8);
+        graphic.drawRect(this.background.x, (this.background.y + this.background.height / 2) - 100, this.background.width, 1);
+        graphic.endFill();
+
+        var bar = game.add.sprite(this.background.x, (this.background.y + this.background.height / 2) - 100, graphic.generateTexture());
+        graphic.destroy();
+
+        var dayTitle = this.weekdaysTitlesMap[levels[this.currentLevel].title];
+        var dayText = _this.add.text(-50, bar.y + bar.height / 2, dayTitle, {fill: "white", font: "30px pixellari"});
+        dayText.anchor.set(0.5, 0.5);
+
+        var openDayBar = gameState.add.tween(bar).to({height: 50, y: '-30px'}, Phaser.Timer.SECOND / 2);
+        var closeDayBar = gameState.add.tween(bar).to({height: 0, y: '+30px'}, Phaser.Timer.SECOND / 2);
+        var moveText = gameState.add.tween(dayText).to({x: game.world.x + game.world.width / 2}, Phaser.Timer.SECOND / 2);
+        var moveText2 = gameState.add.tween(dayText).to({x: game.world.width + 50}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, false, Phaser.Timer.SECOND * 1);
+
+        openDayBar.onStart.add(function() {
+            moveText.start();
+        });
+
+        moveText.onComplete.add(function() {
+            moveText2.start();
+        })
+
+        moveText2.onComplete.add(function() {
+            closeDayBar.start();
+        });
+
+        closeDayBar.onComplete.add(function() {
+            dayText.destroy();
+            /*
+            _this.fadeAll(0x213263, 0xffffff, Phaser.Timer.SECOND * 2, function() {
+                _this.createGuirisLoop();
+                _this.createRubbishLoop();
+            });
+            */
+        })
+
         this.fadeAll(0x213263, 0xffffff, Phaser.Timer.SECOND * 2, function() {
             _this.createGuirisLoop();
             _this.createRubbishLoop();
         });
+
+        openDayBar.start();
     },
 
     getUntakenBeachSlot: function(guiri) {
@@ -817,21 +868,11 @@ gameState = {
         this.chiringuitosGroup.forEach(function(chiringuito) {
             var fadeChiringuito = _this.tweenTint(chiringuito, startColor, endColor, time);
             fadeChiringuito.start();
-
-            if (chiringuito.stockSprite != null) {
-                var fadeChiringuitoStock = _this.tweenTint(chiringuito.stockSprite, startColor, endColor, time);
-                fadeChiringuitoStock.start();
-            }
         });
 
         this.baywatchersGroup.forEach(function(baywatcher) {
             var fadeBaywatcher = _this.tweenTint(baywatcher, startColor, endColor, time);
             fadeBaywatcher.start();
-
-            if (baywatcher.exclamationMark != null) {
-                var fadeExclamationMark = _this.tweenTint(baywatcher.exclamationMark, startColor, endColor, time);
-                fadeExclamationMark.start();
-            }
         });
 
         this.trashGroup.forEach(function(trash) {
@@ -842,6 +883,16 @@ gameState = {
         this.rubbishGroup.forEach(function(rubbish) {
             var fadeRubbish = _this.tweenTint(rubbish, startColor, endColor, time);
             fadeRubbish.start();
+        });
+
+        this.cooldownsGroup.forEach(function(cooldown) {
+            var fadeCooldown = _this.tweenTint(cooldown, startColor, endColor, time);
+            fadeCooldown.start();
+        });
+
+        this.baywatcherCooldownsGroup.forEach(function(cooldown) {
+            var fadeCooldown = _this.tweenTint(cooldown, startColor, endColor, time);
+            fadeCooldown.start();
         });
 
         var tintBackground = this.tweenTint(this.background, startColor, endColor, time);
@@ -860,36 +911,40 @@ gameState = {
 
         this.background.kill();
 
-        var gameOverBackground = gameState.add.sprite(0, 0, 'gameover');
+        var gameOverBackground = gameState.add.sprite(-50, -50, 'gameover');
         gameOverBackground.smoothed = false;
         gameOverBackground.scale.set(scaleFactor);
 
-        var tryAgainButton = this.add.button(345, 10, 'button');
-        tryAgainButton.scale.set(scaleFactor);
-        tryAgainButton.smoothed = false;
+        game.camera.shake(0.05, Phaser.Timer.SECOND / 2);
 
-        var tryAgainText = this.add.text(tryAgainButton.x + tryAgainButton.width / 2, tryAgainButton.y + tryAgainButton.height / 2, "Intentarlo otra vez", {fill: "yellow", font: "30px pixellari"});
-        tryAgainText.anchor.set(0.5);
+        game.time.events.add(Phaser.Timer.SECOND / 2 + Phaser.Timer.SECOND / 4, function () {
+            var tryAgainButton = _this.add.button(345, 10, 'button');
+            tryAgainButton.scale.set(scaleFactor);
+            tryAgainButton.smoothed = false;
 
-        var mainMenuButton = this.add.button(645, 10, 'button');
-        mainMenuButton.scale.set(scaleFactor);
-        mainMenuButton.smoothed = false;
+            var tryAgainText = _this.add.text(tryAgainButton.x + tryAgainButton.width / 2, tryAgainButton.y + tryAgainButton.height / 2, "Intentarlo otra vez", {fill: "yellow", font: "30px pixellari"});
+            tryAgainText.anchor.set(0.5);
 
-        var mainMenuText = this.add.text(mainMenuButton.x + mainMenuButton.width / 2, mainMenuButton.y + mainMenuButton.height / 2, "Menú principal", {fill: "yellow", font: "30px pixellari"});
-        mainMenuText.anchor.set(0.5);
+            var mainMenuButton = _this.add.button(645, 10, 'button');
+            mainMenuButton.scale.set(scaleFactor);
+            mainMenuButton.smoothed = false;
 
-        tryAgainButton.onInputUp.add(function () {
-            gameOverBackground.destroy();
-            tryAgainButton.destroy();
-            mainMenuButton.destroy();
-            tryAgainText.destroy();
-            mainMenuText.destroy();
+            var mainMenuText = _this.add.text(mainMenuButton.x + mainMenuButton.width / 2, mainMenuButton.y + mainMenuButton.height / 2, "Menú principal", {fill: "yellow", font: "30px pixellari"});
+            mainMenuText.anchor.set(0.5);
 
-            _this.startLevel();
-        }, this);
+            tryAgainButton.onInputUp.add(function () {
+                gameOverBackground.destroy();
+                tryAgainButton.destroy();
+                mainMenuButton.destroy();
+                tryAgainText.destroy();
+                mainMenuText.destroy();
 
-        mainMenuButton.onInputUp.add(function () {
-            _this.state.start("menuState");
-        }, this);
+                _this.startLevel();
+            }, _this);
+
+            mainMenuButton.onInputUp.add(function () {
+                _this.state.start("menuState");
+            }, _this);
+        }, _this);
     }
 }

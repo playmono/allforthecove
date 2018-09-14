@@ -18,7 +18,7 @@ Rubbish = function (game, x, y) {
 
     this.enableBody = true;
 
-    this.events.onDragStart.add(this.onDragStart, this);
+    this.events.onDragStop.add(this.onDragStop, this);
 
     game.physics.arcade.enable(this);
 

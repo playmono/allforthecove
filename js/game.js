@@ -102,13 +102,13 @@ gameState = {
     },
 
     weekdaysTitlesMap : {
-        'Monday' : 'Lunes',
-        'Tuesday' : 'Martes',
-        'Wednesday' : 'Miércoles',
-        'Thursday' : 'Jueves',
-        'Friday' : 'Viernes',
-        'Saturday' : 'Sábado',
-        'Sunday' : 'Domingo'
+        'Monday' : 'LUNES',
+        'Tuesday' : 'MARTES',
+        'Wednesday' : 'MIÉRCOLES',
+        'Thursday' : 'JUEVES',
+        'Friday' : 'VIERNES',
+        'Saturday' : 'SÁBADO',
+        'Sunday' : 'DOMINGO'
     },
 
     preload: function() {
@@ -307,11 +307,11 @@ gameState = {
         var _this = this;
 
         this.rubbishLoop = this.time.events.loop(Phaser.Timer.SECOND * 10 / this.difficulty, function() {
-            if (_this.rubbishGroup.countLiving() >= 24) {
+            if (_this.rubbishGroup.countLiving() >= 18) {
                 return;
             }
 
-            var proportion = 4/24;
+            var proportion = 3/24;
             var countGuiris = _this.guirisGroup.countLiving();
             var totalRubbishCount = Math.floor(countGuiris * proportion);
 
@@ -376,31 +376,27 @@ gameState = {
         gameState.notificationsGroup.revive();
         gameState.hudGroup.revive();
 
-        this.rubbishGroup.removeAll(true);
-
-        this.chiringuitosGroup.forEach(function(chiringuito) {
-            if (chiringuito.bought) {
-                chiringuito.stock = 3;
-                chiringuito.stockSprite.frame = 11;
-            }
-        });
+        game.input.enabled = false;
 
         var graphic = game.add.graphics(0, 0);
         graphic.beginFill(0x000000, 0.8);
-        graphic.drawRect(this.background.x, (this.background.y + this.background.height / 2) - 100, this.background.width, 1);
+        graphic.drawRect(0, 0, this.background.width, 1);
         graphic.endFill();
 
-        var bar = game.add.sprite(this.background.x, (this.background.y + this.background.height / 2) - 100, graphic.generateTexture());
+        var bar = game.add.sprite(this.background.x, (this.background.y + this.background.height / 2), graphic.generateTexture());
         graphic.destroy();
 
+        var maxHeight = 80;
+        var minY = maxHeight / 2;
+
         var dayTitle = this.weekdaysTitlesMap[levels[this.currentLevel].title];
-        var dayText = _this.add.text(-50, bar.y + bar.height / 2, dayTitle, {fill: "white", font: "30px pixellari"});
+        var dayText = _this.add.text(-100, ((bar.y - minY) + maxHeight / 2) + 5, dayTitle, {fill: "white", font: "40px pixellari"});
         dayText.anchor.set(0.5, 0.5);
 
-        var openDayBar = gameState.add.tween(bar).to({height: 50, y: '-30px'}, Phaser.Timer.SECOND / 2);
-        var closeDayBar = gameState.add.tween(bar).to({height: 0, y: '+30px'}, Phaser.Timer.SECOND / 2);
+        var openDayBar = gameState.add.tween(bar).to({height: maxHeight, y: '-40px'}, Phaser.Timer.SECOND / 2);
+        var closeDayBar = gameState.add.tween(bar).to({height: 0, y: '+40px'}, Phaser.Timer.SECOND / 2);
         var moveText = gameState.add.tween(dayText).to({x: game.world.x + game.world.width / 2}, Phaser.Timer.SECOND / 2);
-        var moveText2 = gameState.add.tween(dayText).to({x: game.world.width + 50}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, false, Phaser.Timer.SECOND * 1);
+        var moveText2 = gameState.add.tween(dayText).to({x: game.world.width + 100}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, false, Phaser.Timer.SECOND * 1);
 
         openDayBar.onStart.add(function() {
             moveText.start();
@@ -416,20 +412,52 @@ gameState = {
 
         closeDayBar.onComplete.add(function() {
             dayText.destroy();
-            /*
-            _this.fadeAll(0x213263, 0xffffff, Phaser.Timer.SECOND * 2, function() {
-                _this.createGuirisLoop();
-                _this.createRubbishLoop();
-            });
-            */
-        })
+        });
 
         this.fadeAll(0x213263, 0xffffff, Phaser.Timer.SECOND * 2, function() {
+            _this.chiringuitosGroup.forEach(function(chiringuito) {
+                if (chiringuito.bought) {
+                    chiringuito.stock = 3;
+                    chiringuito.stockSprite.frame = 11;
+                }
+            });
+
+            game.input.enabled = true;
+
             _this.createGuirisLoop();
             _this.createRubbishLoop();
         });
 
         openDayBar.start();
+    },
+
+    checkNextLevel: function() {
+        var _this = this;
+
+        gameState.realGuirisTotalCount++;
+
+        if (this.realGuirisTotalCount != levels[this.currentLevel].guirisTotalCount) {
+            return;
+        }
+
+        game.input.enabled = false;
+
+        this.fadeAll(0xffffff, 0x213263, Phaser.Timer.SECOND * 2, function() {
+            game.input.enabled = true;
+            game.time.events.remove(_this.rubbishLoop);
+
+            _this.rubbishGroup.removeAll(true);
+
+            _this.trashGroup.forEach(function(trash) {
+                trash.stopCooldown();
+            });
+
+            _this.baywatchersGroup.forEach(function(baywatcher) {
+                baywatcher.stopCooldown();
+            });
+
+            _this.showRatings();
+        });
     },
 
     getUntakenBeachSlot: function(guiri) {
@@ -533,18 +561,6 @@ gameState = {
         this.famePercentage = Math.floor(levels[this.currentLevel].guirisHappyCount * 100 / gameState.currentGuirisTotalCount);
     },
 
-    checkNextLevel: function() {
-        gameState.realGuirisTotalCount++;
-
-        if (this.realGuirisTotalCount != levels[this.currentLevel].guirisTotalCount) {
-            return;
-        }
-
-        game.time.events.remove(this.rubbishLoop);
-
-        this.fadeAll(0xffffff, 0x213263, Phaser.Timer.SECOND * 2, this.showRatings);
-    },
-
     showRatings: function() {
         // We are using gameState instead of this because context reasons
 
@@ -595,6 +611,7 @@ gameState = {
 
         lastTween.onComplete.add(function() {
             rating.inputEnabled = true;
+            rating.input.useHandCursor = true;
         });
     },
 
@@ -915,7 +932,7 @@ gameState = {
         gameOverBackground.smoothed = false;
         gameOverBackground.scale.set(scaleFactor);
 
-        game.camera.shake(0.05, Phaser.Timer.SECOND / 2);
+        game.camera.shake(0.01, Phaser.Timer.SECOND * 0.35);
 
         game.time.events.add(Phaser.Timer.SECOND / 2 + Phaser.Timer.SECOND / 4, function () {
             var tryAgainButton = _this.add.button(345, 10, 'button');

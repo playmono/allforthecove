@@ -14,6 +14,13 @@ Trash = function (game, x, y) {
     this.inputEnabled = true;
     this.input.useHandCursor = true;
 
+    this.cooldownSprite = gameState.add.sprite(this.centerX, this.centerY, 'icons');
+    this.cooldownSprite.smoothed = false;
+    this.cooldownSprite.scale.set(scaleFactor);
+    gameState.cooldownsGroup.add(this.cooldownSprite);
+
+    this.cooldownSprite.kill();
+
     this.mapFrame = {
         unbought : 1,
         bought: 0
@@ -91,23 +98,18 @@ Trash.prototype.startCooldown = function(distance) {
     var _this = this;
 
     this.isInCooldown = true;
-
-    var cooldownSprite = gameState.add.sprite(this.centerX, this.centerY, 'icons');
-    cooldownSprite.smoothed = false;
-    cooldownSprite.scale.set(scaleFactor);
+    this.cooldownSprite.revive();
 
     var seconds = Phaser.Timer.SECOND * (distance / 40);
     var fps = 4 / (seconds / Phaser.Timer.SECOND);
 
-    cooldownSprite.animations.add('cooldown', [7, 6, 5, 4], fps, false);
+    this.cooldownSprite.animations.add('cooldown', [7, 6, 5, 4], fps, false);
+    this.cooldownSprite.animations.play('cooldown');
 
-    cooldownSprite.animations.play('cooldown');
+    game.time.events.add(seconds, this.stopCooldown, this);
+}
 
-    gameState.cooldownsGroup.add(cooldownSprite);
-
-    game.time.events.add(seconds, function () {
-        _this.isInCooldown = false;
-
-        cooldownSprite.destroy();
-    });
+Trash.prototype.stopCooldown = function() {
+    this.isInCooldown = false;
+    this.cooldownSprite.kill();
 }

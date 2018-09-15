@@ -13,6 +13,12 @@ Baywatcher = function (game, x, y, name) {
     this.exclamationMarkInitialX = this.centerX - 5;
     this.exclamationMarkInitialY = this.centerY + 24;
 
+    this.cooldownSprite = gameState.add.sprite(this.exclamationMarkInitialX, this.exclamationMarkInitialY, 'icons');
+    this.cooldownSprite.smoothed = false;
+    this.cooldownSprite.scale.set(scaleFactor);
+    this.cooldownSprite.kill();
+    gameState.baywatcherCooldownsGroup.add(this.cooldownSprite);
+
     this.isInCooldown = false;
 
     this.animations.add('idle', [0, 1, 2, 3], 5, true);
@@ -165,25 +171,23 @@ Baywatcher.prototype.startCooldown = function(distance) {
 
     this.isInCooldown = true;
     this.exclamationMark.kill();
-
-    var cooldownSprite = gameState.add.sprite(this.exclamationMarkInitialX, this.exclamationMarkInitialY, 'icons');
-    cooldownSprite.smoothed = false;
-    cooldownSprite.scale.set(scaleFactor);
+    this.cooldownSprite.revive();
 
     var seconds = Phaser.Timer.SECOND * (distance / 40);
     var fps = 4 / (seconds / Phaser.Timer.SECOND);
 
-    cooldownSprite.animations.add('cooldown', [3, 2, 1, 0], fps, false);
+    this.cooldownSprite.revive();
+    this.cooldownSprite.animations.add('cooldown', [3, 2, 1, 0], fps, false);
+    this.cooldownSprite.animations.play('cooldown');
 
-    cooldownSprite.animations.play('cooldown');
+    game.time.events.add(seconds, this.stopCooldown, this);
+}
 
-    gameState.baywatcherCooldownsGroup.add(cooldownSprite);
+Baywatcher.prototype.stopCooldown = function() {
+    this.isInCooldown = false;
+    this.cooldownSprite.kill();
 
-    game.time.events.add(seconds, function () {
-        _this.isInCooldown = false;
-
-        cooldownSprite.destroy();
-
-        _this.exclamationMark.revive();
-    });
+    if (this.exclamationMark != null) {
+        this.exclamationMark.revive();
+    }
 }

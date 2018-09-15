@@ -526,7 +526,7 @@ Guiri.prototype.doSplash = function() {
             destroySplash.onComplete.add(function() {
                 _this.modifyHappiness(5);
                 _this.actions.didSplash = true;
-
+                _this.isSplashing = false;
                 _this.splash.destroy();
 
                 gameState.guirisGroup.forEach(function(guiri) {

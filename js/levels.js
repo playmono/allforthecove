@@ -12,7 +12,7 @@ levels = [
     {
         title: 'Tuesday',
         guirisTotalCount: 7,
-        velocity: 1.5,
+        velocity: 1.3,
         startMoney: 0,
         guirisHappyCount: 0,
         rubbishCleaned: 0,
@@ -22,7 +22,7 @@ levels = [
     {
         title: 'Wednesday',
         guirisTotalCount: 15,
-        velocity: 2,
+        velocity: 1.6,
         startMoney: 0,
         guirisHappyCount: 0,
         rubbishCleaned: 0,
@@ -32,7 +32,7 @@ levels = [
     {
         title: 'Thursday',
         guirisTotalCount: 20,
-        velocity: 2.5,
+        velocity: 1.9,
         startMoney: 0,
         guirisHappyCount: 0,
         rubbishCleaned: 0,
@@ -42,7 +42,7 @@ levels = [
     {
         title: 'Friday',
         guirisTotalCount: 25,
-        velocity: 3,
+        velocity: 2.2,
         startMoney: 0,
         guirisHappyCount: 0,
         rubbishCleaned: 0,
@@ -52,7 +52,7 @@ levels = [
     {
         title: 'Saturday',
         guirisTotalCount: 30,
-        velocity: 3.5,
+        velocity: 2.5,
         startMoney: 0,
         guirisHappyCount: 0,
         rubbishCleaned: 0,
@@ -62,7 +62,7 @@ levels = [
     {
         title: 'Sunday',
         guirisTotalCount: 35,
-        velocity: 4,
+        velocity: 2.8,
         startMoney: 0,
         guirisHappyCount: 0,
         rubbishCleaned: 0,

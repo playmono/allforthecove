@@ -27,7 +27,7 @@ loadState = {
         // Just to debug FPS
         this.time.advancedTiming = true;
 
-        this.game.load.image('title', 'assets/title.png', 480, 270);
+        this.game.load.spritesheet('title', 'assets/titlemenu.png', 480, 270);
         this.game.load.image('button', 'assets/button1.png', 140, 40);
         
         if (debug) {
@@ -80,6 +80,9 @@ loadState = {
         this.game.load.image('rating', 'assets/ratings.png', 330, 250);
         this.game.load.image('visitors', 'assets/visitors.png', 10, 20);
         this.game.load.image('gameover', 'assets/gameover1.png', 480, 270);
+        this.game.load.image('exitpanel', 'assets/exitbox1.png', 270, 120);
+        this.game.load.image('exitbutton', 'assets/exitbutton.png', 90, 42);
+        this.game.load.image('resumebutton', 'assets/resumebutton.png', 90, 42);
     },
 
     create : function() {
@@ -103,9 +106,11 @@ menuState = {
 
         this.game.sound.stopAll();
 
-        var background = this.game.add.image(0, 0, 'title');
+        var background = this.game.add.sprite(0, 0, 'title');
         background.scale.set(scaleFactor);
         background.smoothed = false;
+        background.animations.add('idle', [0, 1, 2, 3, 4, 5], 5, true);
+        background.animations.play('idle');
 
         var startButton = this.add.button(35, 250, 'button');
         startButton.scale.set(scaleFactor);

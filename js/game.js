@@ -150,6 +150,7 @@ gameState = {
         this.notificationsGroup = this.add.group();
         this.ratingsGroup = this.add.group();
         this.hudGroup = this.add.group();
+        this.exitPanelGroup = this.add.group();
 
         var exit = this.game.add.sprite(gameWidth -70, 15, 'exit');
         exit.smoothed = false;
@@ -158,7 +159,7 @@ gameState = {
         this.hudGroup.add(exit);
 
         exit.events.onInputDown.add(function () {
-            _this.state.start("menuState");
+            _this.showExitPanel();
         }, this);
 
         this.moneyText = this.game.add.text(0, 0, this.money, {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
@@ -341,12 +342,16 @@ gameState = {
         gameState.time.events.add(Phaser.Timer.SECOND * 3 / gameState.difficulty, function(){
             var guiri = new Guiri(game);
             gameState.guirisGroup.add(guiri);
+
+            guiri.fromCityToMainPath();
         });
 
         // Rest of guiris at 10 / difficulty
         gameState.time.events.repeat(Phaser.Timer.SECOND * 10 / gameState.difficulty, (levels[gameState.currentLevel].guirisTotalCount - 1), function() {
             var guiri = new Guiri(game);
             gameState.guirisGroup.add(guiri);
+
+            guiri.fromCityToMainPath();
         });
     },
 
@@ -364,17 +369,7 @@ gameState = {
         levels[this.currentLevel].rubbishCleaned = 0;
         levels[this.currentLevel].guirisHappyCount = 0;
 
-        this.background.revive();
-        gameState.itemsGroup.revive();
-        gameState.chiringuitosGroup.revive();
-        gameState.trashGroup.revive();
-        gameState.cooldownsGroup.revive();
-        gameState.rubbishGroup.revive();
-        gameState.guirisGroup.revive();
-        gameState.baywatchersGroup.revive();
-        gameState.baywatcherCooldownsGroup.revive();
-        gameState.notificationsGroup.revive();
-        gameState.hudGroup.revive();
+        this.reviveAll();
 
         game.input.enabled = false;
 
@@ -564,16 +559,7 @@ gameState = {
     showRatings: function() {
         // We are using gameState instead of this because context reasons
 
-        gameState.itemsGroup.kill();
-        gameState.chiringuitosGroup.kill();
-        gameState.trashGroup.kill();
-        gameState.cooldownsGroup.kill();
-        gameState.rubbishGroup.kill();
-        gameState.guirisGroup.kill();
-        gameState.baywatchersGroup.kill();
-        gameState.baywatcherCooldownsGroup.kill();
-        gameState.notificationsGroup.kill();
-        gameState.hudGroup.kill();
+        gameState.killAll();
 
         var rating = gameState.add.sprite(gameState.world.centerX, gameState.world.centerY, 'rating');
         rating.anchor.setTo(0.5, 0.5);
@@ -921,6 +907,87 @@ gameState = {
         tintBackground.start();
 
         return tintBackground;
+    },
+
+    showExitPanel: function() {
+        var _this = this;
+
+        this.killAll();
+        game.paused = true;
+
+        var centerX = game.world.x + game.world.width / 2;
+        var centerY = game.world.y + game.world.height / 2;
+
+        var exitPanel = game.add.sprite(centerX, centerY, 'exitpanel');
+        exitPanel.smoothed = false;
+        exitPanel.scale.set(scaleFactor);
+        exitPanel.anchor.set(0.5, 0.5);
+        this.exitPanelGroup.add(exitPanel);
+
+        var text = game.add.text(centerX, centerY - 40, '¿Está seguro de que desea salir?', {fill: 'white', font: '24px pixellari'});
+        text.anchor.set(0.5, 0.5);
+        this.exitPanelGroup.add(text);
+
+        var exitButton = game.add.button(centerX - 180, centerY, 'exitbutton');
+        exitButton.scale.set(scaleFactor);
+        this.exitPanelGroup.add(exitButton);
+
+        var resumeButton = game.add.button(centerX, centerY, 'resumebutton');
+        resumeButton.scale.set(scaleFactor);
+        this.exitPanelGroup.add(resumeButton);
+
+        var textOffsetX = 15;
+        var textOffsetY = 2;
+
+        var exitText = game.add.text((exitButton.x + exitButton.width / 2) + textOffsetX, (exitButton.y + exitButton.height / 2) + textOffsetY, 'Salir', {fill: 'white', font: '24px pixellari'});
+        exitText.smoothed = false;
+        exitText.anchor.set(0.5, 0.5);
+        this.exitPanelGroup.add(exitText);
+
+        var resumeText = game.add.text((resumeButton.x + resumeButton.width / 2) + textOffsetX, (resumeButton.y + resumeButton.height / 2) + textOffsetY, 'Jugar', {fill: 'white', font: '24px pixellari'});
+        resumeText.smoothed = false;
+        resumeText.anchor.set(0.5, 0.5);
+        this.exitPanelGroup.add(resumeText);
+
+        exitButton.events.onInputDown.add(function () {
+            _this.reviveAll();
+            game.paused = false;
+            _this.state.start("menuState");
+        }, this);
+
+        resumeButton.events.onInputDown.add(function () {
+            _this.reviveAll();
+            game.paused = false;
+            _this.exitPanelGroup.removeAll();
+        }, this);
+
+    },
+
+    reviveAll: function() {
+        this.background.revive();
+        this.itemsGroup.revive();
+        this.chiringuitosGroup.revive();
+        this.trashGroup.revive();
+        this.cooldownsGroup.revive();
+        this.rubbishGroup.revive();
+        this.guirisGroup.revive();
+        this.baywatchersGroup.revive();
+        this.baywatcherCooldownsGroup.revive();
+        this.notificationsGroup.revive();
+        this.hudGroup.revive();
+    },
+
+    killAll: function() {
+        this.itemsGroup.kill();
+        this.chiringuitosGroup.kill();
+        this.trashGroup.kill();
+        this.cooldownsGroup.kill();
+        this.rubbishGroup.kill();
+        this.guirisGroup.kill();
+        this.baywatchersGroup.kill();
+        this.baywatcherCooldownsGroup.kill();
+        this.notificationsGroup.kill();
+        this.hudGroup.kill();
     },
 
     gameOver: function() {

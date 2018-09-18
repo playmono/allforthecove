@@ -148,18 +148,20 @@ gameState = {
         this.baywatchersGroup = this.add.group();
         this.baywatcherCooldownsGroup = this.add.group();
         this.notificationsGroup = this.add.group();
+        this.emojisGroup = this.add.group();
         this.ratingsGroup = this.add.group();
         this.hudGroup = this.add.group();
         this.exitPanelGroup = this.add.group();
 
-        var exit = this.game.add.sprite(gameWidth -70, 15, 'exit');
-        exit.smoothed = false;
-        exit.inputEnabled = true;
-        exit.input.useHandCursor = true;
-        this.hudGroup.add(exit);
+        this.exitButton = this.game.add.button(gameWidth -70, 15, 'exit');
+        this.exitButton.smoothed = false;
+        this.exitButton.inputEnabled = true;
+        this.exitButton.input.useHandCursor = true;
+        this.hudGroup.add(this.exitButton);
 
-        exit.events.onInputDown.add(function () {
-            _this.showExitPanel();
+        // 15 ms is the limit for tween animations
+        this.exitButton.events.onInputDown.add(function () {
+            _this.fadeAll(0xffffff, 0x213263, 100, _this.showExitPanel);
         }, this);
 
         this.moneyText = this.game.add.text(0, 0, this.money, {fill: '#FFFFFF', font: '24px pixellari', boundsAlignH: 'right'});
@@ -898,10 +900,34 @@ gameState = {
             fadeCooldown.start();
         });
 
+        this.guirisGroup.forEach(function(guiri) {
+            var fadeGuiri = _this.tweenTint(guiri, startColor, endColor, time);
+            fadeGuiri.start();
+        });
+
+        this.itemsGroup.forEach(function(item) {
+            var fadeItem = _this.tweenTint(item, startColor, endColor, time);
+            fadeItem.start();
+        });
+
+        this.emojisGroup.forEach(function(emoji) {
+            var fadeEmoji = _this.tweenTint(emoji, startColor, endColor, time);
+            fadeEmoji.start();
+        });
+
+        this.notificationsGroup.forEach(function(notification) {
+            notification.forEach(function(sprite) {
+                var fadeNotification = _this.tweenTint(sprite, startColor, endColor, time);
+                fadeNotification.start();
+            })
+        });
+
         var tintBackground = this.tweenTint(this.background, startColor, endColor, time);
 
         tintBackground.onComplete.add(function() {
-            callback();
+            if (callback !== undefined) {
+                callback();
+            }
         });
 
         tintBackground.start();
@@ -910,10 +936,25 @@ gameState = {
     },
 
     showExitPanel: function() {
-        var _this = this;
-
-        this.killAll();
         game.paused = true;
+
+        gameState.chiringuitosGroup.forEach(function(chiringuito) {
+            chiringuito.input.enabled = false;
+        });
+
+        gameState.trashGroup.forEach(function(trash) {
+            trash.input.enabled = false;
+        });
+
+        gameState.rubbishGroup.forEach(function(rubbish) {
+            rubbish.input.enabled = false;
+        });
+
+        gameState.baywatchersGroup.forEach(function(baywatcher) {
+            baywatcher.input.enabled = false;
+        });
+
+        gameState.exitButton.input.enabled = false;
 
         var centerX = game.world.x + game.world.width / 2;
         var centerY = game.world.y + game.world.height / 2;
@@ -922,44 +963,64 @@ gameState = {
         exitPanel.smoothed = false;
         exitPanel.scale.set(scaleFactor);
         exitPanel.anchor.set(0.5, 0.5);
-        this.exitPanelGroup.add(exitPanel);
+        gameState.exitPanelGroup.add(exitPanel);
 
-        var text = game.add.text(centerX, centerY - 40, '¿Está seguro de que desea salir?', {fill: 'white', font: '24px pixellari'});
+        var text = game.add.text(centerX, centerY - 40, '¿Está seguro de que desea salir?', {fill: 'black', font: '20px pixellari'});
         text.anchor.set(0.5, 0.5);
-        this.exitPanelGroup.add(text);
+        gameState.exitPanelGroup.add(text);
 
-        var exitButton = game.add.button(centerX - 180, centerY, 'exitbutton');
+        var exitButton = game.add.button(centerX - 130, centerY + 4, 'exitbutton');
+        exitButton.smoothed = false;
         exitButton.scale.set(scaleFactor);
-        this.exitPanelGroup.add(exitButton);
+        gameState.exitPanelGroup.add(exitButton);
 
-        var resumeButton = game.add.button(centerX, centerY, 'resumebutton');
+        var resumeButton = game.add.button(centerX + 6, centerY + 4, 'resumebutton');
+        resumeButton.smoothed = false;
         resumeButton.scale.set(scaleFactor);
-        this.exitPanelGroup.add(resumeButton);
+        gameState.exitPanelGroup.add(resumeButton);
 
         var textOffsetX = 15;
         var textOffsetY = 2;
 
-        var exitText = game.add.text((exitButton.x + exitButton.width / 2) + textOffsetX, (exitButton.y + exitButton.height / 2) + textOffsetY, 'Salir', {fill: 'white', font: '24px pixellari'});
+        var exitText = game.add.text((exitButton.x + exitButton.width / 2) + textOffsetX, (exitButton.y + exitButton.height / 2) + textOffsetY, 'Salir', {fill: 'black', font: '20px pixellari'});
         exitText.smoothed = false;
         exitText.anchor.set(0.5, 0.5);
-        this.exitPanelGroup.add(exitText);
+        gameState.exitPanelGroup.add(exitText);
 
-        var resumeText = game.add.text((resumeButton.x + resumeButton.width / 2) + textOffsetX, (resumeButton.y + resumeButton.height / 2) + textOffsetY, 'Jugar', {fill: 'white', font: '24px pixellari'});
+        var resumeText = game.add.text((resumeButton.x + resumeButton.width / 2) + textOffsetX, (resumeButton.y + resumeButton.height / 2) + textOffsetY, 'Jugar', {fill: 'black', font: '20px pixellari'});
         resumeText.smoothed = false;
         resumeText.anchor.set(0.5, 0.5);
-        this.exitPanelGroup.add(resumeText);
+        gameState.exitPanelGroup.add(resumeText);
 
         exitButton.events.onInputDown.add(function () {
-            _this.reviveAll();
             game.paused = false;
-            _this.state.start("menuState");
-        }, this);
+            game.state.start("menuState");
+        }, game);
 
+        // 15 ms is the limit for tween animations
         resumeButton.events.onInputDown.add(function () {
-            _this.reviveAll();
+            gameState.fadeAll(0x213263, 0xffffff, 100);
             game.paused = false;
-            _this.exitPanelGroup.removeAll();
-        }, this);
+            gameState.exitPanelGroup.removeAll();
+
+            gameState.chiringuitosGroup.forEach(function(chiringuito) {
+                chiringuito.input.enabled = true;
+            });
+
+            gameState.trashGroup.forEach(function(trash) {
+                trash.input.enabled = true;
+            });
+
+            gameState.rubbishGroup.forEach(function(rubbish) {
+                rubbish.input.enabled = true;
+            });
+
+            gameState.baywatchersGroup.forEach(function(baywatcher) {
+                baywatcher.input.enabled = true;
+            });
+
+            gameState.exitButton.input.enabled = true;
+        }, game);
 
     },
 

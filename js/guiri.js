@@ -12,7 +12,7 @@ Guiri = function (game) {
     this.isSwimming = false;
     this.layOnTowelForFirstTime = true;
 
-    this.id = gameState.rnd.integerInRange(1, 8);
+    this.id = game.rnd.integerInRange(1, 8);
 
     Phaser.Sprite.call(this, game, this.initialPosition.x, this.initialPosition.y, 'guiri' + this.id);
 
@@ -33,11 +33,13 @@ Guiri = function (game) {
     this.beachSlot = gameState.getUntakenBeachSlot();
 
     // emoji
-    this.emoji = gameState.add.sprite(this.x, this.y, 'icons');
+    this.emoji = game.add.sprite(this.x, this.y, 'icons');
     this.emoji.smoothed = false;
     this.emoji.scale.set(scaleFactor);
     this.emoji.animations.add('positive', [16, 17, 18, 19], 8, true);
     this.emoji.animations.add('negative', [20, 21, 22, 23], 8, true);
+    gameState.emojisGroup.add(this.emoji);
+
     this.emoji.kill();
 
     this.emojiTweenFade = null;
@@ -52,8 +54,6 @@ Guiri = function (game) {
         clean : null,
         unalertedByBaywatcher : true
     };
-
-    this.fromCityToMainPath();
 };
 
 Guiri.prototype = Object.create(Phaser.Sprite.prototype);
@@ -80,7 +80,7 @@ Guiri.prototype.fromCityToMainPath = function() {
     var movingRoute2 = gameState.add.tween(this);
 
     // Come to the beach (+y)
-    movingRoute1.to({ y: 100 }, 2000 / gameState.difficulty, Phaser.Easing.Linear.None);
+    movingRoute1.to({ y: 100 }, Phaser.Timer.SECOND * 2 / gameState.difficulty, Phaser.Easing.Linear.None);
 
     // Start transition to to movement2
     movingRoute1.onComplete.add(function() {
@@ -90,7 +90,7 @@ Guiri.prototype.fromCityToMainPath = function() {
             movingTransition1.to({
                 y: '+40',
                 x: _this.x + offsetX
-            }, 1000 / gameState.difficulty, Phaser.Easing.Circular.None, true);
+            }, Phaser.Timer.SECOND / gameState.difficulty, Phaser.Easing.Circular.None, true);
         } else {
             _this.fromMainPathToCity();
         }

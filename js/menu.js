@@ -83,6 +83,7 @@ loadState = {
         this.game.load.image('exitpanel', 'assets/exitbox1.png', 270, 120);
         this.game.load.image('exitbutton', 'assets/exitbutton.png', 90, 42);
         this.game.load.image('resumebutton', 'assets/resumebutton.png', 90, 42);
+        this.game.load.image('credits', 'assets/credits.png', 480, 270);
     },
 
     create : function() {
@@ -220,19 +221,29 @@ creditsState = {
     create : function () {
         var _this = this;
 
-        this.add.text(50, 100, "All for the Cove", {fill: "white", font: "50px pixellari"});
-        this.add.text(50, 170, "Game Design: Noé Fernández", {fill: "white", font: "24px pixellari"});
-        this.add.text(50, 200, "Programmer: Adrián Granado", {fill: "white", font: "24px pixellari"});
-        this.add.text(50, 230, "Artist: Noé Fernández", {fill: "white", font: "24px pixellari"});
+        credits = this.game.add.image(0, 0, 'credits');
+        credits.scale.set(scaleFactor);
+        credits.smoothed = false;
 
-        this.add.text(50, 300, "Fuente: Zacchary Dempsey-Plante (https://www.dafont.com/pixellari.font)", {fill: "white", font: "24px pixellari"});
-        this.add.text(50, 330, "Música: Kevin MacLeod", {fill: "white", font: "24px pixellari"});
-    
-        var backText = this.add.text(50, 400, "Volver a Menú", {fill: "white", font: "24px pixellari"});
+        var centerX = credits.x + credits.width / 2;
+        var centerY = credits.y + credits.height / 2;
+
+        this.add.text(centerX, centerY - 140, "All for the Cove", {fill: "white", font: "50px pixellari"}).anchor.set(0.5, 0.5);
         
-        backText.inputEnabled = true;
+        this.add.text(centerX, centerY - 60, "Diseño: Noé Fernández y Adrián Granado", {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY - 35, "Programador: Adrián Granado", {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY - 10, "Artista: Noé Fernández", {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
 
-        backText.events.onInputDown.add(function () {
+        this.add.text(centerX, centerY + 40, "Fuente: Zacchary Dempsey-Plante (https://www.dafont.com/pixellari.font)", {fill: "white", font: "20px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY + 60, "Música: Kevin MacLeod", {fill: "white", font: "20px pixellari"}).anchor.set(0.5, 0.5);
+
+        var exitButton = this.add.button(credits.x + 50, credits.height - 100, 'button');
+        exitButton.scale.set(scaleFactor);
+        exitButton.smoothed = false;
+
+        var backText = this.add.text(exitButton.x + exitButton.width / 2, exitButton.y + exitButton.height / 2, "Volver a Menú", {fill: "yellow", font: "30px pixellari"}).anchor.set(0.5, 0.5);
+
+        exitButton.onInputUp.add(function () {
             _this.state.start("menuState");
         }, this);
     },

@@ -87,6 +87,7 @@ Chiringuito.prototype.update = function() {
         if (this.lastStock == this.stock) {
             gameState.money -= this.stockPrice;
             gameState.refillText.setText('');
+            gameState.refillSprite.animations.play('refill');
         }
 
         this.stock++;

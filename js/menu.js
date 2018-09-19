@@ -74,7 +74,7 @@ loadState = {
         this.game.load.spritesheet('rubbish', 'assets/rubbish.png', 20, 20);
         this.game.load.spritesheet('icons', 'assets/icons2.png', 16, 16);
         this.game.load.spritesheet('bubble', 'assets/bubble.png', 180, 20);
-        this.game.load.spritesheet('refill', 'assets/refill1.png', 28, 36);
+        this.game.load.spritesheet('refill', 'assets/refill.png', 23, 37);
         this.game.load.spritesheet('exit', 'assets/back2.png', 42, 42);
         this.game.load.spritesheet('price', 'assets/buy.png', 28, 28);
         this.game.load.image('rating', 'assets/ratings.png', 330, 250);

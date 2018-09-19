@@ -826,13 +826,15 @@ gameState = {
             this.refillSprite = gameState.add.sprite(0, 0, 'refill');
             this.refillSprite.smoothed = false;
             this.refillSprite.scale.set(scaleFactor);
-            this.refillSprite.animations.add('refill', [1, 2, 3, 4], 5, true);
+            this.refillSprite.animations.add('hold', [0, 1, 2, 3], 5, true);
+            this.refillSprite.animations.add('refill', [4, 5, 6, 7], 5, true);
 
             this.cooldownsGroup.add(this.refillSprite);
 
-            this.refillSprite.animations.play('refill');
+            this.refillSprite.animations.play('hold');
         } else {
             this.refillSprite.revive();
+            this.refillSprite.animations.play('hold');
         }
 
         this.refillSprite.x = chiringuito.centerX + 60;
@@ -851,7 +853,7 @@ gameState = {
         }
 
         this.refillText.setStyle({fill: textColor, font: '16px pixellari', boundsAlignH: 'right'});
-        this.refillText.x = this.refillSprite.x + 25;
+        this.refillText.x = this.refillSprite.x + 15;
         this.refillText.y = this.refillSprite.y + 50;
         this.refillText.setText(chiringuito.stockPrice);
     },

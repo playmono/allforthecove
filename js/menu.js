@@ -160,21 +160,53 @@ menuState = {
 
 beforePlayState = {
     preload : function() {
-        this.game.load.image('story', 'assets/story.png', 480, 270);
+        this.game.load.image('story1', 'assets/story1.png', 480, 270);
+        this.game.load.image('story2', 'assets/story2.png', 480, 270);
+        this.game.load.image('story3', 'assets/story3.png', 480, 270);
     },
 
     create : function() {
         var _this = this;
 
-        var background = this.game.add.image(0, 0, 'story');
-        background.scale.set(scaleFactor);
-        background.smoothed = false;
+        var story1 = new Phaser.Image(this.game, 0, 0, 'story1');
+        story1.scale.set(scaleFactor);
+        story1.smoothed = false;
+        story1.inputEnabled = true;
+        story1.input.useHandCursor = true;
+        story1.alpha = 0;
 
-        background.inputEnabled = true;
-        background.input.useHandCursor = true;
+        var story2 = new Phaser.Image(this.game, 0, 0, 'story2');
+        story2.scale.set(scaleFactor);
+        story2.smoothed = false;
+        story2.inputEnabled = true;
+        story2.input.useHandCursor = true;
+        story2.alpha = 0;
 
-        background.events.onInputDown.add(function () {
-            _this.state.start("gameState");
+        var story3 = new Phaser.Image(this.game, 0, 0, 'story3');
+        story3.scale.set(scaleFactor);
+        story3.smoothed = false;
+        story3.inputEnabled = true;
+        story3.input.useHandCursor = true;
+        story3.alpha = 0;
+
+        this.game.add.existing(story1);
+        game.add.tween(story1).to({ alpha: 1 }, Phaser.Second, "Linear", true);
+
+        story1.events.onInputDown.add(function () {
+            story1.kill();
+            this.game.add.existing(story2);
+            game.add.tween(story2).to({ alpha: 1 }, Phaser.Second, "Linear", true);
+        }, this);
+
+        story2.events.onInputDown.add(function () {
+            story2.kill();
+            this.game.add.existing(story3);
+            game.add.tween(story3).to({ alpha: 1 }, Phaser.Second, "Linear", true);
+        }, this);
+
+        story3.events.onInputDown.add(function () {
+            story3.kill();
+            this.state.start("gameState");
         }, this);
     }
 },

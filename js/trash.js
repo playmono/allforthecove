@@ -100,7 +100,10 @@ Trash.prototype.startCooldown = function(distance) {
     this.isInCooldown = true;
     this.cooldownSprite.revive();
 
-    var seconds = Phaser.Timer.SECOND * (distance / 40);
+    // proporcion: en el nivel 7 queremos la mitad de velocidad
+    var proportion = 1 + gameState.difficulty/4;
+    var seconds = Phaser.Timer.SECOND * (distance / 40) / proportion;
+
     var fps = 4 / (seconds / Phaser.Timer.SECOND);
 
     this.cooldownSprite.animations.add('cooldown', [7, 6, 5, 4], fps, false);

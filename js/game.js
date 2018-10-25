@@ -373,6 +373,13 @@ gameState = {
 
         this.reviveAll();
 
+        this.chiringuitosGroup.forEach(function(chiringuito) {
+            if (chiringuito.bought) {
+                chiringuito.stock = 3;
+                chiringuito.stockSprite.frame = 11;
+            }
+        });
+
         game.input.enabled = false;
 
         var graphic = game.add.graphics(0, 0);
@@ -412,13 +419,6 @@ gameState = {
         });
 
         this.fadeAll(0x213263, 0xffffff, Phaser.Timer.SECOND * 2, function() {
-            _this.chiringuitosGroup.forEach(function(chiringuito) {
-                if (chiringuito.bought) {
-                    chiringuito.stock = 3;
-                    chiringuito.stockSprite.frame = 11;
-                }
-            });
-
             game.input.enabled = true;
 
             _this.createGuirisLoop();

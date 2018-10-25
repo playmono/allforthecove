@@ -547,7 +547,7 @@ Guiri.prototype.doSplash = function() {
 Guiri.prototype.buyInChiringuito = function() {
     var _this = this;
 
-    gameState.money += 50;
+    gameState.money += 30;
     levels[gameState.currentLevel].moneySpent += 50;
 
     this.modifyHappiness(2);

@@ -14,7 +14,7 @@ Chiringuito = function (game, x, y, name) {
 	this.bought = false;
     this.costOffset = 150;
     this.stock = 3;
-    this.stockPrice = 50;
+    this.stockPrice = 30;
     this.maxStock = 3;
     this.isRefreshing = false;
     this.isRefreshed = false;
@@ -83,7 +83,10 @@ Chiringuito.prototype.update = function() {
         this.isRefreshing = false;
     }
 
-    if (this.isRefreshing && !this.isRefreshed && game.input.activePointer.duration % 1000 > 900) {
+    // proporcion: en el nivel 7 queremos la mitad de velocidad
+    var duration = 1000 / (1 + gameState.difficulty / 4);
+
+    if (this.isRefreshing && !this.isRefreshed && game.input.activePointer.duration % duration > (duration - 100)) {
         if (this.lastStock == this.stock) {
             gameState.money -= this.stockPrice;
             gameState.refillText.setText('');
@@ -101,7 +104,7 @@ Chiringuito.prototype.update = function() {
         }
     }
 
-    if (this.game.input.activePointer.duration % 1000 < 900) {
+    if (this.game.input.activePointer.duration % duration < (duration - 100)) {
         this.isRefreshed = false;
     }
 };

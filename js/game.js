@@ -555,7 +555,7 @@ gameState = {
             levels[this.currentLevel].guirisHappyCount++;
         }
 
-        levels[this.currentLevel].guirisHappyCount++;
+        //levels[this.currentLevel].guirisHappyCount++;
 
         this.famePercentage = Math.floor(levels[this.currentLevel].guirisHappyCount * 100 / gameState.currentGuirisTotalCount);
     },

@@ -168,6 +168,19 @@ beforePlayState = {
     create : function() {
         var _this = this;
 
+        var style = {fill: '#000000', font: '24px pixellari'};
+
+        var text1 = new Phaser.Text(this.game, 30, 170, 'Nunca tienen suficiente...', style);
+        var text2 = new Phaser.Text(this.game, 30, text1.y + 50, 'Van a construir\nun nuevo hotel\nen nuestra cala.', style);
+
+        var text3 = new Phaser.Text(this.game, 600, 50, '¡Ya hay suficientes\nhoteles alrededor!', style);
+        var text4 = new Phaser.Text(this.game, text3.x - 80, text3.y + 80, '¡Y encima quieren\nconstruirlo sobre la\narena de la cala!', style);
+        var text5 = new Phaser.Text(this.game, text4.x + 30, text4.y + 110, '¡Destruirá completamente\nla naturaleza en este\npaisaje! ¡Y sólo lo\nhacen por dinero!', style);
+
+        var text6 = new Phaser.Text(this.game, 120, 15, 'Hay que impedirlo como sea.\nLa gente lo tiene que saber.', style);
+        var text7 = new Phaser.Text(this.game, 150, text6.y + 70, 'Necesitamos ayuda para impedir\nque contruyan el hotel.\nHaremos una petición.', style);
+        var text8 = new Phaser.Text(this.game, 85, 245, '¡EL NUEVO HOTEL ES\nUN GRAVE PELIGRO\nPARA NUESTRA CALA!\nAyúdanos a evitar\nla destrucción\nde este hermoso\npaisaje.', style);
+
         var story1 = new Phaser.Image(this.game, 0, 0, 'story1');
         story1.scale.set(scaleFactor);
         story1.smoothed = false;
@@ -192,20 +205,42 @@ beforePlayState = {
         this.game.add.existing(story1);
         game.add.tween(story1).to({ alpha: 1 }, Phaser.Second, "Linear", true);
 
+        this.game.add.existing(text1);
+        this.game.add.existing(text2);
+
         story1.events.onInputDown.add(function () {
             story1.kill();
+            text1.kill();
+            text2.kill();
+
             this.game.add.existing(story2);
+            this.game.add.existing(text3);
+            this.game.add.existing(text4);
+            this.game.add.existing(text5);
+
             game.add.tween(story2).to({ alpha: 1 }, Phaser.Second, "Linear", true);
         }, this);
 
         story2.events.onInputDown.add(function () {
             story2.kill();
+            text3.kill();
+            text4.kill();
+            text5.kill();
+
             this.game.add.existing(story3);
+            this.game.add.existing(text6);
+            this.game.add.existing(text7);
+            this.game.add.existing(text8);
+
             game.add.tween(story3).to({ alpha: 1 }, Phaser.Second, "Linear", true);
         }, this);
 
         story3.events.onInputDown.add(function () {
             story3.kill();
+            text6.kill();
+            text7.kill();
+            text8.kill();
+
             this.state.start("gameState");
         }, this);
     }

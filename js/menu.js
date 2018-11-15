@@ -84,6 +84,10 @@ loadState = {
         this.game.load.image('exitbutton', 'assets/exitbutton.png', 90, 42);
         this.game.load.image('resumebutton', 'assets/resumebutton.png', 90, 42);
         this.game.load.image('credits', 'assets/credits.png', 480, 270);
+
+        this.game.load.image('ending1', 'assets/ending1.png', 480, 270);
+        this.game.load.image('ending2', 'assets/ending2.png', 480, 270);
+        this.game.load.image('ending3', 'assets/ending3.png', 480, 270);
     },
 
     create : function() {

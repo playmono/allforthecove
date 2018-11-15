@@ -117,7 +117,7 @@ gameState = {
     create: function() {
         var _this = this;
 
-        this.currentLevel = 0;
+        this.currentLevel = 6;
 
         // Level properties
         this.famePercentage = 0;
@@ -555,6 +555,8 @@ gameState = {
             levels[this.currentLevel].guirisHappyCount++;
         }
 
+        levels[this.currentLevel].guirisHappyCount++;
+
         this.famePercentage = Math.floor(levels[this.currentLevel].guirisHappyCount * 100 / gameState.currentGuirisTotalCount);
     },
 
@@ -582,8 +584,13 @@ gameState = {
                 gameState.gameOver();
             } else {
                 gameState.currentLevel++;
-                levels[gameState.currentLevel].startMoney = gameState.money;
-                gameState.startLevel();
+
+                if (gameState.currentLevel < 7) {
+                    levels[gameState.currentLevel].startMoney = gameState.money;
+                    gameState.startLevel();
+                } else {
+                    gameState.endGame();
+                }
             }
         });
 
@@ -1093,5 +1100,77 @@ gameState = {
                 _this.state.start("menuState");
             }, _this);
         }, _this);
+    },
+
+    endGame: function() {
+        var _this = this;
+
+        this.killAll();
+        this.background.kill();
+
+        var style = {fill: '#000000', font: '24px pixellari'};
+
+        var text1 = new Phaser.Text(this.game, 30, 170, '¡Lo hemos conseguido! La gente\nnos ha apoyado. ¡No habrá hotel!', style);
+
+        var story1 = new Phaser.Image(this.game, 0, 0, 'ending1');
+        story1.scale.set(scaleFactor);
+        story1.smoothed = false;
+        story1.inputEnabled = true;
+        story1.input.useHandCursor = true;
+        story1.alpha = 0;
+
+        var story2 = new Phaser.Image(this.game, 0, 0, 'ending2');
+        story2.scale.set(scaleFactor);
+        story2.smoothed = false;
+        story2.inputEnabled = true;
+        story2.input.useHandCursor = true;
+        story2.alpha = 0;
+
+        var story3 = new Phaser.Image(this.game, 0, 0, 'ending3');
+        story3.scale.set(scaleFactor);
+        story3.smoothed = false;
+        story3.inputEnabled = true;
+        story3.input.useHandCursor = true;
+        story3.alpha = 0;
+
+        this.game.add.existing(story1);
+        game.add.tween(story1).to({ alpha: 1 }, Phaser.Second, "Linear", true);
+
+        this.game.add.existing(text1);
+
+        story1.events.onInputDown.add(function () {
+            story1.kill();
+            text1.kill();
+
+            this.game.add.existing(story2);
+            //this.game.add.existing(text3);
+            //this.game.add.existing(text4);
+            //this.game.add.existing(text5);
+
+            game.add.tween(story2).to({ alpha: 1 }, Phaser.Second, "Linear", true);
+        }, this);
+
+        story2.events.onInputDown.add(function () {
+            story2.kill();
+            //text3.kill();
+            //text4.kill();
+            //text5.kill();
+
+            this.game.add.existing(story3);
+            //this.game.add.existing(text6);
+            //this.game.add.existing(text7);
+            //this.game.add.existing(text8);
+
+            game.add.tween(story3).to({ alpha: 1 }, Phaser.Second, "Linear", true);
+        }, this);
+
+        story3.events.onInputDown.add(function () {
+            story3.kill();
+            //text6.kill();
+            //text7.kill();
+            //text8.kill();
+
+            this.state.start("menuState");
+        }, this);
     }
 }

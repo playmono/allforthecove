@@ -117,7 +117,7 @@ gameState = {
     create: function() {
         var _this = this;
 
-        this.currentLevel = 6;
+        this.currentLevel = 0;
 
         // Level properties
         this.famePercentage = 0;
@@ -554,8 +554,6 @@ gameState = {
         if (guiri.happiness >= 0) {
             levels[this.currentLevel].guirisHappyCount++;
         }
-
-        //levels[this.currentLevel].guirisHappyCount++;
 
         this.famePercentage = Math.floor(levels[this.currentLevel].guirisHappyCount * 100 / gameState.currentGuirisTotalCount);
     },
@@ -1110,8 +1108,23 @@ gameState = {
 
         var style = {fill: '#000000', font: '24px pixellari'};
 
-        var text1 = new Phaser.Text(this.game, 30, 170, '¡Lo hemos conseguido! La gente\nnos ha apoyado. ¡No habrá hotel!', style);
+        var text1 = new Phaser.Text(this.game, 300, 20, '¡Lo hemos conseguido! La gente\nnos ha apoyado. ¡No habrá hotel!', style);
 
+        var text2 = new Phaser.Text(this.game, 380, 20, 'Ha sido duro, pero al final', style);
+        var text3 = new Phaser.Text(this.game, text2.x - 30, text2.y + 25, 'ha valido la pena luchar por proteger', style);
+        var text4 = new Phaser.Text(this.game, text3.x + 50, text3.y + 25, 'esta valiosa cala.', style);
+        var text5 = new Phaser.Text(this.game, text4.x + 30, text4.y + 40, 'Da gusto ver a la gente', style);
+        var text6 = new Phaser.Text(this.game, text5.x + 30, text5.y + 25, 'disfrutar de esta costa.', style);
+        var text7 = new Phaser.Text(this.game, text6.x + 30, text6.y + 25, 'Es también gracias a', style);
+        var text8 = new Phaser.Text(this.game, text7.x + 30, text7.y + 25, 'ellos que la', style);
+        var text9 = new Phaser.Text(this.game, text8.x + 30, text8.y + 25, 'podemos', style);
+        var text10 = new Phaser.Text(this.game, text9.x + 30, text9.y + 25, 'conservar.', style);
+
+        var text11 = new Phaser.Text(this.game, 20, 150, 'Pero es sobretodo\ngracias a ti que la\ncala está a salvo.', style);
+        var text12 = new Phaser.Text(this.game, text11.x, text9.y + 50, 'Gracias por proteger\neste pequeño\nparaíso.', style);
+        var text13 = new Phaser.Text(this.game, 30, 470, '¡GRACIAS POR JUGAR!', {fill: '#FFFFFF', font: '24px pixellari'});
+        var text14 = new Phaser.Text(this.game, 660, 455, '¡Desbloqueado\n  modo infinito!', {fill: '#000000', font: '18px pixellari'});
+        
         var story1 = new Phaser.Image(this.game, 0, 0, 'ending1');
         story1.scale.set(scaleFactor);
         story1.smoothed = false;
@@ -1143,32 +1156,49 @@ gameState = {
             text1.kill();
 
             this.game.add.existing(story2);
-            //this.game.add.existing(text3);
-            //this.game.add.existing(text4);
-            //this.game.add.existing(text5);
+            this.game.add.existing(text2);
+            this.game.add.existing(text3);
+            this.game.add.existing(text4);
+            this.game.add.existing(text5);
+            this.game.add.existing(text6);
+            this.game.add.existing(text7);
+            this.game.add.existing(text8);
+            this.game.add.existing(text9);
+            this.game.add.existing(text10);
 
             game.add.tween(story2).to({ alpha: 1 }, Phaser.Second, "Linear", true);
         }, this);
 
         story2.events.onInputDown.add(function () {
             story2.kill();
-            //text3.kill();
-            //text4.kill();
-            //text5.kill();
+            text2.kill();
+            text3.kill();
+            text4.kill();
+            text5.kill();
+            text6.kill();
+            text7.kill();
+            text8.kill();
+            text9.kill();
+            text10.kill();
 
             this.game.add.existing(story3);
-            //this.game.add.existing(text6);
-            //this.game.add.existing(text7);
-            //this.game.add.existing(text8);
+            this.game.add.existing(text11);
+            this.game.add.existing(text12);
+            this.game.add.existing(text13);
+            this.game.add.existing(text14);
 
             game.add.tween(story3).to({ alpha: 1 }, Phaser.Second, "Linear", true);
         }, this);
 
         story3.events.onInputDown.add(function () {
             story3.kill();
-            //text6.kill();
-            //text7.kill();
-            //text8.kill();
+            text11.kill();
+            text12.kill();
+            text13.kill();
+            text14.kill();
+
+            localStorage.setItem('allforthecove_endlessmode', true);
+            localStorage.setItem('allforthecove_transition', true);
 
             this.state.start("menuState");
         }, this);

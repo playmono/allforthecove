@@ -124,12 +124,16 @@ menuState = {
         var startText = this.add.text(startButton.x + startButton.width / 2, startButton.y + startButton.height / 2, "Empezar Juego", {fill: "yellow", font: "30px pixellari"});
         startText.anchor.set(0.5);
 
-        var endlessModeButton = this.add.button(35, 350, 'button');
-        endlessModeButton.scale.set(scaleFactor);
-        endlessModeButton.smoothed = false;
-        
-        var endlessModeText = this.add.text(endlessModeButton.x + endlessModeButton.width / 2, endlessModeButton.y + endlessModeButton.height / 2, "Modo Infinito", {fill: "yellow", font: "30px pixellari"});
-        endlessModeText.anchor.set(0.5);
+        var endlessMode = localStorage.getItem('allforthecove_endlessmode');
+
+        if (endlessMode) {
+            var endlessModeButton = this.add.button(35, 350, 'button');
+            endlessModeButton.scale.set(scaleFactor);
+            endlessModeButton.smoothed = false;
+
+            var endlessModeText = this.add.text(endlessModeButton.x + endlessModeButton.width / 2, endlessModeButton.y + endlessModeButton.height / 2, "Modo Infinito", {fill: "yellow", font: "30px pixellari"});
+            endlessModeText.anchor.set(0.5);
+        }
 
         var howToPlayButton = this.add.button(35, 450, 'button');
         howToPlayButton.scale.set(scaleFactor);

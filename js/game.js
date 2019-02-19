@@ -89,6 +89,7 @@ gameState = {
     notificationsGroup: null,
     cooldownsGroup: null,
     baywatcherCooldownsGroup : null,
+    tutorialGroup: null,
     priceInfo: null,
     background: null,
 
@@ -151,6 +152,7 @@ gameState = {
         this.emojisGroup = this.add.group();
         this.ratingsGroup = this.add.group();
         this.hudGroup = this.add.group();
+        this.tutorialGroup = this.add.group();
         this.exitPanelGroup = this.add.group();
 
         this.exitButton = this.game.add.button(gameWidth -70, 15, 'exit');
@@ -286,6 +288,8 @@ gameState = {
             this.game.debug.text(levels[this.currentLevel].moneySpent, gameWidth - 50, 80);
 
             this.game.debug.text(levels[this.currentLevel].title, gameWidth - 80, 120);
+        
+            this.game.debug.text(Tutorial.toRead.length, 30, 30);
         }
 
         this.moneyText.setText(this.money);
@@ -353,7 +357,7 @@ gameState = {
             var guiri = new Guiri(game);
             gameState.guirisGroup.add(guiri);
 
-            guiri.fromCityToMainPath();
+            guiri.fromCityToMainPath(false);
         });
     },
 
@@ -878,54 +882,48 @@ gameState = {
         var _this = this;
 
         this.chiringuitosGroup.forEach(function(chiringuito) {
-            var fadeChiringuito = _this.tweenTint(chiringuito, startColor, endColor, time);
-            fadeChiringuito.start();
+            _this.tweenTint(chiringuito, startColor, endColor, time).start();
         });
 
         this.baywatchersGroup.forEach(function(baywatcher) {
-            var fadeBaywatcher = _this.tweenTint(baywatcher, startColor, endColor, time);
-            fadeBaywatcher.start();
+            _this.tweenTint(baywatcher, startColor, endColor, time).start();
         });
 
         this.trashGroup.forEach(function(trash) {
-            var fadeTrash = _this.tweenTint(trash, startColor, endColor, time);
-            fadeTrash.start();
+            _this.tweenTint(trash, startColor, endColor, time).start();
         });
 
         this.rubbishGroup.forEach(function(rubbish) {
-            var fadeRubbish = _this.tweenTint(rubbish, startColor, endColor, time);
-            fadeRubbish.start();
+            _this.tweenTint(rubbish, startColor, endColor, time).start();
         });
 
         this.cooldownsGroup.forEach(function(cooldown) {
-            var fadeCooldown = _this.tweenTint(cooldown, startColor, endColor, time);
-            fadeCooldown.start();
+            _this.tweenTint(cooldown, startColor, endColor, time).start();
         });
 
         this.baywatcherCooldownsGroup.forEach(function(cooldown) {
-            var fadeCooldown = _this.tweenTint(cooldown, startColor, endColor, time);
-            fadeCooldown.start();
+            _this.tweenTint(cooldown, startColor, endColor, time).start();
         });
 
         this.guirisGroup.forEach(function(guiri) {
-            var fadeGuiri = _this.tweenTint(guiri, startColor, endColor, time);
-            fadeGuiri.start();
+            _this.tweenTint(guiri, startColor, endColor, time).start();
         });
 
         this.itemsGroup.forEach(function(item) {
-            var fadeItem = _this.tweenTint(item, startColor, endColor, time);
-            fadeItem.start();
+            _this.tweenTint(item, startColor, endColor, time).start();
         });
 
         this.emojisGroup.forEach(function(emoji) {
-            var fadeEmoji = _this.tweenTint(emoji, startColor, endColor, time);
-            fadeEmoji.start();
+            _this.tweenTint(emoji, startColor, endColor, time).start();
+        });
+
+        this.tutorialGroup.forEach(function(emoji) {
+            _this.tweenTint(emoji, startColor, endColor, time).start();
         });
 
         this.notificationsGroup.forEach(function(notification) {
             notification.forEach(function(sprite) {
-                var fadeNotification = _this.tweenTint(sprite, startColor, endColor, time);
-                fadeNotification.start();
+                _this.tweenTint(sprite, startColor, endColor, time).start();
             })
         });
 
@@ -1055,6 +1053,7 @@ gameState = {
         this.baywatchersGroup.kill();
         this.baywatcherCooldownsGroup.kill();
         this.notificationsGroup.kill();
+        this.tutorialGroup.kill();
         this.hudGroup.kill();
     },
 
@@ -1202,5 +1201,5 @@ gameState = {
 
             this.state.start("menuState");
         }, this);
-    }
+    },
 }

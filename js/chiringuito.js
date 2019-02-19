@@ -161,6 +161,10 @@ Chiringuito.prototype.sell = function() {
 
     this.stock--;
     this.stockSprite.frame = this.stockSpriteMap[this.stock];
+
+    if (this.stock == 1) {
+        Tutorial.add('chiringuito');
+    }
 }
 
 Chiringuito.prototype.createStock = function() {

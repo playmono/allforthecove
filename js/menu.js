@@ -84,6 +84,7 @@ loadState = {
         this.game.load.image('exitbutton', 'assets/exitbutton.png', 90, 42);
         this.game.load.image('resumebutton', 'assets/resumebutton.png', 90, 42);
         this.game.load.image('credits', 'assets/credits.png', 480, 270);
+        this.game.load.image('notepad', 'assets/notepad.png', 370, 42);
 
         this.game.load.image('ending1', 'assets/ending1.png', 480, 270);
         this.game.load.image('ending2', 'assets/ending2.png', 480, 270);
@@ -135,14 +136,7 @@ menuState = {
             endlessModeText.anchor.set(0.5);
         }
 
-        var howToPlayButton = this.add.button(35, 450, 'button');
-        howToPlayButton.scale.set(scaleFactor);
-        howToPlayButton.smoothed = false;
-        
-        var howToPlayText = this.add.text(howToPlayButton.x + howToPlayButton.width / 2, howToPlayButton.y + howToPlayButton.height / 2, "Cómo jugar", {fill: "yellow", font: "30px pixellari"});
-        howToPlayText.anchor.set(0.5);
-
-        var creditsButton = this.add.button(650, 450, 'button');
+        var creditsButton = this.add.button(35, 450, 'button');
         creditsButton.scale.set(scaleFactor);
         creditsButton.smoothed = false;
         
@@ -151,10 +145,6 @@ menuState = {
 
         startButton.onInputUp.add(function () {
             _this.state.start("beforePlayState");
-        }, this);
-
-        howToPlayButton.onInputUp.add(function () {
-            _this.state.start("howToPlayState");
         }, this);
 
         creditsButton.onInputUp.add(function () {
@@ -253,40 +243,6 @@ beforePlayState = {
         }, this);
     }
 },
-
-howToPlayState = {
-    preload :  function() {
-        this.game.load.image('tutorial', 'assets/tutorial.png', 480, 270);
-        this.game.load.image('story', 'assets/story.png', 480, 270);
-        this.game.load.image('title', 'assets/title.png', 480, 270);
-    },
-
-    create : function() {
-        var _this = this;
-
-        b = this.game.add.image(0, 0, 'story');
-        b.scale.set(scaleFactor);
-        b.smoothed = false;
-
-        b.inputEnabled = true;
-
-        b.events.onInputDown.add(function () {
-            c = this.game.add.image(0, 0, 'tutorial');
-            c.scale.set(scaleFactor);
-            c.smoothed = false;
-
-            c.inputEnabled = true;
-
-            c.events.onInputDown.add(function () {
-                _this.state.start("menuState");
-            }, this);
-        });
-    },
-
-    update : function() {
-
-    }
-}
 
 creditsState = {
     preload : function() {

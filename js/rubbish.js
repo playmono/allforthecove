@@ -23,6 +23,8 @@ Rubbish = function (game, x, y) {
     game.physics.arcade.enable(this);
 
     gameState.add.tween(this).to({alpha: 1}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, true);
+
+    Tutorial.add('rubbish');
 };
 
 Rubbish.prototype = Object.create(Phaser.Sprite.prototype);

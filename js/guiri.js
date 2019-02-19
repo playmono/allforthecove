@@ -54,6 +54,8 @@ Guiri = function (game) {
         clean : null,
         unalertedByBaywatcher : true
     };
+
+    Tutorial.add('guiri');
 };
 
 Guiri.prototype = Object.create(Phaser.Sprite.prototype);
@@ -501,6 +503,8 @@ Guiri.prototype.layOnTowel = function() {
 
 Guiri.prototype.doSplash = function() {
     var _this = this;
+
+    Tutorial.add('splash');
 
     this.isSplashing = true;
 

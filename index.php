@@ -29,6 +29,7 @@
 <script src="js/rubbish.js"></script>
 <script src="js/menu.js"></script>
 <script src="js/game.js"></script>
+<script src="js/tutorial.js"></script>
 
 <p style="font-family: pixellari;">.</p>
 
@@ -58,7 +59,6 @@
     game.state.add("menuState", menuState);
     game.state.add("beforePlayState", beforePlayState);
     game.state.add("gameState", gameState);
-    game.state.add("howToPlayState", howToPlayState);
     game.state.add("creditsState", creditsState);
 
     game.state.start("bootState");

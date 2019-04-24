@@ -12,6 +12,7 @@ Baywatcher = function (game, x, y, name) {
     this.exclamationMark = null;
     this.exclamationMarkInitialX = this.centerX - 5;
     this.exclamationMarkInitialY = this.centerY + 24;
+    this.beingDrag = false;
 
     this.cooldownSprite = gameState.add.sprite(this.exclamationMarkInitialX, this.exclamationMarkInitialY, 'icons');
     this.cooldownSprite.smoothed = false;
@@ -61,10 +62,6 @@ Baywatcher = function (game, x, y, name) {
 Baywatcher.prototype = Object.create(Phaser.Sprite.prototype);
 Baywatcher.prototype.constructor = Baywatcher;
 
-Baywatcher.prototype.update = function() {
-
-};
-
 Baywatcher.prototype.click = function() {
     var _this = this;
 
@@ -86,6 +83,7 @@ Baywatcher.prototype.buy = function(free) {
     var _this = this;
 
     if (!free) {
+        Tutorial.removeFromRead('buy');
         gameState.money -= gameState.baywatcherCost;
         gameState.baywatcherCost += this.costOffset;
         coinEffect.play();
@@ -116,23 +114,39 @@ Baywatcher.prototype.createExclamationMark = function() {
 
     this.exclamationMark.body.setSize(1, 1, 7, 7);
 
+    this.exclamationMark.events.onDragStart.add(this.onMarkExclamationDragStart, this);
     this.exclamationMark.events.onDragStop.add(this.onMarkExclamationDragStop, this);
 }
 
+Baywatcher.prototype.onMarkExclamationDragStart = function() {
+    this.beingDrag = true;
+
+    if (Tutorial.getCurrentOption() == 'splash') {
+        Tutorial.update('splash');
+    }
+}
+
 Baywatcher.prototype.onMarkExclamationDragStop = function() {
+    this.beingDrag = false;
+
     var overlap = game.physics.arcade.overlap(this.exclamationMark, gameState.guirisGroup, this.checkCollision, null, this);
 
     this.exclamationMark.x = this.exclamationMarkInitialX;
     this.exclamationMark.y = this.exclamationMarkInitialY;
+
+    if (Tutorial.getCurrentOption() == 'splash') {
+        Tutorial.update('splash');
+    }
 }
 
 Baywatcher.prototype.checkCollision = function(exclamationMark, guiri) {
     if (guiri.isSplashing) {
-        guiri.splash.destroy();
         guiri.isSplashing = false;
 
-        guiri.fromWaterToTowel();
+        Tutorial.removeFromRead('splash');
 
+        guiri.splash.destroy();
+        guiri.fromWaterToTowel();
         guiri.modifyHappiness(-10);
         //guiri.actions.freeActions = false;
 

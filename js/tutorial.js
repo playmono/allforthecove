@@ -1,152 +1,243 @@
 var Tutorial = {
-    initialized: false,
-    notepad: null,
-    text1: null,
-    text2: null,
-    style: {
-        fill: 'black',
-        font: '20px pixellari'
-    },
+    currentOption: null,
     toRead: [],
     alreadyRead: [],
 
-    init: function() {
-        if (this.initialized) {
+    getCurrentOption: function() {
+        return this.currentOption;
+    },
+
+    addToAlreadyDead: function(option) {
+        if (this.alreadyRead.includes(option)) {
             return true;
         }
 
-        var x = gameState.world.centerX;
-        var y = gameState.world.centerY + 150;
+        this.alreadyRead.push(option);
+    },
 
-        this.initialized = true;
-        this.notepad = gameState.add.sprite(x, y, 'notepad');
-        this.notepad.alpha = 0.7;   
-        this.notepad.anchor.set(0.5);
-        this.notepad.smoothed = false;
-        this.notepad.inputEnabled = true;
-        this.notepad.input.useHandCursor = true;
-        this.notepad.scale.set(scaleFactor);
+    addToRead: function(option) {
+        if (this.toRead.includes(option)) {
+            return true;
+        }
 
-        gameState.tutorialGroup.add(this.notepad);
-
-        var text1x = this.notepad.position.x - 190;
-
-        this.text1 = gameState.add.text(text1x, y, '', this.style);
-        this.text1.anchor.set(0.5);
-        gameState.tutorialGroup.add(this.text1);
-
-        var text2x = this.notepad.position.x + 190; 
-
-        this.text2 = gameState.add.text(text2x, y, '', this.style);
-        this.text2.anchor.set(0.5);
-        gameState.tutorialGroup.add(this.text2);
-
-        var text3x = this.notepad.position.x + 320; 
-
-        this.text3 = gameState.add.text(text3x, y + 15, '', this.style);
-        gameState.tutorialGroup.add(this.text3);
-
-        this.notepad.events.onInputDown.add(function () {
-            this.removeFromRead();
-
-            if (this.toRead.length < 1) {
-                this.hide();
-            }
-        }, this);
-
-        this.hide();
+        this.toRead.push(option);
     },
 
     add: function(option) {
-         this.init();
-
-        if (this.isAlreadyRead(option)) {
+        if (this.alreadyRead.includes(option)) {
             return true;
         }
 
         this.addToRead(option);
 
-        if (this.notepad.alive) {
+        if (this.toRead.length == 1) {
+            this.update(option);
+        }
+    },
+
+    update: function(option) {
+        var _this = this;
+
+        this.currentOption = option;
+
+        gameState.tutorialGroup.callAll('kill');
+
+        if (option == 'guiri') {
+            gameState.guirisGroup.forEach(function(guiri) {
+                _this.createGuiriArrow(guiri);
+            });
+        }
+
+        if (option == 'rubbish') {
+            var draggingRubbish = false;
+
+            gameState.rubbishGroup.forEach(function(rubbish) {
+                if (rubbish.beingDrag) {
+                    draggingRubbish = true;
+                    return false;
+                }
+            });
+
+            if (draggingRubbish) {
+                gameState.trashGroup.forEach(function(trash) {
+                    _this.createTrashArrow(trash);
+                });
+            } else {
+                gameState.rubbishGroup.forEach(function(rubbish) {
+                    _this.createRubbishArrow(rubbish);
+                });
+            }
+        }
+
+        if (option == 'chiringuito') {
+            gameState.chiringuitosGroup.forEach(function(chiringuito) {
+                _this.createChiringuitoArrow(chiringuito);
+            });
+        }
+
+        if (option == 'splash') {
+            var draggingWhistle = false;
+
+            gameState.baywatchersGroup.forEach(function(baywatcher) {
+                if (baywatcher.beingDrag) {
+                    draggingWhistle = true;
+                    return false;
+                }
+            });
+
+            if (!draggingWhistle) {
+                gameState.baywatchersGroup.forEach(function(baywatcher) {
+                    _this.createBaywatcherArrow(baywatcher);
+                });
+            } else {
+                gameState.guirisGroup.forEach(function(guiri) {
+                    _this.createSplashArrow(guiri);
+                });
+            }
+        }
+
+        if (option == 'buy') {
+            gameState.baywatchersGroup.forEach(function(baywatcher) {
+                _this.createToBuyArrow(baywatcher, 0, -30);
+            });
+
+            gameState.trashGroup.forEach(function(trash) {
+                _this.createToBuyArrow(trash, 0, -70);
+            });
+
+            gameState.chiringuitosGroup.forEach(function(chiringuito) {
+                _this.createToBuyArrow(chiringuito, 0, -30);
+            });
+        }
+    },
+
+    removeFromRead: function(option) {
+        var index = 0;
+
+        if (option !== undefined) {
+            var index = this.toRead.indexOf(option);
+        }
+
+        this.addToAlreadyDead(option);
+
+        if (index >= 0) {
+            this.toRead.splice(index, 1);
+        }
+
+        if (this.alreadyRead.includes('guiri')
+            && this.alreadyRead.includes('rubbish')
+            && this.alreadyRead.includes('chiringuito')
+        ) {
+            this.add('buy');
+        }
+
+        this.toRead.length == 0 ? this.update(null) : this.update(this.toRead[0]);
+    },
+
+    // RENDERS
+
+    createGuiriArrow: function(guiri) {
+        arrow = game.add.sprite(0, 0, 'arrows');
+        arrow.anchor.set(0.5);
+        arrow.smoothed = false;
+        arrow.scale.set(scaleFactor);
+        arrow.frame = 0;
+
+        arrow.update = function() {
+            this.position.x = guiri.centerX;
+            this.position.y = guiri.centerY - 80;
+        };
+
+        gameState.add.tween(arrow).to(
+            { alpha: 0 },
+            Phaser.Timer.SECOND,
+            Phaser.Easing.Linear.None,
+            true,
+            Phaser.Timer.SECOND * 4
+        ).onComplete.add(function() {
+            Tutorial.removeFromRead('guiri');
+        });
+
+        gameState.tutorialGroup.add(arrow);
+    },
+
+    createRubbishArrow: function(rubbish) {
+        arrow = game.add.sprite(rubbish.centerX, rubbish.centerY + 50, 'arrows');
+        arrow.anchor.set(0.5);
+        arrow.smoothed = false;
+        arrow.scale.set(scaleFactor);
+        arrow.frame = 1;
+
+        gameState.tutorialGroup.add(arrow);
+    },
+
+    createTrashArrow: function(trash) {
+        if (!trash.bought) {
             return true;
         }
 
-        this.show(option);
+        arrow = game.add.sprite(trash.centerX, trash.centerY + 60, 'arrows');
+        arrow.anchor.set(0.5);
+        arrow.smoothed = false;
+        arrow.scale.set(scaleFactor);
+        arrow.frame = 1;
+
+        gameState.tutorialGroup.add(arrow);
     },
 
-    show: function(option) {
-        this.text1.setText(this.getTexts1(option));
-        this.text2.setText(this.getTexts2(option));
-
-        this.notepad.revive();
-        this.text1.revive();
-        this.text2.revive();
-    },
-
-    hide: function() {
-        this.notepad.kill();
-        this.text1.kill();
-        this.text2.kill();
-        this.text3.kill();
-    },
-
-    isAlreadyRead: function(option) {
-        var found = false;
-        this.alreadyRead.forEach(function(item) {
-            if (option == item) {
-                found = true;
-                return true;
-            }
-        });
-
-        return found;
-    },
-
-    addToRead: function(option) {
-        this.toRead.push(option);
-        this.alreadyRead.push(option);
-
-        this.text3.revive();
-        this.text3.setText('1/' + this.toRead.length);
-    },
-
-    removeFromRead: function() {
-        this.toRead.shift();
-        this.show(this.toRead[0]);
-
-        this.text3.setText('1/' + this.toRead.length);
-    },
-
-    getTexts1: function(option) {
-        var map = {
-            guiri: '¡Hey! Un turista ha llegado a la playa.',
-            rubbish: 'Como ves, los turistas no son muy limpios.',
-            splash: '¡Qué maleducada es la gente!',
-            chiringuito: 'El stock de los chiringuitos se está acabando.',
-            buy: 'Si te faltan recursos y te sobra dinero',
-            end: 'Al salir de la playa, los turistas',
-        };
-
-        if (!map.hasOwnProperty(option)) {
-            return '';
+    createChiringuitoArrow: function(chiringuito) {
+        if (!chiringuito.bought) {
+            return true;
         }
 
-        return map[option];
+        arrow = game.add.sprite(chiringuito.centerX - 80, chiringuito.centerY + 20, 'arrows');
+        arrow.anchor.set(0.5);
+        arrow.smoothed = false;
+        arrow.scale.set(scaleFactor);
+        arrow.frame = 5;
+
+        gameState.tutorialGroup.add(arrow);
     },
 
-    getTexts2: function(option) {
-        var map = {
-            guiri: '¡Hey! Un turista ha llegado a la playa.',
-            rubbish: 'Como ves, los turistas no son muy limpios.',
-            splash: '¡Qué maleducada es la gente!',
-            chiringuito: 'El stock de los chiringuitos se está acabando.',
-            buy: 'Si te faltan recursos y te sobra dinero',
-            end: 'Al salir de la playa, los turistas',
-        };
-
-        if (!map.hasOwnProperty(option)) {
-            return '';
+    createSplashArrow: function(guiri) {
+        if (!guiri.isSplashing) {
+            return true;
         }
 
-        return map[option];
+        arrow = game.add.sprite(guiri.centerX + 50, guiri.centerY, 'arrows');
+        arrow.anchor.set(0.5);
+        arrow.smoothed = false;
+        arrow.scale.set(scaleFactor);
+        arrow.frame = 3;
+
+        gameState.tutorialGroup.add(arrow);
+    },
+
+    createBaywatcherArrow: function(baywatcher) {
+        if (!baywatcher.bought) {
+            return true;
+        }
+
+        arrow = game.add.sprite(baywatcher.exclamationMark.centerX + 50, baywatcher.exclamationMark.centerY - 10, 'arrows');
+        arrow.anchor.set(0.5);
+        arrow.smoothed = false;
+        arrow.scale.set(scaleFactor);
+        arrow.frame = 3;
+
+        gameState.tutorialGroup.add(arrow);
+    },
+
+    createToBuyArrow: function(sprite, offsetX, offsetY) {
+        if (sprite.bought) {
+            return true;
+        }
+
+        arrow = game.add.sprite(sprite.centerX + offsetX, sprite.centerY + offsetY, 'arrows');
+        arrow.anchor.set(0.5);
+        arrow.smoothed = false;
+        arrow.scale.set(scaleFactor);
+        arrow.frame = 4;
+
+        gameState.tutorialGroup.add(arrow);
     }
 }

@@ -54,8 +54,6 @@ Guiri = function (game) {
         clean : null,
         unalertedByBaywatcher : true
     };
-
-    Tutorial.add('guiri');
 };
 
 Guiri.prototype = Object.create(Phaser.Sprite.prototype);
@@ -70,7 +68,6 @@ Guiri.prototype.update = function() {
         } else {
             this.emoji.y = this.y - 5;
         }
-
     }
 };
 
@@ -543,6 +540,10 @@ Guiri.prototype.doSplash = function() {
                 });
 
                 _this.swimming();
+
+                if (Tutorial.getCurrentOption() == 'splash') {
+                    Tutorial.update('splash');
+                }
             });
         }
     });

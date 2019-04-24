@@ -337,6 +337,7 @@ gameState = {
 
                 var rubbish = new Rubbish(game, x, y);
                 _this.rubbishGroup.add(rubbish);
+                Tutorial.add('rubbish');
             }
         }, this);
     },
@@ -348,6 +349,7 @@ gameState = {
         gameState.time.events.add(Phaser.Timer.SECOND * 3 / gameState.difficulty, function(){
             var guiri = new Guiri(game);
             gameState.guirisGroup.add(guiri);
+            Tutorial.add('guiri');
 
             guiri.fromCityToMainPath();
         });

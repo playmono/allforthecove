@@ -88,6 +88,7 @@ Chiringuito.prototype.update = function() {
 
     if (this.isRefreshing && !this.isRefreshed && game.input.activePointer.duration % duration > (duration - 100)) {
         if (this.lastStock == this.stock) {
+            Tutorial.removeFromRead('chiringuito');
             gameState.money -= this.stockPrice;
             gameState.refillText.setText('');
             gameState.refillSprite.animations.play('refill');
@@ -141,6 +142,7 @@ Chiringuito.prototype.buy = function(free) {
     var _this = this;
 
     if (!free) {
+        Tutorial.removeFromRead('buy');
         gameState.money -= gameState.chiringuitoCost;
         gameState.chiringuitoCost += this.costOffset;
     }
@@ -162,7 +164,7 @@ Chiringuito.prototype.sell = function() {
     this.stock--;
     this.stockSprite.frame = this.stockSpriteMap[this.stock];
 
-    if (this.stock == 1) {
+    if (this.stock <= 1) {
         Tutorial.add('chiringuito');
     }
 }

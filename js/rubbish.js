@@ -18,13 +18,13 @@ Rubbish = function (game, x, y) {
 
     this.enableBody = true;
 
+    this.events.onDragStart.add(this.onDragStart, this);
     this.events.onDragStop.add(this.onDragStop, this);
+    this.beingDrag = false;
 
     game.physics.arcade.enable(this);
 
     gameState.add.tween(this).to({alpha: 1}, Phaser.Timer.SECOND / 2, Phaser.Easing.Linear.None, true);
-
-    Tutorial.add('rubbish');
 };
 
 Rubbish.prototype = Object.create(Phaser.Sprite.prototype);
@@ -36,18 +36,33 @@ Rubbish.prototype.update = function() {
     }
 };
 
+Rubbish.prototype.onDragStart = function() {
+    this.beingDrag = true;
+
+    if (Tutorial.getCurrentOption() == 'rubbish') {
+        Tutorial.update('rubbish');
+    }
+}
+
 Rubbish.prototype.onDragStop = function() {
+    this.beingDrag = false;
+
     var overlap = game.physics.arcade.overlap(this, gameState.trashGroup, this.checkCollision, null, this);
 
     if (!overlap) {
         this.x = this.initialX;
         this.y = this.initialY;
     }
+
+    if (Tutorial.getCurrentOption() == 'rubbish') {
+        Tutorial.update('rubbish');
+    }
 }
 
 Rubbish.prototype.checkCollision = function(rubbish, trash) {
     if (trash.bought && !trash.isInCooldown) {
         this.kill();
+        Tutorial.removeFromRead('rubbish');
         trashEffect.play();
 
         var distance = game.physics.arcade.distanceToXY(trash, this.initialX, this.initialY);

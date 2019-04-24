@@ -84,6 +84,7 @@ Trash.prototype.buy = function(free) {
     var _this = this;
 
     if (!free) {
+        Tutorial.removeFromRead('buy');
         gameState.money -= gameState.trashCost;
         gameState.trashCost += this.costOffset;
     }

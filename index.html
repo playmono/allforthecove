@@ -30,6 +30,7 @@
 <script src="js/menu.js"></script>
 <script src="js/game.js"></script>
 <script src="js/tutorial.js"></script>
+<script src="js/languages.js"></script>
 
 <p style="font-family: pixellari;">.</p>
 

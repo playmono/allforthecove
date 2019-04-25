@@ -92,6 +92,7 @@ gameState = {
     tutorialGroup: null,
     priceInfo: null,
     background: null,
+    lang: null,
 
     rubbishLoop: null,
 
@@ -103,13 +104,13 @@ gameState = {
     },
 
     weekdaysTitlesMap : {
-        'Monday' : 'LUNES',
-        'Tuesday' : 'MARTES',
-        'Wednesday' : 'MIÉRCOLES',
-        'Thursday' : 'JUEVES',
-        'Friday' : 'VIERNES',
-        'Saturday' : 'SÁBADO',
-        'Sunday' : 'DOMINGO'
+        'Monday' : 'LBL_MONDAY',
+        'Tuesday' : 'LBL_TUESDAY',
+        'Wednesday' : 'LBL_WEDNESDAY',
+        'Thursday' : 'LBL_THURSDAY',
+        'Friday' : 'LBL_FRIDAY',
+        'Saturday' : 'LBL_SATURDAY',
+        'Sunday' : 'LBL_SUNDAY'
     },
 
     preload: function() {
@@ -399,7 +400,7 @@ gameState = {
         var maxHeight = 80;
         var minY = maxHeight / 2;
 
-        var dayTitle = this.weekdaysTitlesMap[levels[this.currentLevel].title];
+        var dayTitle = Languages.getText(this.weekdaysTitlesMap[levels[this.currentLevel].title]);
         var dayText = _this.add.text(-100, ((bar.y - minY) + maxHeight / 2) + 5, dayTitle, {fill: "white", font: "40px pixellari"});
         dayText.anchor.set(0.5, 0.5);
 
@@ -576,7 +577,7 @@ gameState = {
 
         gameState.ratingsGroup.add(rating);
 
-        var ratingText = gameState.add.text(gameState.world.centerX, 75, "Valoración del turismo" , {fill: "black", font: "36px pixellari"});
+        var ratingText = gameState.add.text(gameState.world.centerX, 75, Languages.getText("LBL_TOURISM_RATING") , {fill: "black", font: "36px pixellari"});
         ratingText.anchor.setTo(0.5);
         //ratingText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
         gameState.ratingsGroup.add(ratingText);
@@ -972,7 +973,7 @@ gameState = {
         exitPanel.anchor.set(0.5, 0.5);
         gameState.exitPanelGroup.add(exitPanel);
 
-        var text = game.add.text(centerX, centerY - 40, '¿Está seguro de que desea salir?', {fill: 'black', font: '20px pixellari'});
+        var text = game.add.text(centerX, centerY - 40, Languages.getText('LBL_EXIT_QUESTION'), {fill: 'black', font: '20px pixellari'});
         text.anchor.set(0.5, 0.5);
         gameState.exitPanelGroup.add(text);
 
@@ -989,12 +990,12 @@ gameState = {
         var textOffsetX = 15;
         var textOffsetY = 2;
 
-        var exitText = game.add.text((exitButton.x + exitButton.width / 2) + textOffsetX, (exitButton.y + exitButton.height / 2) + textOffsetY, 'Salir', {fill: 'black', font: '20px pixellari'});
+        var exitText = game.add.text((exitButton.x + exitButton.width / 2) + textOffsetX, (exitButton.y + exitButton.height / 2) + textOffsetY, Languages.getText('LBL_EXIT_OK'), {fill: 'black', font: '20px pixellari'});
         exitText.smoothed = false;
         exitText.anchor.set(0.5, 0.5);
         gameState.exitPanelGroup.add(exitText);
 
-        var resumeText = game.add.text((resumeButton.x + resumeButton.width / 2) + textOffsetX, (resumeButton.y + resumeButton.height / 2) + textOffsetY, 'Jugar', {fill: 'black', font: '20px pixellari'});
+        var resumeText = game.add.text((resumeButton.x + resumeButton.width / 2) + textOffsetX, (resumeButton.y + resumeButton.height / 2) + textOffsetY, Languages.getText('LBL_EXIT_KO'), {fill: 'black', font: '20px pixellari'});
         resumeText.smoothed = false;
         resumeText.anchor.set(0.5, 0.5);
         gameState.exitPanelGroup.add(resumeText);
@@ -1075,14 +1076,14 @@ gameState = {
             tryAgainButton.scale.set(scaleFactor);
             tryAgainButton.smoothed = false;
 
-            var tryAgainText = _this.add.text(tryAgainButton.x + tryAgainButton.width / 2, tryAgainButton.y + tryAgainButton.height / 2, "Intentarlo otra vez", {fill: "yellow", font: "30px pixellari"});
+            var tryAgainText = _this.add.text(tryAgainButton.x + tryAgainButton.width / 2, tryAgainButton.y + tryAgainButton.height / 2, Languages.getText('LBL_TRY_AGAIN'), {fill: "yellow", font: "30px pixellari"});
             tryAgainText.anchor.set(0.5);
 
             var mainMenuButton = _this.add.button(645, 10, 'button');
             mainMenuButton.scale.set(scaleFactor);
             mainMenuButton.smoothed = false;
 
-            var mainMenuText = _this.add.text(mainMenuButton.x + mainMenuButton.width / 2, mainMenuButton.y + mainMenuButton.height / 2, "Menú principal", {fill: "yellow", font: "30px pixellari"});
+            var mainMenuText = _this.add.text(mainMenuButton.x + mainMenuButton.width / 2, mainMenuButton.y + mainMenuButton.height / 2, Languages.getText('LBL_MAIN_MENU'), {fill: "yellow", font: "30px pixellari"});
             mainMenuText.anchor.set(0.5);
 
             tryAgainButton.onInputUp.add(function () {
@@ -1109,22 +1110,22 @@ gameState = {
 
         var style = {fill: '#000000', font: '24px pixellari'};
 
-        var text1 = new Phaser.Text(this.game, 300, 20, '¡Lo hemos conseguido! La gente\nnos ha apoyado. ¡No habrá hotel!', style);
+        var text1 = new Phaser.Text(this.game, 300, 20, Languages.getText('LBL_ENDING1'), style);
 
-        var text2 = new Phaser.Text(this.game, 380, 20, 'Ha sido duro, pero al final', style);
-        var text3 = new Phaser.Text(this.game, text2.x - 30, text2.y + 25, 'ha valido la pena luchar por proteger', style);
-        var text4 = new Phaser.Text(this.game, text3.x + 50, text3.y + 25, 'esta valiosa cala.', style);
-        var text5 = new Phaser.Text(this.game, text4.x + 30, text4.y + 40, 'Da gusto ver a la gente', style);
-        var text6 = new Phaser.Text(this.game, text5.x + 30, text5.y + 25, 'disfrutar de esta costa.', style);
-        var text7 = new Phaser.Text(this.game, text6.x + 30, text6.y + 25, 'Es también gracias a', style);
-        var text8 = new Phaser.Text(this.game, text7.x + 30, text7.y + 25, 'ellos que la', style);
-        var text9 = new Phaser.Text(this.game, text8.x + 30, text8.y + 25, 'podemos', style);
-        var text10 = new Phaser.Text(this.game, text9.x + 30, text9.y + 25, 'conservar.', style);
+        var text2 = new Phaser.Text(this.game, 380, 20, Languages.getText('LBL_ENDING2'), style);
+        var text3 = new Phaser.Text(this.game, text2.x - 30, text2.y + 25, Languages.getText('LBL_ENDING3'), style);
+        var text4 = new Phaser.Text(this.game, text3.x + 50, text3.y + 25, Languages.getText('LBL_ENDING4'), style);
+        var text5 = new Phaser.Text(this.game, text4.x + 30, text4.y + 40, Languages.getText('LBL_ENDING5'), style);
+        var text6 = new Phaser.Text(this.game, text5.x + 30, text5.y + 25, Languages.getText('LBL_ENDING6'), style);
+        var text7 = new Phaser.Text(this.game, text6.x + 30, text6.y + 25, Languages.getText('LBL_ENDING7'), style);
+        var text8 = new Phaser.Text(this.game, text7.x + 30, text7.y + 25, Languages.getText('LBL_ENDING8'), style);
+        var text9 = new Phaser.Text(this.game, text8.x + 30, text8.y + 25, Languages.getText('LBL_ENDING9'), style);
+        var text10 = new Phaser.Text(this.game, text9.x + 30, text9.y + 25, Languages.getText('LBL_ENDING10'), style);
 
-        var text11 = new Phaser.Text(this.game, 20, 150, 'Pero es sobretodo\ngracias a ti que la\ncala está a salvo.', style);
-        var text12 = new Phaser.Text(this.game, text11.x, text9.y + 50, 'Gracias por proteger\neste pequeño\nparaíso.', style);
-        var text13 = new Phaser.Text(this.game, 30, 470, '¡GRACIAS POR JUGAR!', {fill: '#FFFFFF', font: '24px pixellari'});
-        var text14 = new Phaser.Text(this.game, 660, 455, '¡Desbloqueado\n  modo infinito!', {fill: '#000000', font: '18px pixellari'});
+        var text11 = new Phaser.Text(this.game, 20, 150, Languages.getText('LBL_ENDING11'), style);
+        var text12 = new Phaser.Text(this.game, text11.x, text9.y + 50, Languages.getText('LBL_ENDING12'), style);
+        var text13 = new Phaser.Text(this.game, 30, 470, Languages.getText('LBL_ENDING13'), {fill: '#FFFFFF', font: '24px pixellari'});
+        var text14 = new Phaser.Text(this.game, 660, 455, Languages.getText('LBL_ENDING14'), {fill: '#000000', font: '18px pixellari'});
         
         var story1 = new Phaser.Image(this.game, 0, 0, 'ending1');
         story1.scale.set(scaleFactor);

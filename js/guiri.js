@@ -624,51 +624,51 @@ Guiri.prototype.getNotificationText = function() {
 Guiri.prototype.getNotificationTexts = function(key, positive) {
     var positiveTexts = {
         layedOnTowel: [
-            'La playa está impecable <3',
-            'Vuelvo mañana mismo.'
+            Languages.getText('LBL_GUIRI_POSITIVE_TOWEL1'),
+            Languages.getText('LBL_GUIRI_POSITIVE_TOWEL2')
         ],
         swam: [
-            '¡Qué fresquita está el agua!',
-            'El mar está muy tranquilo'
+            Languages.getText('LBL_GUIRI_POSITIVE_SWAM1'),
+            Languages.getText('LBL_GUIRI_POSITIVE_SWAM2')
         ],
         didSplash: [
-            'Me lo he pasasado genial',
-            'ANARKIA Y BIRRA FRIA!'
+            Languages.getText('LBL_GUIRI_POSITIVE_SPLASH1'),
+            Languages.getText('LBL_GUIRI_POSITIVE_SPLASH2')
         ],
         quietSwam: [
-            'Vale la pena venir a bañarse.',
-            'Una playa muy tranquila.',
+            Languages.getText('LBL_GUIRI_POSITIVE_QUIETSWAM1'),
+            Languages.getText('LBL_GUIRI_POSITIVE_QUIETSWAM2')
         ],
         couldBuy: [
-            'Muy rica la comida.',
-            'Me encanta la piña colada'
+            Languages.getText('LBL_GUIRI_POSITIVE_COULDBUY1'),
+            Languages.getText('LBL_GUIRI_POSITIVE_COULDBUY2')
         ],
         clean: [
-            '¡Qué limpio está todo!',
-            'La playa está impecable'
+            Languages.getText('LBL_GUIRI_POSITIVE_CLEANBEACH1'),
+            Languages.getText('LBL_GUIRI_POSITIVE_CLEANBEACH2')
         ],
         unalertedByBaywatcher: [
-            '¡Que guay! Dejan meter pelotas en el agua',
-            'Me encantan las guerras de agua'
+            Languages.getText('LBL_GUIRI_POSITIVE_BAYWATCHER1'),
+            Languages.getText('LBL_GUIRI_POSITIVE_BAYWATCHER2')
         ]
     };
 
     var negativeTexts = {
         quietSwam: [
-            '¿Es que nadie vigila o qué?',
-            'Los Guardacostas van a su bola ¬¬'
+            Languages.getText('LBL_GUIRI_NEGATIVE_QUIETSWAM1'),
+            Languages.getText('LBL_GUIRI_NEGATIVE_QUIETSWAM2')
         ],
         couldBuy: [
-            'No quedan helados y hace calor...',
-            'Me gustaría poder comer algo...'
+            Languages.getText('LBL_GUIRI_NEGATIVE_COULDBUY1'),
+            Languages.getText('LBL_GUIRI_NEGATIVE_COULDBUY2')
         ],
         clean: [
-            '¡La playa está super sucia!!!1!',
-            'Que asco de la playa.'
+            Languages.getText('LBL_GUIRI_NEGATIVE_CLEANBEACH1'),
+            Languages.getText('LBL_GUIRI_NEGATIVE_CLEANBEACH2')
         ],
         unalertedByBaywatcher: [
-            '¡No se puede hacer nada en el agua!',
-            'Los guardacostas son unos aguafiestas'
+            Languages.getText('LBL_GUIRI_NEGATIVE_BAYWATCHER1'),
+            Languages.getText('LBL_GUIRI_NEGATIVE_BAYWATCHER2')
         ]
     }
 
@@ -680,12 +680,12 @@ Guiri.prototype.getNotificationTexts = function(key, positive) {
     // PERO AUN ASÍ, SU FELICIDAD ES NEGATIVA
 
     var defaultPositiveText = [
-        'Me lo he pasado genial.',
-        'Ha sido un día genial'
+        Languages.getText('LBL_GUIRI_POSITIVE_DEFAULT1'),
+        Languages.getText('LBL_GUIRI_POSITIVE_DEFAULT2')
     ];
     var defaultNegativeText = [
-        'No pienso volver a esta playa.',
-        'Ha sido el peor día de mi vida'
+        Languages.getText('LBL_GUIRI_NEGATIVE_DEFAULT1'),
+        Languages.getText('LBL_GUIRI_NEGATIVE_DEFAULT2')
     ];
 
     if (positive) {

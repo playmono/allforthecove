@@ -78,6 +78,7 @@ loadState = {
         this.game.load.spritesheet('exit', 'assets/back2.png', 42, 42);
         this.game.load.spritesheet('price', 'assets/buy.png', 28, 28);
         this.game.load.spritesheet('arrows', 'assets/arrows.png', 25, 36);
+        this.game.load.spritesheet('flags', 'assets/flags.png', 60, 40);
         this.game.load.image('rating', 'assets/ratings.png', 330, 250);
         this.game.load.image('visitors', 'assets/visitors.png', 10, 20);
         this.game.load.image('gameover', 'assets/gameover1.png', 480, 270);
@@ -90,6 +91,11 @@ loadState = {
         this.game.load.image('ending1', 'assets/ending1.png', 480, 270);
         this.game.load.image('ending2', 'assets/ending2.png', 480, 270);
         this.game.load.image('ending3', 'assets/ending3.png', 480, 270);
+
+        this.game.load.json('es_es', 'languages/es_es.json');
+        this.game.load.json('en_us', 'languages/en_us.json');
+
+        Languages.init();
     },
 
     create : function() {
@@ -113,6 +119,8 @@ menuState = {
 
         this.game.sound.stopAll();
 
+        // Background and sprites
+
         var background = this.game.add.sprite(0, 0, 'title');
         background.scale.set(scaleFactor);
         background.smoothed = false;
@@ -123,7 +131,7 @@ menuState = {
         startButton.scale.set(scaleFactor);
         startButton.smoothed = false;
 
-        var startText = this.add.text(startButton.x + startButton.width / 2, startButton.y + startButton.height / 2, "Empezar Juego", {fill: "yellow", font: "30px pixellari"});
+        var startText = this.add.text(startButton.x + startButton.width / 2, startButton.y + startButton.height / 2, Languages.getText('LBL_START_GAME'), {fill: "yellow", font: "30px pixellari"});
         startText.anchor.set(0.5);
 
         var endlessMode = localStorage.getItem('allforthecove_endlessmode');
@@ -133,7 +141,7 @@ menuState = {
             endlessModeButton.scale.set(scaleFactor);
             endlessModeButton.smoothed = false;
 
-            var endlessModeText = this.add.text(endlessModeButton.x + endlessModeButton.width / 2, endlessModeButton.y + endlessModeButton.height / 2, "Modo Infinito", {fill: "yellow", font: "30px pixellari"});
+            var endlessModeText = this.add.text(endlessModeButton.x + endlessModeButton.width / 2, endlessModeButton.y + endlessModeButton.height / 2, Languages.getText('LBL_ENDLESS_MODE'), {fill: "yellow", font: "30px pixellari"});
             endlessModeText.anchor.set(0.5);
         }
 
@@ -141,7 +149,7 @@ menuState = {
         creditsButton.scale.set(scaleFactor);
         creditsButton.smoothed = false;
         
-        var creditsText = this.add.text(creditsButton.x + creditsButton.width / 2, creditsButton.y + creditsButton.height / 2, "Créditos", {fill: "yellow", font: "30px pixellari"});
+        var creditsText = this.add.text(creditsButton.x + creditsButton.width / 2, creditsButton.y + creditsButton.height / 2, Languages.getText('LBL_CREDITS'), {fill: "yellow", font: "30px pixellari"});
         creditsText.anchor.set(0.5);
 
         startButton.onInputUp.add(function () {
@@ -150,6 +158,37 @@ menuState = {
 
         creditsButton.onInputUp.add(function () {
             _this.state.start("creditsState");
+        }, this);
+
+        // Language
+
+        var flag = this.add.sprite(this.world.width - 150, 30, 'flags');
+        flag.scale.set(scaleFactor);
+        flag.smoothed = false;
+        flag.inputEnabled = true;
+        flag.input.useHandCursor = true;
+
+        if (Languages.currentLang == 'en_us') {
+            flag.frame = 1;
+        } else {
+            flag.frame = 0;
+        }
+
+        flag.events.onInputUp.add(function () {
+            Languages.switchLanguage();
+
+            if (Languages.currentLang == 'en_us') {
+                flag.frame = 1;
+            } else {
+                flag.frame = 0;
+            }
+
+            startText.setText(Languages.getText('LBL_START_GAME'));
+            creditsText.setText(Languages.getText('LBL_CREDITS'));
+
+            if (endlessMode) {
+                endlessModeText.setText(Languages.getText('LBL_ENDLESS_MODE'));
+            }
         }, this);
     },
 
@@ -169,16 +208,16 @@ beforePlayState = {
 
         var style = {fill: '#000000', font: '24px pixellari'};
 
-        var text1 = new Phaser.Text(this.game, 30, 170, 'Nunca tienen suficiente...', style);
-        var text2 = new Phaser.Text(this.game, 30, text1.y + 50, 'Van a construir\nun nuevo hotel\nen nuestra cala.', style);
+        var text1 = new Phaser.Text(this.game, 30, 170, Languages.getText('LBL_INTRO1'), style);
+        var text2 = new Phaser.Text(this.game, 30, text1.y + 50, Languages.getText('LBL_INTRO2'), style);
 
-        var text3 = new Phaser.Text(this.game, 600, 50, '¡Ya hay suficientes\nhoteles alrededor!', style);
-        var text4 = new Phaser.Text(this.game, text3.x - 80, text3.y + 80, '¡Y encima quieren\nconstruirlo sobre la\narena de la cala!', style);
-        var text5 = new Phaser.Text(this.game, text4.x + 30, text4.y + 110, '¡Destruirá completamente\nla naturaleza en este\npaisaje! ¡Y sólo lo\nhacen por dinero!', style);
+        var text3 = new Phaser.Text(this.game, 600, 50, Languages.getText('LBL_INTRO3'), style);
+        var text4 = new Phaser.Text(this.game, text3.x - 80, text3.y + 80, Languages.getText('LBL_INTRO4'), style);
+        var text5 = new Phaser.Text(this.game, text4.x + 30, text4.y + 110, Languages.getText('LBL_INTRO5'), style);
 
-        var text6 = new Phaser.Text(this.game, 120, 15, 'Hay que impedirlo como sea.\nLa gente lo tiene que saber.', style);
-        var text7 = new Phaser.Text(this.game, 150, text6.y + 70, 'Necesitamos ayuda para impedir\nque contruyan el hotel.\nHaremos una petición.', style);
-        var text8 = new Phaser.Text(this.game, 85, 245, '¡EL NUEVO HOTEL ES\nUN GRAVE PELIGRO\nPARA NUESTRA CALA!\nAyúdanos a evitar\nla destrucción\nde este hermoso\npaisaje.', style);
+        var text6 = new Phaser.Text(this.game, 120, 15, Languages.getText('LBL_INTRO6'), style);
+        var text7 = new Phaser.Text(this.game, 150, text6.y + 70, Languages.getText('LBL_INTRO7'), style);
+        var text8 = new Phaser.Text(this.game, 85, 245, Languages.getText('LBL_INTRO8'), style);
 
         var story1 = new Phaser.Image(this.game, 0, 0, 'story1');
         story1.scale.set(scaleFactor);
@@ -260,20 +299,20 @@ creditsState = {
         var centerX = credits.x + credits.width / 2;
         var centerY = credits.y + credits.height / 2;
 
-        this.add.text(centerX, centerY - 140, "All for the Cove", {fill: "white", font: "50px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY - 140, Languages.getText("LBL_TITLE_GAME"), {fill: "white", font: "50px pixellari"}).anchor.set(0.5, 0.5);
         
-        this.add.text(centerX, centerY - 60, "Diseño: Noé Fernández y Adrián Granado", {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
-        this.add.text(centerX, centerY - 35, "Programador: Adrián Granado", {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
-        this.add.text(centerX, centerY - 10, "Artista: Noé Fernández", {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY - 60, Languages.getText("LBL_GAME_DESIGNERS"), {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY - 35, Languages.getText("LBL_PROGRAMMER"), {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY - 10, Languages.getText("LBL_ARTIST"), {fill: "white", font: "24px pixellari"}).anchor.set(0.5, 0.5);
 
-        this.add.text(centerX, centerY + 40, "Fuente: Zacchary Dempsey-Plante (https://www.dafont.com/pixellari.font)", {fill: "white", font: "20px pixellari"}).anchor.set(0.5, 0.5);
-        this.add.text(centerX, centerY + 60, "Música: Kevin MacLeod", {fill: "white", font: "20px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY + 40, Languages.getText("LBL_FONT_CREDITS"), {fill: "white", font: "20px pixellari"}).anchor.set(0.5, 0.5);
+        this.add.text(centerX, centerY + 60, Languages.getText("LBL_MUSIC_CREDITS"), {fill: "white", font: "20px pixellari"}).anchor.set(0.5, 0.5);
 
         var exitButton = this.add.button(credits.x + 50, credits.height - 100, 'button');
         exitButton.scale.set(scaleFactor);
         exitButton.smoothed = false;
 
-        var backText = this.add.text(exitButton.x + exitButton.width / 2, exitButton.y + exitButton.height / 2, "Volver a Menú", {fill: "yellow", font: "30px pixellari"}).anchor.set(0.5, 0.5);
+        var backText = this.add.text(exitButton.x + exitButton.width / 2, exitButton.y + exitButton.height / 2, Languages.getText("LBL_RETURN_TO_MENU"), {fill: "yellow", font: "30px pixellari"}).anchor.set(0.5, 0.5);
 
         exitButton.onInputUp.add(function () {
             _this.state.start("menuState");

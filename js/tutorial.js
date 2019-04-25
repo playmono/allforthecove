@@ -2,6 +2,7 @@ var Tutorial = {
     currentOption: null,
     toRead: [],
     alreadyRead: [],
+    text: null,
 
     getCurrentOption: function() {
         return this.currentOption;
@@ -42,72 +43,86 @@ var Tutorial = {
 
         gameState.tutorialGroup.callAll('kill');
 
-        if (option == 'guiri') {
-            gameState.guirisGroup.forEach(function(guiri) {
-                _this.createGuiriArrow(guiri);
-            });
-        }
+        var text = this.createText(option);
 
-        if (option == 'rubbish') {
-            var draggingRubbish = false;
-
-            gameState.rubbishGroup.forEach(function(rubbish) {
-                if (rubbish.beingDrag) {
-                    draggingRubbish = true;
-                    return false;
-                }
-            });
-
-            if (draggingRubbish) {
-                gameState.trashGroup.forEach(function(trash) {
-                    _this.createTrashArrow(trash);
-                });
-            } else {
-                gameState.rubbishGroup.forEach(function(rubbish) {
-                    _this.createRubbishArrow(rubbish);
-                });
-            }
-        }
-
-        if (option == 'chiringuito') {
-            gameState.chiringuitosGroup.forEach(function(chiringuito) {
-                _this.createChiringuitoArrow(chiringuito);
-            });
-        }
-
-        if (option == 'splash') {
-            var draggingWhistle = false;
-
-            gameState.baywatchersGroup.forEach(function(baywatcher) {
-                if (baywatcher.beingDrag) {
-                    draggingWhistle = true;
-                    return false;
-                }
-            });
-
-            if (!draggingWhistle) {
-                gameState.baywatchersGroup.forEach(function(baywatcher) {
-                    _this.createBaywatcherArrow(baywatcher);
-                });
-            } else {
+        switch (option) {
+            case 'guiri':
                 gameState.guirisGroup.forEach(function(guiri) {
-                    _this.createSplashArrow(guiri);
+                    _this.createGuiriArrow(guiri);
                 });
-            }
-        }
 
-        if (option == 'buy') {
-            gameState.baywatchersGroup.forEach(function(baywatcher) {
-                _this.createToBuyArrow(baywatcher, 0, -30);
-            });
+                text.setText(Languages.getText('LBL_TUTORIAL_GUIRI'));
+            break;
 
-            gameState.trashGroup.forEach(function(trash) {
-                _this.createToBuyArrow(trash, 0, -70);
-            });
+            case 'rubbish':
+                var draggingRubbish = false;
 
-            gameState.chiringuitosGroup.forEach(function(chiringuito) {
-                _this.createToBuyArrow(chiringuito, 0, -30);
-            });
+                gameState.rubbishGroup.forEach(function(rubbish) {
+                    if (rubbish.beingDrag) {
+                        draggingRubbish = true;
+                        return false;
+                    }
+                });
+
+                if (draggingRubbish) {
+                    gameState.trashGroup.forEach(function(trash) {
+                        _this.createTrashArrow(trash);
+                    });
+                } else {
+                    gameState.rubbishGroup.forEach(function(rubbish) {
+                        _this.createRubbishArrow(rubbish);
+                    });
+                }
+
+                text.setText(Languages.getText('LBL_TUTORIAL_RUBBISH'));
+            break;
+
+            case 'chiringuito':
+                gameState.chiringuitosGroup.forEach(function(chiringuito) {
+                    _this.createChiringuitoArrow(chiringuito);
+                });
+
+                text.setText(Languages.getText('LBL_TUTORIAL_CHIRINGUITO'));
+            break;
+
+            case 'splash':
+                var draggingWhistle = false;
+
+                gameState.baywatchersGroup.forEach(function(baywatcher) {
+                    if (baywatcher.beingDrag) {
+                        draggingWhistle = true;
+                        return false;
+                    }
+                });
+
+                if (!draggingWhistle) {
+                    gameState.baywatchersGroup.forEach(function(baywatcher) {
+                        _this.createBaywatcherArrow(baywatcher);
+                    });
+                } else {
+                    gameState.guirisGroup.forEach(function(guiri) {
+                        _this.createSplashArrow(guiri);
+                    });
+                }
+
+                text.setText(Languages.getText('LBL_TUTORIAL_SPLASH'));
+            break;
+
+            case 'buy':
+                gameState.baywatchersGroup.forEach(function(baywatcher) {
+                    _this.createToBuyArrow(baywatcher, 0, -30);
+                });
+
+                gameState.trashGroup.forEach(function(trash) {
+                    _this.createToBuyArrow(trash, 0, -70);
+                });
+
+                gameState.chiringuitosGroup.forEach(function(chiringuito) {
+                    _this.createToBuyArrow(chiringuito, 0, -30);
+                });
+
+                text.setText(Languages.getText('LBL_TUTORIAL_BUY'));
+            break;
         }
     },
 
@@ -135,6 +150,15 @@ var Tutorial = {
     },
 
     // RENDERS
+
+    createText: function(option) {
+        text = game.add.text(game.world.centerX, game.world.centerY + 150, '', {fill: 'black', font: '24px pixellari'});
+        text.anchor.set(0.5);
+
+        gameState.tutorialGroup.add(text);
+
+        return text;
+    },
 
     createGuiriArrow: function(guiri) {
         arrow = game.add.sprite(0, 0, 'arrows');

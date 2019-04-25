@@ -154,6 +154,7 @@ var Tutorial = {
     createText: function(option) {
         text = game.add.text(game.world.centerX, game.world.centerY + 150, '', {fill: 'black', font: '24px pixellari'});
         text.anchor.set(0.5);
+        text.smoothed = false;
 
         gameState.tutorialGroup.add(text);
 

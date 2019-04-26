@@ -30,7 +30,7 @@
 <script src="js/menu.js"></script>
 <script src="js/game.js"></script>
 <script src="js/Tutorial.js"></script>
-<script src="js/languages.js"></script>
+<script src="js/Languages.js"></script>
 <script src="js/AudioManager.js"></script>
 
 <p style="font-family: pixellari;">.</p>

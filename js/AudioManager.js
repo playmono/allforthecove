@@ -16,6 +16,7 @@ var AudioManager = {
 			var tmp = game.add.sound(music);
 			_this.musicList.push(tmp);
 
+			tmp.loop = true;
 			tmp.volume -= 0.5;
 		});
 

@@ -254,15 +254,15 @@ gameState = {
         musicButton.scale.set(scaleFactor);
         this.hudGroup.add(musicButton);
 
-        AudioManager.music ? musicButton.frame = 1 : musicButton.frame = 0;
+        AudioManager.music ? musicButton.frame = 3 : musicButton.frame = 2;
 
         musicButton.events.onInputDown.add(function() {
             if (AudioManager.music) {
                 AudioManager.setMusic(false);
-                musicButton.frame = 0;
+                musicButton.frame = 2;
             } else {
                 AudioManager.setMusic(true);
-                musicButton.frame = 1;
+                musicButton.frame = 3;
             }
         });
 
@@ -273,15 +273,15 @@ gameState = {
         soundButton.scale.set(scaleFactor);
         this.hudGroup.add(musicButton);
 
-        AudioManager.sound ? soundButton.frame = 3 : soundButton.frame = 2;
+        AudioManager.sound ? soundButton.frame = 1 : soundButton.frame = 0;
 
         soundButton.events.onInputDown.add(function() {
             if (AudioManager.sound) {
                 AudioManager.setSound(false);
-                soundButton.frame = 2;
+                soundButton.frame = 0;
             } else {
                 AudioManager.setSound(true);
-                soundButton.frame = 3;
+                soundButton.frame = 1;
             }
         });
 
@@ -1074,7 +1074,9 @@ gameState = {
             });
 
             gameState.hudGroup.forEach(function(hudItem) {
-                hudItem.input.enabled = true;
+                if (hudItem.input !== null) {
+                    hudItem.input.enabled = true;
+                }
             });
         }, game);
 

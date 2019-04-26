@@ -113,6 +113,9 @@ gameState = {
         'Sunday' : 'LBL_SUNDAY'
     },
 
+    music: true,
+    sound: true,
+
     preload: function() {
     },
 
@@ -156,14 +159,16 @@ gameState = {
         this.tutorialGroup = this.add.group();
         this.exitPanelGroup = this.add.group();
 
-        this.exitButton = this.game.add.button(gameWidth -70, 15, 'exit');
-        this.exitButton.smoothed = false;
-        this.exitButton.inputEnabled = true;
-        this.exitButton.input.useHandCursor = true;
-        this.hudGroup.add(this.exitButton);
+        var exitButton = this.game.add.button(gameWidth -70, 15, 'options');
+        exitButton.frame = 4;
+        exitButton.smoothed = false;
+        exitButton.inputEnabled = true;
+        exitButton.input.useHandCursor = true;
+        exitButton.scale.set(scaleFactor);
+        this.hudGroup.add(exitButton);
 
         // 15 ms is the limit for tween animations
-        this.exitButton.events.onInputDown.add(function () {
+        exitButton.events.onInputDown.add(function () {
             _this.fadeAll(0xffffff, 0x213263, 100, _this.showExitPanel);
         }, this);
 
@@ -238,12 +243,49 @@ gameState = {
             }
         });
 
-        var music = game.add.audio("music");
-        trashEffect = game.add.audio("trash");
-        buyGuiriEffect = game.add.audio("buyguiri");
-        coinEffect = game.add.audio("coin");
+        // MUSIC MANAGER
 
-        music.play();
+        AudioManager.init();
+
+        var musicButton = this.game.add.button(exitButton.x, exitButton.y + 44, 'options');
+        musicButton.smoothed = false;
+        musicButton.inputEnabled = true;
+        musicButton.input.useHandCursor = true;
+        musicButton.scale.set(scaleFactor);
+        this.hudGroup.add(musicButton);
+
+        AudioManager.music ? musicButton.frame = 1 : musicButton.frame = 0;
+
+        musicButton.events.onInputDown.add(function() {
+            if (AudioManager.music) {
+                AudioManager.setMusic(false);
+                musicButton.frame = 0;
+            } else {
+                AudioManager.setMusic(true);
+                musicButton.frame = 1;
+            }
+        });
+
+        var soundButton = this.game.add.button(musicButton.x, musicButton.y + 44, 'options');
+        soundButton.smoothed = false;
+        soundButton.inputEnabled = true;
+        soundButton.input.useHandCursor = true;
+        soundButton.scale.set(scaleFactor);
+        this.hudGroup.add(musicButton);
+
+        AudioManager.sound ? soundButton.frame = 3 : soundButton.frame = 2;
+
+        soundButton.events.onInputDown.add(function() {
+            if (AudioManager.sound) {
+                AudioManager.setSound(false);
+                soundButton.frame = 2;
+            } else {
+                AudioManager.setSound(true);
+                soundButton.frame = 3;
+            }
+        });
+
+        AudioManager.getMusic("music").play();
 
         this.startLevel();
     },
@@ -962,7 +1004,11 @@ gameState = {
             baywatcher.input.enabled = false;
         });
 
-        gameState.exitButton.input.enabled = false;
+        gameState.hudGroup.forEach(function(hudItem) {
+            if (hudItem.input != null) {
+                hudItem.input.enabled = false;
+            }
+        });
 
         var centerX = game.world.x + game.world.width / 2;
         var centerY = game.world.y + game.world.height / 2;
@@ -1027,7 +1073,9 @@ gameState = {
                 baywatcher.input.enabled = true;
             });
 
-            gameState.exitButton.input.enabled = true;
+            gameState.hudGroup.forEach(function(hudItem) {
+                hudItem.input.enabled = true;
+            });
         }, game);
 
     },
@@ -1199,8 +1247,7 @@ gameState = {
             text13.kill();
             text14.kill();
 
-            localStorage.setItem('allforthecove_endlessmode', true);
-            localStorage.setItem('allforthecove_transition', true);
+            localStorage.setItem('allforthecove_endlessmode', JSON.stringify(true));
 
             this.state.start("menuState");
         }, this);

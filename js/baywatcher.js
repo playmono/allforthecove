@@ -84,9 +84,10 @@ Baywatcher.prototype.buy = function(free) {
 
     if (!free) {
         Tutorial.removeFromRead('buy');
+        AudioManager.getSound('coin').play();
+
         gameState.money -= gameState.baywatcherCost;
         gameState.baywatcherCost += this.costOffset;
-        coinEffect.play();
     }
 
     this.alpha = 1;

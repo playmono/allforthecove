@@ -63,7 +63,7 @@ Rubbish.prototype.checkCollision = function(rubbish, trash) {
     if (trash.bought && !trash.isInCooldown) {
         this.kill();
         Tutorial.removeFromRead('rubbish');
-        trashEffect.play();
+        AudioManager.getSound('trash').play();
 
         var distance = game.physics.arcade.distanceToXY(trash, this.initialX, this.initialY);
 

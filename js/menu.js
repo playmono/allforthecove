@@ -75,9 +75,10 @@ loadState = {
         this.game.load.spritesheet('icons', 'assets/icons2.png', 16, 16);
         this.game.load.spritesheet('bubble', 'assets/bubble.png', 180, 20);
         this.game.load.spritesheet('refill', 'assets/refill.png', 23, 37);
-        this.game.load.spritesheet('exit', 'assets/back2.png', 42, 42);
+        this.game.load.spritesheet('options', 'assets/options.png', 22, 22);
         this.game.load.spritesheet('price', 'assets/buy.png', 28, 28);
         this.game.load.spritesheet('arrows', 'assets/arrows.png', 25, 36);
+        this.game.load.spritesheet('flags', 'assets/flags.png', 60, 40);
         this.game.load.spritesheet('flags', 'assets/flags.png', 60, 40);
         this.game.load.image('rating', 'assets/ratings.png', 330, 250);
         this.game.load.image('visitors', 'assets/visitors.png', 10, 20);
@@ -134,7 +135,7 @@ menuState = {
         var startText = this.add.text(startButton.x + startButton.width / 2, startButton.y + startButton.height / 2, Languages.getText('LBL_START_GAME'), {fill: "yellow", font: "30px pixellari"});
         startText.anchor.set(0.5);
 
-        var endlessMode = localStorage.getItem('allforthecove_endlessmode');
+        var endlessMode = JSON.parse(localStorage.getItem('allforthecove_endlessmode'));
 
         if (endlessMode) {
             var endlessModeButton = this.add.button(35, 350, 'button');

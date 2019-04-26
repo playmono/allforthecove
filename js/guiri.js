@@ -558,7 +558,7 @@ Guiri.prototype.buyInChiringuito = function() {
     this.modifyHappiness(2);
     this.actions.couldBuy = true;
 
-    buyGuiriEffect.play();
+    AudioManager.getSound('buyguiri').play();
 }
 
 Guiri.prototype.modifyHappiness = function(happiness) {

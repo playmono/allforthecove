@@ -1,4 +1,4 @@
-levels = [
+var levels = [
     {
         title: 'Monday',
         guirisTotalCount: 5,

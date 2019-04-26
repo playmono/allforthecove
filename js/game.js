@@ -252,7 +252,6 @@ gameState = {
         musicButton.inputEnabled = true;
         musicButton.input.useHandCursor = true;
         musicButton.scale.set(scaleFactor);
-        this.hudGroup.add(musicButton);
 
         AudioManager.music ? musicButton.frame = 3 : musicButton.frame = 2;
 
@@ -271,7 +270,6 @@ gameState = {
         soundButton.inputEnabled = true;
         soundButton.input.useHandCursor = true;
         soundButton.scale.set(scaleFactor);
-        this.hudGroup.add(musicButton);
 
         AudioManager.sound ? soundButton.frame = 1 : soundButton.frame = 0;
 

@@ -22,6 +22,6 @@ The game consists on managing the wellbeing of the beach: people will be coming 
 ![Screenshof 4 of All for the cove](https://i.ibb.co/RhGhbXs/Untitled.png)
 
 ### Credits
-Programming: Adrián Granado
-Art: Noé Fernández
+- Programming: Adrián Granado
+- Art: Noé Fernández
 
